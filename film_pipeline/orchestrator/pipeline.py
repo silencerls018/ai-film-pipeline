@@ -7,6 +7,7 @@ from typing import Any
 
 from film_pipeline.paths import ensure_project_dir
 from film_pipeline.runtime.agent_runner import AgentRunner
+from film_pipeline.runtime.prompt_compiler import export_prompts_markdown
 
 STAGES = [
     "dramaturg",
@@ -58,6 +59,10 @@ class Pipeline:
         project_id = bible["meta"]["project_id"]
         path = self.project_path(project_id)
         path.write_text(json.dumps(bible, ensure_ascii=False, indent=2), encoding="utf-8")
+        # Side-export human-readable prompt board when jobs exist
+        if bible.get("generation_jobs"):
+            md_path = ensure_project_dir(project_id) / "prompt_board.md"
+            md_path.write_text(export_prompts_markdown(bible), encoding="utf-8")
         return path
 
     def load(self, project_id: str) -> dict[str, Any]:

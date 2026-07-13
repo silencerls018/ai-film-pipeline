@@ -12,10 +12,14 @@
         "required": ["shot_id", "visual_prompt", "motion_prompt"],
         "properties": {
           "shot_id": { "type": "string" },
+          "scene_id": { "type": "string" },
           "visual_prompt": { "type": "string" },
           "motion_prompt": { "type": "string" },
+          "master_prompt": { "type": "string" },
           "negative_prompt": { "type": "string" },
+          "zh_director_summary": { "type": "string" },
           "duration_sec": { "type": "number" },
+          "sources": { "type": "object" },
           "downgrades": {
             "type": "array",
             "items": { "type": "string" }

@@ -307,32 +307,11 @@ def stub_cinematography(bible: dict[str, Any], kb: dict[str, Any]) -> dict[str, 
 
 
 def stub_generator(bible: dict[str, Any], kb: dict[str, Any]) -> dict[str, Any]:
-    jobs = []
-    for shot in bible.get("shots") or []:
-        cam = shot.get("camera") or {}
-        look = shot.get("look") or {}
-        move = (cam.get("movement") or {}).get("type", "static")
-        visual = (
-            f"{shot.get('shot_size', 'MS')} {cam.get('angle', 'eye_level')}, "
-            f"{cam.get('lens_mm', 40)}mm, {shot.get('subject', 'scene')}, "
-            f"lighting: {look.get('key_light', 'cinematic')}, tone: {look.get('tone', 'mid_key')}, "
-            f"contrast: {look.get('contrast', 'medium')}, {look.get('color_temp', '')}, "
-            f"photoreal film still, {cam.get('body', 'cinema camera')}"
-        )
-        motion = (
-            f"camera movement: {move}, speed: {(cam.get('movement') or {}).get('speed', 'normal')}"
-        )
-        jobs.append(
-            {
-                "shot_id": shot["shot_id"],
-                "visual_prompt": visual,
-                "motion_prompt": motion,
-                "negative_prompt": "cartoon, extra fingers, text watermark, overexposed faces",
-                "duration_sec": shot.get("duration_sec", 3.5),
-                "downgrades": [],
-            }
-        )
-    return {"generation_jobs": jobs}
+    """Final stage: compile all FilmBible decisions into model-ready prompts."""
+    from film_pipeline.runtime.prompt_compiler import compile_generation_jobs
+
+    style_pack = kb.get("style_pack") if isinstance(kb, dict) else None
+    return {"generation_jobs": compile_generation_jobs(bible, style_pack=style_pack)}
 
 
 def stub_critic(bible: dict[str, Any], kb: dict[str, Any]) -> dict[str, Any]:

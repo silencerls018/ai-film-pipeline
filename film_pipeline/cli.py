@@ -36,6 +36,22 @@ def main(argv: list[str] | None = None) -> int:
     show_p = sub.add_parser("show", help="Print summary of a project bible")
     show_p.add_argument("--project", required=True)
 
+    prompts_p = sub.add_parser(
+        "prompts",
+        help="Export / print final compiled prompts (all stages merged)",
+    )
+    prompts_p.add_argument("--project", required=True)
+    prompts_p.add_argument(
+        "--shot",
+        default=None,
+        help="Only print one shot_id (e.g. S01_T05)",
+    )
+    prompts_p.add_argument(
+        "--out",
+        default=None,
+        help="Optional path to write prompt_board.md",
+    )
+
     list_p = sub.add_parser("stages", help="List pipeline stages")
 
     args = parser.parse_args(argv)
@@ -44,6 +60,10 @@ def main(argv: list[str] | None = None) -> int:
     if args.command == "stages":
         for i, s in enumerate(STAGES, 1):
             console.print(f"{i}. {s}")
+        console.print(
+            "\n[dim]Final merge stage: generator (Prompt Compiler) "
+            "→ generation_jobs + prompt_board.md[/dim]"
+        )
         return 0
 
     if args.command == "run":
@@ -85,6 +105,47 @@ def main(argv: list[str] | None = None) -> int:
         _print_summary(bible)
         return 0
 
+    if args.command == "prompts":
+        try:
+            bible = pipe.load(args.project)
+        except FileNotFoundError:
+            console.print(f"[red]Project not found:[/red] {args.project}")
+            return 1
+        from film_pipeline.runtime.prompt_compiler import (
+            compile_generation_jobs,
+            export_prompts_markdown,
+        )
+
+        jobs = bible.get("generation_jobs") or compile_generation_jobs(bible)
+        if args.shot:
+            jobs = [j for j in jobs if j.get("shot_id") == args.shot]
+            if not jobs:
+                console.print(f"[red]Shot not found:[/red] {args.shot}")
+                return 1
+        if args.out:
+            out_path = Path(args.out)
+            # if filtering one shot, still export that subset as md
+            tmp = dict(bible)
+            tmp["generation_jobs"] = jobs
+            out_path.write_text(export_prompts_markdown(tmp), encoding="utf-8")
+            console.print(f"[green]Wrote[/green] {out_path}")
+        for job in jobs:
+            console.rule(str(job.get("shot_id")))
+            console.print(f"[cyan]中文摘要[/cyan] {job.get('zh_director_summary', '')}")
+            console.print("\n[bold]visual_prompt[/bold]")
+            console.print(job.get("visual_prompt") or "")
+            console.print("\n[bold]motion_prompt[/bold]")
+            console.print(job.get("motion_prompt") or "")
+            console.print("\n[bold]master_prompt[/bold]")
+            console.print(job.get("master_prompt") or "")
+            console.print("\n[bold]negative_prompt[/bold]")
+            console.print(job.get("negative_prompt") or "")
+            console.print()
+        board = pipe.project_path(args.project).parent / "prompt_board.md"
+        if board.exists() and not args.out:
+            console.print(f"[dim]Also on disk:[/dim] {board}")
+        return 0
+
     return 1
 
 
@@ -118,6 +179,21 @@ def _print_summary(bible: dict) -> None:
     if bible.get("shots"):
         console.print(table)
 
+    jobs = bible.get("generation_jobs") or []
+    if jobs:
+        console.print(f"\n[bold]Compiled prompts:[/bold] {len(jobs)} jobs")
+        sample = jobs[0]
+        preview = (sample.get("visual_prompt") or "")[:180]
+        console.print(f"  example {sample.get('shot_id')}: {preview}...")
+        board = Path(__file__).resolve().parent / "bible" / "projects" / meta.get(
+            "project_id", ""
+        ) / "prompt_board.md"
+        # show relative hint
+        console.print(
+            "  export: [cyan]film-pipeline prompts --project "
+            f"{meta.get('project_id')}[/cyan]"
+        )
+
     review = bible.get("last_review")
     if review:
         status = "PASS" if review.get("pass") else "FAIL"
@@ -128,10 +204,8 @@ def _print_summary(bible: dict) -> None:
         for f in review.get("failures") or []:
             console.print(f"  - [{f.get('reroute_to')}] {f.get('type')}: {f.get('reason')}")
 
-    # compact JSON tip
-    console.print(
-        f"\nFull bible JSON keys: {', '.join(k for k, v in bible.items() if v not in (None, [], {{}}))}"
-    )
+    nonempty = [k for k, v in bible.items() if v not in (None, [], {})]
+    console.print(f"\nFull bible JSON keys: {', '.join(nonempty)}")
 
 
 if __name__ == "__main__":

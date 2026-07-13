@@ -13,8 +13,35 @@
   → Director      分镜叙事（景别、beat、剪辑意图）
   → Look          全片 & 分场影调 / 色彩剧本
   → Cinematography  单镜：角度·焦段·运镜·光色落地
-  → Generator     ShotSpec → 关键帧 / 视频（可接 API）
+  → Generator     **Prompt 编译器**：合并全部成果 → 最终提示词
   → Critic        对照合同质检，精确打回
+```
+
+### 最终提示词从哪来？
+
+`generator` 阶段是 **Prompt Compiler**（不是重新拍脑袋写 prompt）：
+
+| 上游 | 并入提示词的内容 |
+|------|------------------|
+| Director | 景别、主体、戏剧 beat、情绪 |
+| Look | 全片/场次影调、色板、禁用项 |
+| Cinematography | 焦段、角度、运镜+动机、灯光 |
+| Dialogue | 台词表演提示（delivery/subtext） |
+| Style pack | 类型气质 |
+
+每镜产出：
+
+- `visual_prompt` — 关键帧 / 文生图  
+- `motion_prompt` — 图生视频运镜  
+- `master_prompt` — 视觉+运动合一  
+- `negative_prompt` — 负向词  
+- `zh_director_summary` — 中文镜头摘要  
+
+并导出可读文件：`film_pipeline/bible/projects/<id>/prompt_board.md`
+
+```bash
+film-pipeline prompts --project demo
+film-pipeline prompts --project demo --shot S01_T05
 ```
 
 编排器按状态机调用各岗；Agent **不自由群聊**，只读写 FilmBible 中自己的字段。
@@ -137,6 +164,7 @@ ruff check film_pipeline
 - [x] Skill + 知识库骨架
 - [x] 状态机编排 + dry-run
 - [x] Look（影调）独立节点
+- [x] Prompt Compiler（合并全部成果为最终提示词 + prompt_board.md）
 - [ ] 人审交互（approve / edit shot）
 - [ ] 关键帧 / 视频 API 适配器
 - [ ] 向量检索 exemplars

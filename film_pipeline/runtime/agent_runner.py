@@ -55,7 +55,17 @@ def _merge_cinematography(bible: dict[str, Any], out: dict[str, Any]) -> dict[st
 
 
 def _merge_generator(bible: dict[str, Any], out: dict[str, Any]) -> dict[str, Any]:
-    bible["generation_jobs"] = out["generation_jobs"]
+    # Prefer deterministic compiler so all upstream fields are always merged.
+    from film_pipeline.runtime.prompt_compiler import compile_generation_jobs
+
+    style_id = (bible.get("meta") or {}).get("style_pack", "neo_noir")
+    try:
+        style_pack = AgentRunner._style_pack_for_merge(style_id)
+    except Exception:
+        style_pack = None
+    compiled = compile_generation_jobs(bible, style_pack=style_pack)
+    # Allow LLM output to fill gaps only if compiler got nothing
+    bible["generation_jobs"] = compiled or out.get("generation_jobs") or []
     return bible
 
 
@@ -87,6 +97,10 @@ class AgentRunner:
         self.skills_dir = skills_dir or SKILLS_DIR
         self.knowledge = knowledge or KnowledgeStore()
         self.llm = llm or LLMClient()
+
+    @staticmethod
+    def _style_pack_for_merge(style_id: str) -> dict[str, Any]:
+        return KnowledgeStore().style_pack(style_id)
 
     def load_skill(self, stage: str) -> tuple[str, dict[str, Any]]:
         skill_path = self.skills_dir / stage / "SKILL.md"
@@ -170,8 +184,11 @@ class AgentRunner:
             }
         if stage == "generator":
             return {
+                "meta": meta,
+                "story": bible.get("story"),
                 "shots": bible.get("shots"),
                 "look_bible": bible.get("look_bible"),
+                "dialogue": bible.get("dialogue"),
                 "characters": bible.get("characters"),
             }
         if stage == "critic":

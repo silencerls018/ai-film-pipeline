@@ -24,8 +24,21 @@ def test_full_pipeline_dry_run(tmp_path, monkeypatch):
     assert all((s["camera"].get("movement") or {}).get("motivation") for s in bible["shots"])
     assert all((s["look"] or {}).get("motivation") for s in bible["shots"])
     assert bible["generation_jobs"]
+    job0 = bible["generation_jobs"][0]
+    assert job0.get("visual_prompt")
+    assert job0.get("motion_prompt")
+    assert job0.get("master_prompt")
+    assert job0.get("negative_prompt")
+    assert "mm" in job0["visual_prompt"] or "lens" in job0["visual_prompt"].lower()
     assert "last_review" in bible
     assert bible["last_review"]["pass"] is True
+
+    from film_pipeline.paths import PROJECTS_DIR
+
+    board = PROJECTS_DIR / "test_demo" / "prompt_board.md"
+    assert board.exists()
+    text = board.read_text(encoding="utf-8")
+    assert "Visual prompt" in text
 
 
 def test_skill_schemas_exist():
