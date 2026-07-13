@@ -1,0 +1,13 @@
+{
+  "static": { "min_sec": 1.5, "preferred_sec": 2.5 },
+  "static_hold": { "min_sec": 2.0, "preferred_sec": 3.0 },
+  "micro_drift": { "min_sec": 2.5, "preferred_sec": 4.0 },
+  "slow_push_in": { "min_sec": 3.5, "preferred_sec": 5.0 },
+  "very_slow_push_in": { "min_sec": 5.0, "preferred_sec": 7.0 },
+  "creep_in": { "min_sec": 4.0, "preferred_sec": 6.0 },
+  "slow_lateral": { "min_sec": 3.0, "preferred_sec": 5.0 },
+  "rack_focus_support": { "min_sec": 2.0, "preferred_sec": 3.0 },
+  "orbit": { "min_sec": 4.0, "preferred_sec": 6.0 },
+  "whip_pan": { "min_sec": 1.0, "preferred_sec": 1.5 },
+  "default": { "min_sec": 2.0, "preferred_sec": 3.5 }
+}

@@ -54,6 +54,17 @@ def _merge_cinematography(bible: dict[str, Any], out: dict[str, Any]) -> dict[st
     return bible
 
 
+def _merge_timing(bible: dict[str, Any], out: dict[str, Any]) -> dict[str, Any]:
+    """Always re-run deterministic planner so dialogue/move budgets stay consistent."""
+    from film_pipeline.runtime.timing import apply_timing_plan
+
+    profile = (bible.get("meta") or {}).get("model_profile")
+    if out.get("timing_plan") and out.get("shot_timings"):
+        # still prefer code path
+        pass
+    return apply_timing_plan(bible, model_profile=profile)
+
+
 def _merge_generator(bible: dict[str, Any], out: dict[str, Any]) -> dict[str, Any]:
     # Prefer deterministic compiler so all upstream fields are always merged.
     from film_pipeline.runtime.prompt_compiler import compile_generation_jobs
@@ -82,6 +93,7 @@ MERGERS = {
     "director": _merge_director,
     "look": _merge_look,
     "cinematography": _merge_cinematography,
+    "timing": _merge_timing,
     "generator": _merge_generator,
     "critic": _merge_critic,
 }
@@ -113,6 +125,32 @@ class AgentRunner:
         skill_text, schema = self.load_skill(stage)
         kb = self.knowledge.retrieve_for_stage(stage, bible)
         payload = self._slice_bible(stage, bible)
+
+        # Timing is deterministic code (speech/move budgets + clip split).
+        if stage == "timing":
+            from film_pipeline.runtime.timing import apply_timing_plan
+
+            profile = (bible.get("meta") or {}).get("model_profile")
+            bible = apply_timing_plan(bible, model_profile=profile)
+            # Build a schema-valid envelope for history/debug
+            raw = {
+                "timing_plan": bible.get("timing_plan") or {},
+                "shot_timings": [
+                    {
+                        "shot_id": s.get("shot_id"),
+                        "duration_sec": s.get("duration_sec"),
+                        "timing": s.get("timing"),
+                        "generation_clips": s.get("generation_clips") or [],
+                    }
+                    for s in bible.get("shots") or []
+                ],
+            }
+            errors = validate_against_schema(raw, schema)
+            if errors:
+                raise ValueError(
+                    f"Schema validation failed for stage={stage}:\n" + "\n".join(errors)
+                )
+            return bible
 
         try:
             if self.llm.dry_run or not self.llm.api_key:
@@ -182,6 +220,12 @@ class AgentRunner:
                 "shots": bible.get("shots"),
                 "scenes": bible.get("scenes"),
             }
+        if stage == "timing":
+            return {
+                "meta": meta,
+                "shots": bible.get("shots"),
+                "dialogue": bible.get("dialogue"),
+            }
         if stage == "generator":
             return {
                 "meta": meta,
@@ -190,6 +234,7 @@ class AgentRunner:
                 "look_bible": bible.get("look_bible"),
                 "dialogue": bible.get("dialogue"),
                 "characters": bible.get("characters"),
+                "timing_plan": bible.get("timing_plan"),
             }
         if stage == "critic":
             return {
@@ -198,6 +243,7 @@ class AgentRunner:
                 "dialogue": bible.get("dialogue"),
                 "look_bible": bible.get("look_bible"),
                 "shots": bible.get("shots"),
+                "timing_plan": bible.get("timing_plan"),
                 "generation_jobs": bible.get("generation_jobs"),
             }
         return bible

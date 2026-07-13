@@ -12,6 +12,7 @@
         "required": ["shot_id", "visual_prompt", "motion_prompt"],
         "properties": {
           "shot_id": { "type": "string" },
+          "clip_id": { "type": "string" },
           "scene_id": { "type": "string" },
           "visual_prompt": { "type": "string" },
           "motion_prompt": { "type": "string" },
@@ -19,6 +20,10 @@
           "negative_prompt": { "type": "string" },
           "zh_director_summary": { "type": "string" },
           "duration_sec": { "type": "number" },
+          "timeline_start_sec": { "type": "number" },
+          "timeline_end_sec": { "type": "number" },
+          "stitch": { "type": "string" },
+          "extend_from_clip": { "type": ["string", "null"] },
           "sources": { "type": "object" },
           "downgrades": {
             "type": "array",

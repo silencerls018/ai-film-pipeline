@@ -26,6 +26,11 @@ def main(argv: list[str] | None = None) -> int:
     run_p.add_argument("--script", required=True, help="Path to screenplay text")
     run_p.add_argument("--project", required=True, help="Project id")
     run_p.add_argument("--style", default="neo_noir", help="style pack id")
+    run_p.add_argument(
+        "--model-profile",
+        default="generic_30s",
+        help="video model clip cap profile: generic_30s | short_10s | short_5s | extendable_30s",
+    )
     run_p.add_argument("--title", default=None)
     run_p.add_argument("--until", default=None, choices=STAGES, help="Stop after stage")
 
@@ -50,6 +55,17 @@ def main(argv: list[str] | None = None) -> int:
         "--out",
         default=None,
         help="Optional path to write prompt_board.md",
+    )
+
+    timing_p = sub.add_parser(
+        "timing",
+        help="Show duration budget (dialogue / move / clip splits under max cap)",
+    )
+    timing_p.add_argument("--project", required=True)
+    timing_p.add_argument(
+        "--profile",
+        default=None,
+        help="Override model profile: generic_30s | short_10s | short_5s",
     )
 
     list_p = sub.add_parser("stages", help="List pipeline stages")
@@ -79,6 +95,7 @@ def main(argv: list[str] | None = None) -> int:
             style_pack=args.style,
             title=args.title,
             until=args.until,
+            model_profile=args.model_profile,
         )
         path = pipe.project_path(args.project)
         console.print(f"[green]Saved[/green] {path}")
@@ -103,6 +120,31 @@ def main(argv: list[str] | None = None) -> int:
             console.print(f"[red]Project not found:[/red] {args.project}")
             return 1
         _print_summary(bible)
+        return 0
+
+    if args.command == "timing":
+        try:
+            bible = pipe.load(args.project)
+        except FileNotFoundError:
+            console.print(f"[red]Project not found:[/red] {args.project}")
+            return 1
+        from film_pipeline.runtime.timing import apply_timing_plan, format_timing_report
+
+        if args.profile:
+            bible.setdefault("meta", {})["model_profile"] = args.profile
+            apply_timing_plan(bible, model_profile=args.profile)
+            pipe.save(bible)
+        plan = bible.get("timing_plan")
+        if not plan:
+            apply_timing_plan(bible)
+            pipe.save(bible)
+            plan = bible.get("timing_plan")
+        console.print(format_timing_report(bible))
+        console.print(
+            f"\n[dim]max_clip={plan.get('max_clip_sec')}s · "
+            f"film_total={plan.get('film_total_sec')}s · "
+            f"warnings={len(plan.get('warnings') or [])}[/dim]"
+        )
         return 0
 
     if args.command == "prompts":
@@ -164,10 +206,13 @@ def _print_summary(bible: dict) -> None:
     table.add_column("lens")
     table.add_column("move")
     table.add_column("tone")
+    table.add_column("sec")
+    table.add_column("clips")
     for shot in bible.get("shots") or []:
         cam = shot.get("camera") or {}
         look = shot.get("look") or {}
         mov = (cam.get("movement") or {}).get("type", "-")
+        nclips = len(shot.get("generation_clips") or []) or 1
         table.add_row(
             str(shot.get("shot_id")),
             str(shot.get("shot_size")),
@@ -175,13 +220,27 @@ def _print_summary(bible: dict) -> None:
             str(cam.get("lens_mm", "-")),
             str(mov),
             str(look.get("tone", "-")),
+            str(shot.get("duration_sec", "-")),
+            str(nclips),
         )
     if bible.get("shots"):
         console.print(table)
 
+    plan = bible.get("timing_plan") or {}
+    if plan:
+        console.print(
+            f"\n[bold]Timing:[/bold] max_clip={plan.get('max_clip_sec')}s · "
+            f"film_total={plan.get('film_total_sec')}s "
+            f"({plan.get('film_total_min')} min) · "
+            f"profile={plan.get('model_profile')}"
+        )
+        if plan.get("warnings"):
+            console.print(f"[yellow]warnings:[/yellow] {len(plan['warnings'])} "
+                          f"(see film-pipeline timing --project {meta.get('project_id')})")
+
     jobs = bible.get("generation_jobs") or []
     if jobs:
-        console.print(f"\n[bold]Compiled prompts:[/bold] {len(jobs)} jobs")
+        console.print(f"\n[bold]Compiled prompts:[/bold] {len(jobs)} jobs (per clip)")
         sample = jobs[0]
         preview = (sample.get("visual_prompt") or "")[:180]
         console.print(f"  example {sample.get('shot_id')}: {preview}...")

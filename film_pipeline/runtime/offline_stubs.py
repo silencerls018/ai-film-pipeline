@@ -306,6 +306,25 @@ def stub_cinematography(bible: dict[str, Any], kb: dict[str, Any]) -> dict[str, 
     return {"shot_patches": patches}
 
 
+def stub_timing(bible: dict[str, Any], kb: dict[str, Any]) -> dict[str, Any]:
+    from film_pipeline.runtime.timing import apply_timing_plan
+
+    profile = (bible.get("meta") or {}).get("model_profile")
+    apply_timing_plan(bible, model_profile=profile)
+    return {
+        "timing_plan": bible.get("timing_plan") or {},
+        "shot_timings": [
+            {
+                "shot_id": s.get("shot_id"),
+                "duration_sec": s.get("duration_sec"),
+                "timing": s.get("timing"),
+                "generation_clips": s.get("generation_clips") or [],
+            }
+            for s in bible.get("shots") or []
+        ],
+    }
+
+
 def stub_generator(bible: dict[str, Any], kb: dict[str, Any]) -> dict[str, Any]:
     """Final stage: compile all FilmBible decisions into model-ready prompts."""
     from film_pipeline.runtime.prompt_compiler import compile_generation_jobs
@@ -333,6 +352,14 @@ def stub_critic(bible: dict[str, Any], kb: dict[str, Any]) -> dict[str, Any]:
                 "reroute_to": "look",
             }
         )
+    if not bible.get("timing_plan"):
+        failures.append(
+            {
+                "type": "missing_timing",
+                "reason": "缺少 timing_plan（台词/运镜时长未核算）",
+                "reroute_to": "timing",
+            }
+        )
     for shot in shots:
         cam = shot.get("camera") or {}
         mov = cam.get("movement") or {}
@@ -355,17 +382,46 @@ def stub_critic(bible: dict[str, Any], kb: dict[str, Any]) -> dict[str, Any]:
                     "reroute_to": "cinematography",
                 }
             )
-    jobs = {j.get("shot_id") for j in bible.get("generation_jobs") or []}
-    for shot in shots:
-        if shot.get("shot_id") not in jobs:
+        if not shot.get("duration_sec"):
             failures.append(
                 {
                     "shot_id": shot.get("shot_id"),
-                    "type": "missing_generation_job",
-                    "reason": "缺少生成任务",
-                    "reroute_to": "generator",
+                    "type": "missing_duration",
+                    "reason": "缺少 duration_sec",
+                    "reroute_to": "timing",
                 }
             )
+        max_clip = (shot.get("timing") or {}).get("max_clip_sec") or (
+            (bible.get("timing_plan") or {}).get("max_clip_sec")
+        )
+        for clip in shot.get("generation_clips") or []:
+            if max_clip and float(clip.get("duration_sec") or 0) > float(max_clip) + 1e-6:
+                failures.append(
+                    {
+                        "shot_id": shot.get("shot_id"),
+                        "type": "clip_over_cap",
+                        "reason": f"clip {clip.get('clip_id')} 超过模型上限 {max_clip}s",
+                        "reroute_to": "timing",
+                    }
+                )
+    # jobs may be per-clip now
+    job_keys = set()
+    for j in bible.get("generation_jobs") or []:
+        job_keys.add(j.get("clip_id") or j.get("shot_id"))
+    for shot in shots:
+        clips = shot.get("generation_clips") or [{"clip_id": shot.get("shot_id")}]
+        for clip in clips:
+            cid = clip.get("clip_id") if isinstance(clip, dict) else shot.get("shot_id")
+            if cid not in job_keys and shot.get("shot_id") not in job_keys:
+                failures.append(
+                    {
+                        "shot_id": shot.get("shot_id"),
+                        "type": "missing_generation_job",
+                        "reason": f"缺少生成任务 clip={cid}",
+                        "reroute_to": "generator",
+                    }
+                )
+                break
     score = max(0.0, 1.0 - 0.08 * len(failures))
     return {
         "review": {
@@ -383,6 +439,7 @@ STUBS = {
     "director": stub_director,
     "look": stub_look,
     "cinematography": stub_cinematography,
+    "timing": stub_timing,
     "generator": stub_generator,
     "critic": stub_critic,
 }

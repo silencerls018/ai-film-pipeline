@@ -152,24 +152,42 @@ def compile_visual_prompt(bible: dict[str, Any], shot: dict[str, Any], style_pac
     return " ".join(parts)
 
 
-def compile_motion_prompt(shot: dict[str, Any]) -> str:
+def compile_motion_prompt(
+    shot: dict[str, Any],
+    clip: dict[str, Any] | None = None,
+) -> str:
     cam = shot.get("camera") or {}
     mov = cam.get("movement") or {}
     mtype = mov.get("type") or "static_hold"
     speed = mov.get("speed") or "normal"
     motivation = mov.get("motivation") or ""
-    duration = shot.get("duration_sec") or 4
+    if clip and clip.get("duration_sec") is not None:
+        duration = clip["duration_sec"]
+    else:
+        duration = shot.get("duration_sec") or 4
     bits = [
         f"Camera movement: {mtype}.",
         f"Speed: {speed}.",
-        f"Duration about {duration} seconds.",
+        f"Duration exactly about {duration} seconds (do not exceed model clip limit).",
         "Keep subject identity and lighting continuous.",
         "Natural physics, subtle film grain ok.",
     ]
     if motivation:
         bits.insert(2, f"Motivation: {motivation}.")
+    if clip and clip.get("stitch") in {"continue", "last"}:
+        bits.append(
+            f"Continuation segment {clip.get('index')}: match end frame of previous clip; "
+            f"overlap ~{clip.get('overlap_prev_sec', 0.5)}s for stitch."
+        )
     if shot.get("shot_size") in {"CU", "ECU", "MCU"}:
         bits.append("Preserve facial micro-expressions; avoid face morphing.")
+    # Pace dialogue inside this clip window when applicable
+    timing = shot.get("timing") or {}
+    dlg = timing.get("components") or {}
+    if dlg.get("dialogue_sec"):
+        bits.append(
+            f"Allow time for spoken line (~{dlg.get('dialogue_sec')}s of speech in full shot timeline)."
+        )
     return " ".join(bits)
 
 
@@ -198,56 +216,97 @@ def compile_negative_prompt(bible: dict[str, Any], shot: dict[str, Any]) -> str:
     return ", ".join(dict.fromkeys(base))
 
 
-def compile_master_prompt(bible: dict[str, Any], shot: dict[str, Any], style_pack: dict[str, Any] | None = None) -> str:
+def compile_master_prompt(
+    bible: dict[str, Any],
+    shot: dict[str, Any],
+    style_pack: dict[str, Any] | None = None,
+    clip: dict[str, Any] | None = None,
+) -> str:
     """Single block combining visual + motion for models that take one prompt."""
     visual = compile_visual_prompt(bible, shot, style_pack)
-    motion = compile_motion_prompt(shot)
+    motion = compile_motion_prompt(shot, clip=clip)
     return f"{visual}\n\n[Motion / I2V]\n{motion}"
 
 
-def compile_zh_summary(shot: dict[str, Any]) -> str:
+def compile_zh_summary(shot: dict[str, Any], clip: dict[str, Any] | None = None) -> str:
     """Human-readable Chinese director summary (not for all model backends)."""
     cam = shot.get("camera") or {}
     look = shot.get("look") or {}
     mov = cam.get("movement") or {}
-    return (
+    base = (
         f"【{shot.get('shot_id')}】{shot.get('dramatic_beat', '')}；"
         f"景别{shot.get('shot_size')}；"
         f"{cam.get('lens_mm', '?')}mm；角度{cam.get('angle', '?')}；"
         f"运镜{mov.get('type', '固定')}（{mov.get('motivation', '')}）；"
         f"影调{look.get('tone', '?')}/{look.get('contrast', '?')}；"
-        f"主体：{shot.get('subject', '')}"
+        f"主体：{shot.get('subject', '')}；"
+        f"需要时长{shot.get('duration_sec', '?')}s"
     )
+    if clip:
+        base += (
+            f"；本段clip {clip.get('clip_id')} "
+            f"{clip.get('duration_sec')}s "
+            f"[{clip.get('timeline_start_sec')}→{clip.get('timeline_end_sec')}] "
+            f"stitch={clip.get('stitch')}"
+        )
+    return base
 
 
 def compile_generation_jobs(bible: dict[str, Any], style_pack: dict[str, Any] | None = None) -> list[dict[str, Any]]:
+    """
+    One API job per generation clip (not merely per shot).
+    Long shots that exceed model max_clip_sec become multiple jobs to stitch later.
+    """
     jobs: list[dict[str, Any]] = []
+    max_clip = (bible.get("timing_plan") or {}).get("max_clip_sec")
     for shot in bible.get("shots") or []:
-        visual = compile_visual_prompt(bible, shot, style_pack)
-        motion = compile_motion_prompt(shot)
-        negative = compile_negative_prompt(bible, shot)
-        master = compile_master_prompt(bible, shot, style_pack)
-        jobs.append(
+        clips = shot.get("generation_clips") or [
             {
-                "shot_id": shot.get("shot_id"),
-                "scene_id": shot.get("scene_id"),
-                "visual_prompt": visual,
-                "motion_prompt": motion,
-                "master_prompt": master,
-                "negative_prompt": negative,
-                "zh_director_summary": compile_zh_summary(shot),
+                "clip_id": f"{shot.get('shot_id')}_c01",
+                "index": 1,
                 "duration_sec": shot.get("duration_sec") or 3.5,
-                "sources": {
-                    "dramatic_beat": shot.get("dramatic_beat"),
-                    "shot_size": shot.get("shot_size"),
-                    "emotion": shot.get("emotion"),
-                    "camera": shot.get("camera"),
-                    "look": shot.get("look"),
-                    "linked_dialogue": shot.get("linked_dialogue"),
-                },
-                "downgrades": [],
+                "timeline_start_sec": 0.0,
+                "timeline_end_sec": shot.get("duration_sec") or 3.5,
+                "stitch": "single",
+                "role": "full_shot",
             }
-        )
+        ]
+        visual = compile_visual_prompt(bible, shot, style_pack)
+        negative = compile_negative_prompt(bible, shot)
+        for clip in clips:
+            dur = float(clip.get("duration_sec") or shot.get("duration_sec") or 3.5)
+            if max_clip is not None:
+                dur = min(dur, float(max_clip))
+            motion = compile_motion_prompt(shot, clip=clip)
+            master = compile_master_prompt(bible, shot, style_pack, clip=clip)
+            jobs.append(
+                {
+                    "shot_id": shot.get("shot_id"),
+                    "clip_id": clip.get("clip_id"),
+                    "scene_id": shot.get("scene_id"),
+                    "visual_prompt": visual,
+                    "motion_prompt": motion,
+                    "master_prompt": master,
+                    "negative_prompt": negative,
+                    "zh_director_summary": compile_zh_summary(shot, clip),
+                    "duration_sec": dur,
+                    "timeline_start_sec": clip.get("timeline_start_sec"),
+                    "timeline_end_sec": clip.get("timeline_end_sec"),
+                    "stitch": clip.get("stitch"),
+                    "extend_from_clip": clip.get("extend_from_clip"),
+                    "sources": {
+                        "dramatic_beat": shot.get("dramatic_beat"),
+                        "shot_size": shot.get("shot_size"),
+                        "emotion": shot.get("emotion"),
+                        "camera": shot.get("camera"),
+                        "look": shot.get("look"),
+                        "linked_dialogue": shot.get("linked_dialogue"),
+                        "timing": shot.get("timing"),
+                        "clip": clip,
+                    },
+                    "downgrades": [],
+                }
+            )
     return jobs
 
 
@@ -263,11 +322,24 @@ def export_prompts_markdown(bible: dict[str, Any]) -> str:
     if story.get("logline"):
         lines += [f"> {story['logline']}", ""]
 
-    for job in bible.get("generation_jobs") or compile_generation_jobs(bible):
+    plan = bible.get("timing_plan") or {}
+    if plan:
         lines += [
-            f"## {job.get('shot_id')}",
+            f"Max clip: **{plan.get('max_clip_sec')}s** · "
+            f"Film total: **{plan.get('film_total_sec')}s**",
+            "",
+        ]
+
+    for job in bible.get("generation_jobs") or compile_generation_jobs(bible):
+        title = job.get("clip_id") or job.get("shot_id")
+        lines += [
+            f"## {title}",
             "",
             f"**中文摘要:** {job.get('zh_director_summary', '')}",
+            "",
+            f"- duration: `{job.get('duration_sec')}s`",
+            f"- stitch: `{job.get('stitch')}`",
+            f"- timeline: `{job.get('timeline_start_sec')} → {job.get('timeline_end_sec')}`",
             "",
             "### Visual prompt",
             "```",

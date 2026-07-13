@@ -1,0 +1,34 @@
+{
+  "default_model_profile": "generic_30s",
+  "profiles": {
+    "generic_30s": {
+      "label": "Generic max 30s clip",
+      "max_clip_sec": 30,
+      "min_clip_sec": 2,
+      "preferred_clip_sec": 8,
+      "supports_extend": false,
+      "note": "Many APIs are 5–10s; set profile per backend."
+    },
+    "short_10s": {
+      "label": "Short form 10s",
+      "max_clip_sec": 10,
+      "min_clip_sec": 2,
+      "preferred_clip_sec": 5,
+      "supports_extend": false
+    },
+    "short_5s": {
+      "label": "Ultra short 5s",
+      "max_clip_sec": 5,
+      "min_clip_sec": 2,
+      "preferred_clip_sec": 4,
+      "supports_extend": false
+    },
+    "extendable_30s": {
+      "label": "30s with extend/stitch",
+      "max_clip_sec": 30,
+      "min_clip_sec": 2,
+      "preferred_clip_sec": 10,
+      "supports_extend": true
+    }
+  }
+}

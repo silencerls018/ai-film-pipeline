@@ -13,8 +13,36 @@
   → Director      分镜叙事（景别、beat、剪辑意图）
   → Look          全片 & 分场影调 / 色彩剧本
   → Cinematography  单镜：角度·焦段·运镜·光色落地
-  → Generator     **Prompt 编译器**：合并全部成果 → 最终提示词
+  → Timing        **时长规划**：台词/运镜/留白 → duration；超 cap 拆 clip
+  → Generator     **Prompt 编译器**：合并全部成果 → 最终提示词（按 clip）
   → Critic        对照合同质检，精确打回
+```
+
+### 视频最长 30 秒怎么解决？
+
+模型限制的是 **单次生成 clip**，不是整部电影。
+
+| 概念 | 说明 |
+|------|------|
+| 场次 / 成片 | 可以很多分钟，由大量 clip 剪在一起 |
+| 单镜 `duration_sec` | 由台词朗读 + 停顿 + 运镜最小时间 + 头尾留白算出 |
+| 单次 API | ≤ `max_clip_sec`（默认 30，可改 10/5） |
+| 超时 | 自动拆 `generation_clips[]`，顺序生成再拼接 |
+
+时长公式（有台词时）：
+
+```text
+needed ≈ pre_roll + max(dialogue_sec, move_sec) + post_hold
+```
+
+```bash
+# 默认按 30s cap
+film-pipeline run --script ... --project demo --model-profile generic_30s
+
+# 若后端只有 10s
+film-pipeline run --script ... --project demo --model-profile short_10s
+
+film-pipeline timing --project demo
 ```
 
 ### 最终提示词从哪来？
@@ -125,6 +153,7 @@ OPENAI_MODEL=gpt-4o-mini
 | Director | `skills/director` | `knowledge/directing` |
 | Look | `skills/look` | `knowledge/look`, `style_packs` |
 | Cinematography | `skills/cinematography` | `knowledge/camera`, `look`, `style_packs` |
+| Timing | `skills/timing` | `knowledge/timing`（语速、运镜时长、模型 cap） |
 | Generator | `skills/generator` | 模型能力 / prompt 模板 |
 | Critic | `skills/critic` | 评分与失败分类 |
 
@@ -165,8 +194,9 @@ ruff check film_pipeline
 - [x] 状态机编排 + dry-run
 - [x] Look（影调）独立节点
 - [x] Prompt Compiler（合并全部成果为最终提示词 + prompt_board.md）
+- [x] Timing Planner（台词/运镜时长 + 30s cap 拆 clip）
 - [ ] 人审交互（approve / edit shot）
-- [ ] 关键帧 / 视频 API 适配器
+- [ ] 关键帧 / 视频 API 适配器 + 自动拼接时间线
 - [ ] 向量检索 exemplars
 - [ ] Web 导演台（可选 TypeScript 前端）
 

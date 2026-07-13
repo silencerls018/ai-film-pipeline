@@ -8,6 +8,7 @@ from typing import Any
 from film_pipeline.paths import ensure_project_dir
 from film_pipeline.runtime.agent_runner import AgentRunner
 from film_pipeline.runtime.prompt_compiler import export_prompts_markdown
+from film_pipeline.runtime.timing import format_timing_report
 
 STAGES = [
     "dramaturg",
@@ -15,6 +16,7 @@ STAGES = [
     "director",
     "look",
     "cinematography",
+    "timing",  # duration budget + clip split under model max (e.g. 30s)
     "generator",
     "critic",
 ]
@@ -30,12 +32,14 @@ class Pipeline:
         script: str,
         style_pack: str = "neo_noir",
         title: str | None = None,
+        model_profile: str = "generic_30s",
     ) -> dict[str, Any]:
         return {
             "meta": {
                 "project_id": project_id,
                 "title": title or project_id,
                 "style_pack": style_pack,
+                "model_profile": model_profile,
                 "created_at": datetime.now(timezone.utc).isoformat(),
                 "pipeline_version": "0.1.0",
             },
@@ -47,6 +51,7 @@ class Pipeline:
             "shots": [],
             "look_bible": None,
             "generation_jobs": [],
+            "timing_plan": None,
             "assets": [],
             "reviews": [],
             "stage_history": [],
@@ -63,6 +68,9 @@ class Pipeline:
         if bible.get("generation_jobs"):
             md_path = ensure_project_dir(project_id) / "prompt_board.md"
             md_path.write_text(export_prompts_markdown(bible), encoding="utf-8")
+        if bible.get("timing_plan"):
+            t_path = ensure_project_dir(project_id) / "timing_plan.md"
+            t_path.write_text(format_timing_report(bible), encoding="utf-8")
         return path
 
     def load(self, project_id: str) -> dict[str, Any]:
@@ -90,8 +98,15 @@ class Pipeline:
         style_pack: str = "neo_noir",
         title: str | None = None,
         until: str | None = None,
+        model_profile: str = "generic_30s",
     ) -> dict[str, Any]:
-        bible = self.new_bible(project_id, script, style_pack=style_pack, title=title)
+        bible = self.new_bible(
+            project_id,
+            script,
+            style_pack=style_pack,
+            title=title,
+            model_profile=model_profile,
+        )
         self.save(bible)
         for stage in STAGES:
             bible = self.run_stage(bible, stage)

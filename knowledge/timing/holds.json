@@ -1,0 +1,9 @@
+{
+  "pre_roll_sec": 0.4,
+  "post_line_reaction_sec": 0.6,
+  "insert_min_sec": 1.2,
+  "insert_preferred_sec": 2.0,
+  "ecu_min_sec": 1.5,
+  "default_tail_hold_sec": 0.5,
+  "overlap_stitch_sec": 0.5
+}

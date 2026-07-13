@@ -1,0 +1,38 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "TimingOutput",
+  "type": "object",
+  "required": ["timing_plan", "shot_timings"],
+  "additionalProperties": false,
+  "properties": {
+    "timing_plan": {
+      "type": "object",
+      "required": ["model_profile", "max_clip_sec", "film_total_sec"],
+      "properties": {
+        "model_profile": { "type": "string" },
+        "max_clip_sec": { "type": "number" },
+        "min_clip_sec": { "type": "number" },
+        "preferred_clip_sec": { "type": "number" },
+        "scene_totals_sec": { "type": "object" },
+        "film_total_sec": { "type": "number" },
+        "film_total_min": { "type": "number" },
+        "shots": { "type": "array" },
+        "warnings": { "type": "array" },
+        "rules": { "type": "object" }
+      }
+    },
+    "shot_timings": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["shot_id", "duration_sec", "generation_clips"],
+        "properties": {
+          "shot_id": { "type": "string" },
+          "duration_sec": { "type": "number" },
+          "timing": { "type": "object" },
+          "generation_clips": { "type": "array" }
+        }
+      }
+    }
+  }
+}

@@ -65,6 +65,11 @@ class KnowledgeStore:
                 )
             except FileNotFoundError:
                 pass
+        if stage in {"timing", "generator", "critic"}:
+            bundle["model_limits"] = self.load_json("timing/model_limits.json")
+            bundle["speaking_rates"] = self.load_json("timing/speaking_rates.json")
+            bundle["move_durations"] = self.load_json("timing/move_durations.json")
+            bundle["holds"] = self.load_json("timing/holds.json")
         return bundle
 
     @staticmethod

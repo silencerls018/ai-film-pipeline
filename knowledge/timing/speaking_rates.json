@@ -1,0 +1,27 @@
+{
+  "zh": {
+    "chars_per_sec_normal": 4.0,
+    "chars_per_sec_slow": 3.0,
+    "chars_per_sec_dramatic": 2.5,
+    "chars_per_sec_fast": 5.5,
+    "min_line_sec": 0.8,
+    "punctuation_pause_sec": {
+      "。": 0.35,
+      "！": 0.4,
+      "？": 0.4,
+      "…": 0.5,
+      "，": 0.15,
+      "、": 0.1,
+      "；": 0.2,
+      "：": 0.15
+    }
+  },
+  "en": {
+    "words_per_sec_normal": 2.5,
+    "words_per_sec_slow": 1.8,
+    "words_per_sec_dramatic": 1.5,
+    "min_line_sec": 0.8
+  },
+  "default_lang": "zh",
+  "breath_gap_between_lines_sec": 0.25
+}
