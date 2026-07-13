@@ -1,0 +1,17 @@
+{
+  "id": "warm_realism",
+  "label": "Warm Realism",
+  "film_look": {
+    "key": "mid_key_warm_realism",
+    "contrast": "medium",
+    "palette": ["warm_practical", "natural_window"],
+    "saturation": "natural",
+    "references": ["marriage_story_interior", "manchester_by_the_sea_mood"]
+  },
+  "camera_habits": {
+    "prefer_moves": ["static", "micro_drift", "slow_lateral"],
+    "prefer_lenses_mm": [35, 40, 50, 65],
+    "avoid_moves": ["crash_zoom", "orbit"]
+  },
+  "forbidden": ["heavy_teal_orange_blockbuster", "horror_green_cast"]
+}

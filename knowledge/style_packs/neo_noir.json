@@ -1,0 +1,17 @@
+{
+  "id": "neo_noir",
+  "label": "Neo Noir",
+  "film_look": {
+    "key": "low_key_neo_noir",
+    "contrast": "high",
+    "palette": ["cold_cyan_shadow", "warm_practical_key"],
+    "saturation": "controlled_low",
+    "references": ["se7en_corridor", "zodiac_interior", "blade_runner_adjacent_not_copy"]
+  },
+  "camera_habits": {
+    "prefer_moves": ["static_hold", "slow_push_in"],
+    "prefer_lenses_mm": [35, 40, 50],
+    "avoid_moves": ["orbit", "whip_pan", "fpv_drone"]
+  },
+  "forbidden": ["high_key_comedy_bright", "rainbow_neon_party", "unmotivated_dutch_everywhere"]
+}

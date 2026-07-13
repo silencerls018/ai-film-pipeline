@@ -1,0 +1,42 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "CriticOutput",
+  "type": "object",
+  "required": ["review"],
+  "additionalProperties": false,
+  "properties": {
+    "review": {
+      "type": "object",
+      "required": ["pass", "score", "failures"],
+      "properties": {
+        "pass": { "type": "boolean" },
+        "score": { "type": "number" },
+        "summary": { "type": "string" },
+        "failures": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["type", "reason", "reroute_to"],
+            "properties": {
+              "shot_id": { "type": "string" },
+              "scene_id": { "type": "string" },
+              "type": { "type": "string" },
+              "reason": { "type": "string" },
+              "reroute_to": {
+                "type": "string",
+                "enum": [
+                  "dramaturg",
+                  "dialogue",
+                  "director",
+                  "look",
+                  "cinematography",
+                  "generator"
+                ]
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

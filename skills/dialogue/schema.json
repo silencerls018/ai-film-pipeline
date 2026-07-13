@@ -1,0 +1,40 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "DialogueOutput",
+  "type": "object",
+  "required": ["dialogue"],
+  "additionalProperties": false,
+  "properties": {
+    "dialogue": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["scene_id", "lines"],
+        "properties": {
+          "scene_id": { "type": "string" },
+          "lines": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["character", "text", "function", "subtext"],
+              "properties": {
+                "character": { "type": "string" },
+                "text": { "type": "string" },
+                "function": {
+                  "type": "string",
+                  "enum": ["advance", "reveal", "mislead", "relationship", "atmosphere", "reaction"]
+                },
+                "subtext": { "type": "string" },
+                "delivery": { "type": "string" }
+              }
+            }
+          },
+          "silence_beats_ms": {
+            "type": "array",
+            "items": { "type": "integer" }
+          }
+        }
+      }
+    }
+  }
+}

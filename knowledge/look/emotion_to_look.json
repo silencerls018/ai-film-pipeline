@@ -1,0 +1,44 @@
+{
+  "oppression": {
+    "tone": ["low_key", "mid_low"],
+    "contrast": ["high", "medium_high"],
+    "palette": ["cool_shadow", "neutral_skin"],
+    "avoid": ["high_key_airy", "pastel", "golden_hour_romance"]
+  },
+  "suspicion": {
+    "tone": ["low_key", "mid_key"],
+    "contrast": ["medium_high", "high"],
+    "palette": ["cool_cyan_shadow", "warm_practical_key"],
+    "avoid": ["flat_even_office"]
+  },
+  "intimacy": {
+    "tone": ["mid_key", "soft_low"],
+    "contrast": ["soft", "medium"],
+    "palette": ["warm_practical", "gentle_roll_off"],
+    "avoid": ["hard_noir_silhouette_only", "dutch_horror_green"]
+  },
+  "grief": {
+    "tone": ["low_key", "mid_low"],
+    "contrast": ["soft_high", "medium"],
+    "palette": ["desaturated", "cool_fill"],
+    "avoid": ["saturated_pop", "high_key_comedy"]
+  },
+  "revelation": {
+    "tone": ["mid_low", "low_key"],
+    "contrast": ["high"],
+    "palette": ["protect_face", "crush_periphery"],
+    "avoid": ["overexposed_white_flash_without_motivation"]
+  },
+  "calm": {
+    "tone": ["mid_key", "high_key_soft"],
+    "contrast": ["soft", "medium"],
+    "palette": ["neutral", "slight_warm"],
+    "avoid": ["extreme_noir"]
+  },
+  "dread": {
+    "tone": ["low_key"],
+    "contrast": ["high"],
+    "palette": ["cold_cyan", "sick_green_optional"],
+    "avoid": ["bright_sitcom"]
+  }
+}

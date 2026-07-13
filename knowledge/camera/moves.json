@@ -1,0 +1,30 @@
+{
+  "static_hold": {
+    "use_when": ["observation", "dread", "power_stillness"],
+    "prompt_hint": "locked-off camera, no pan tilt"
+  },
+  "slow_push_in": {
+    "use_when": ["revelation", "oppression", "psychological_pressure"],
+    "prompt_hint": "very slow dolly-in toward subject"
+  },
+  "very_slow_push_in": {
+    "use_when": ["grief", "realization"],
+    "prompt_hint": "imperceptibly slow push-in"
+  },
+  "micro_drift": {
+    "use_when": ["intimacy", "unease_soft"],
+    "prompt_hint": "subtle handheld micro-drift, controlled"
+  },
+  "slow_lateral": {
+    "use_when": ["calm_transition", "observational"],
+    "prompt_hint": "slow lateral track"
+  },
+  "creep_in": {
+    "use_when": ["dread"],
+    "prompt_hint": "creeping slow approach, tense"
+  },
+  "rack_focus_support": {
+    "use_when": ["revelation", "redirect_attention"],
+    "prompt_hint": "rack focus between planes if model supports"
+  }
+}

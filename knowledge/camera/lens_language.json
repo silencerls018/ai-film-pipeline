@@ -1,0 +1,10 @@
+{
+  "24": "wide spatial context, slight drama/distortion, environment pressure",
+  "28": "wide-narrative, location establishes with edge tension",
+  "35": "versatile cinematic standard, body + space relationship",
+  "40": "naturalistic dialogue coverage, mild compression",
+  "50": "human perspective, portrait-capable medium",
+  "65": "intimate compression, isolate face from room",
+  "85": "portrait isolation, shallow emotional focus",
+  "notes": "Body model names are style anchors for generators, not physical simulators."
+}

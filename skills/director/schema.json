@@ -1,0 +1,42 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "DirectorOutput",
+  "type": "object",
+  "required": ["shots"],
+  "additionalProperties": false,
+  "properties": {
+    "shots": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["shot_id", "scene_id", "dramatic_beat", "emotion", "shot_size", "subject", "edit_intent"],
+        "properties": {
+          "shot_id": { "type": "string" },
+          "scene_id": { "type": "string" },
+          "dramatic_beat": { "type": "string" },
+          "emotion": {
+            "type": "object",
+            "properties": {
+              "primary": { "type": "string" },
+              "intensity": { "type": "number" }
+            },
+            "required": ["primary"]
+          },
+          "shot_size": {
+            "type": "string",
+            "enum": ["EWS", "WS", "FS", "MS", "MCU", "CU", "ECU", "INSERT"]
+          },
+          "subject": { "type": "string" },
+          "whose_pov": { "type": "string" },
+          "edit_intent": { "type": "string" },
+          "camera_draft": { "type": "string" },
+          "linked_dialogue": {
+            "type": "array",
+            "items": { "type": "string" }
+          }
+        }
+      }
+    }
+  }
+}

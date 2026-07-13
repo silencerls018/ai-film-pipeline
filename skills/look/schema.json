@@ -1,0 +1,63 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "LookOutput",
+  "type": "object",
+  "required": ["look_bible"],
+  "additionalProperties": false,
+  "properties": {
+    "look_bible": {
+      "type": "object",
+      "required": ["film_look", "scene_looks"],
+      "properties": {
+        "film_look": {
+          "type": "object",
+          "required": ["key", "contrast", "palette"],
+          "properties": {
+            "key": { "type": "string" },
+            "contrast": { "type": "string" },
+            "palette": {
+              "type": "array",
+              "items": { "type": "string" }
+            },
+            "saturation": { "type": "string" },
+            "references": {
+              "type": "array",
+              "items": { "type": "string" }
+            },
+            "motivation": { "type": "string" }
+          }
+        },
+        "scene_looks": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["scene_id", "base_tone"],
+            "properties": {
+              "scene_id": { "type": "string" },
+              "base_tone": { "type": "string" },
+              "contrast": { "type": "string" },
+              "color": { "type": "string" },
+              "emotion_arc_in_tone": { "type": "string" },
+              "forbidden": {
+                "type": "array",
+                "items": { "type": "string" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "shot_look_intents": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["shot_id", "look_intent", "motivation"],
+        "properties": {
+          "shot_id": { "type": "string" },
+          "look_intent": { "type": "string" },
+          "motivation": { "type": "string" }
+        }
+      }
+    }
+  }
+}

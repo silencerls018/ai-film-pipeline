@@ -1,0 +1,27 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "GeneratorOutput",
+  "type": "object",
+  "required": ["generation_jobs"],
+  "additionalProperties": false,
+  "properties": {
+    "generation_jobs": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["shot_id", "visual_prompt", "motion_prompt"],
+        "properties": {
+          "shot_id": { "type": "string" },
+          "visual_prompt": { "type": "string" },
+          "motion_prompt": { "type": "string" },
+          "negative_prompt": { "type": "string" },
+          "duration_sec": { "type": "number" },
+          "downgrades": {
+            "type": "array",
+            "items": { "type": "string" }
+          }
+        }
+      }
+    }
+  }
+}

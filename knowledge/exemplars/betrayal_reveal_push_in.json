@@ -1,0 +1,24 @@
+{
+  "id": "betrayal_reveal_push_in",
+  "tags": ["revelation", "oppression", "suspicion"],
+  "shot": {
+    "dramatic_beat": "protagonist realizes betrayal",
+    "shot_size": "MCU",
+    "camera": {
+      "lens_mm": 40,
+      "angle": "eye_level_slight_low",
+      "movement": {
+        "type": "slow_push_in",
+        "speed": "very_slow",
+        "motivation": "close psychological distance; deny audience escape"
+      }
+    },
+    "look": {
+      "tone": "low_key",
+      "contrast": "high",
+      "key_light": "soft side key",
+      "color_temp": "cool fill / warm practical",
+      "motivation": "world hardens as truth lands; face still readable"
+    }
+  }
+}

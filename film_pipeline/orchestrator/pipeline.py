@@ -1,0 +1,95 @@
+from __future__ import annotations
+
+import json
+from datetime import datetime, timezone
+from pathlib import Path
+from typing import Any
+
+from film_pipeline.paths import ensure_project_dir
+from film_pipeline.runtime.agent_runner import AgentRunner
+
+STAGES = [
+    "dramaturg",
+    "dialogue",
+    "director",
+    "look",
+    "cinematography",
+    "generator",
+    "critic",
+]
+
+
+class Pipeline:
+    def __init__(self, runner: AgentRunner | None = None) -> None:
+        self.runner = runner or AgentRunner()
+
+    def new_bible(
+        self,
+        project_id: str,
+        script: str,
+        style_pack: str = "neo_noir",
+        title: str | None = None,
+    ) -> dict[str, Any]:
+        return {
+            "meta": {
+                "project_id": project_id,
+                "title": title or project_id,
+                "style_pack": style_pack,
+                "created_at": datetime.now(timezone.utc).isoformat(),
+                "pipeline_version": "0.1.0",
+            },
+            "source_script": script,
+            "story": None,
+            "characters": [],
+            "scenes": [],
+            "dialogue": [],
+            "shots": [],
+            "look_bible": None,
+            "generation_jobs": [],
+            "assets": [],
+            "reviews": [],
+            "stage_history": [],
+        }
+
+    def project_path(self, project_id: str) -> Path:
+        return ensure_project_dir(project_id) / "film_bible.json"
+
+    def save(self, bible: dict[str, Any]) -> Path:
+        project_id = bible["meta"]["project_id"]
+        path = self.project_path(project_id)
+        path.write_text(json.dumps(bible, ensure_ascii=False, indent=2), encoding="utf-8")
+        return path
+
+    def load(self, project_id: str) -> dict[str, Any]:
+        path = self.project_path(project_id)
+        with path.open(encoding="utf-8") as f:
+            return json.load(f)
+
+    def run_stage(self, bible: dict[str, Any], stage: str) -> dict[str, Any]:
+        if stage not in STAGES:
+            raise ValueError(f"Unknown stage: {stage}. Choose from {STAGES}")
+        bible = self.runner.run_stage(stage, bible)
+        bible.setdefault("stage_history", []).append(
+            {
+                "stage": stage,
+                "at": datetime.now(timezone.utc).isoformat(),
+            }
+        )
+        self.save(bible)
+        return bible
+
+    def run_all(
+        self,
+        project_id: str,
+        script: str,
+        style_pack: str = "neo_noir",
+        title: str | None = None,
+        until: str | None = None,
+    ) -> dict[str, Any]:
+        bible = self.new_bible(project_id, script, style_pack=style_pack, title=title)
+        self.save(bible)
+        for stage in STAGES:
+            bible = self.run_stage(bible, stage)
+            if until and stage == until:
+                break
+        return bible

@@ -1,0 +1,57 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "CinematographyOutput",
+  "type": "object",
+  "required": ["shot_patches"],
+  "additionalProperties": false,
+  "properties": {
+    "shot_patches": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["shot_id", "camera", "look"],
+        "properties": {
+          "shot_id": { "type": "string" },
+          "duration_sec": { "type": "number" },
+          "camera": {
+            "type": "object",
+            "required": ["lens_mm", "shot_size", "angle", "movement"],
+            "properties": {
+              "body": { "type": "string" },
+              "lens_mm": { "type": "number" },
+              "t_stop": { "type": "string" },
+              "shot_size": { "type": "string" },
+              "angle": { "type": "string" },
+              "height": { "type": "string" },
+              "movement": {
+                "type": "object",
+                "required": ["type", "motivation"],
+                "properties": {
+                  "type": { "type": "string" },
+                  "speed": { "type": "string" },
+                  "motivation": { "type": "string" }
+                }
+              },
+              "composition": { "type": "string" },
+              "focus": { "type": "string" }
+            }
+          },
+          "look": {
+            "type": "object",
+            "required": ["tone", "motivation"],
+            "properties": {
+              "tone": { "type": "string" },
+              "contrast": { "type": "string" },
+              "key_light": { "type": "string" },
+              "fill_ratio": { "type": "string" },
+              "color_temp": { "type": "string" },
+              "grade_intent": { "type": "string" },
+              "motivation": { "type": "string" },
+              "break_look_reason": { "type": "string" }
+            }
+          }
+        }
+      }
+    }
+  }
+}

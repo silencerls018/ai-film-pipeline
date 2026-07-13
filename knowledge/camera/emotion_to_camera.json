@@ -1,0 +1,44 @@
+{
+  "oppression": {
+    "preferred_angles": ["slight_low", "eye_level_tight"],
+    "preferred_moves": ["slow_push_in", "static_hold"],
+    "lens_mm": [35, 40, 50],
+    "avoid": ["orbit", "whip_pan", "unmotivated_dutch"]
+  },
+  "suspicion": {
+    "preferred_angles": ["eye_level", "slight_high_observe"],
+    "preferred_moves": ["static", "slow_push_in", "micro_drift"],
+    "lens_mm": [40, 50, 65],
+    "avoid": ["hero_low_angle", "crash_zoom"]
+  },
+  "intimacy": {
+    "preferred_angles": ["eye_level"],
+    "preferred_moves": ["static", "micro_drift"],
+    "lens_mm": [50, 65, 85],
+    "avoid": ["wide_distortion", "dutch", "orbit"]
+  },
+  "grief": {
+    "preferred_angles": ["eye_level", "slight_high"],
+    "preferred_moves": ["static_hold", "very_slow_push_in"],
+    "lens_mm": [40, 50, 85],
+    "avoid": ["handheld_chaos", "whip_pan"]
+  },
+  "revelation": {
+    "preferred_angles": ["eye_level", "slight_low"],
+    "preferred_moves": ["slow_push_in", "rack_focus_support"],
+    "lens_mm": [35, 40, 50],
+    "avoid": ["spin", "unmotivated_drone"]
+  },
+  "calm": {
+    "preferred_angles": ["eye_level"],
+    "preferred_moves": ["static", "slow_lateral"],
+    "lens_mm": [35, 40, 50],
+    "avoid": ["dutch", "crash_zoom"]
+  },
+  "dread": {
+    "preferred_angles": ["slight_low", "dutch_rare"],
+    "preferred_moves": ["static_hold", "creep_in"],
+    "lens_mm": [24, 28, 35],
+    "avoid": ["beauty_orbit"]
+  }
+}

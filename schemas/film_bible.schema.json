@@ -1,0 +1,30 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "FilmBible",
+  "type": "object",
+  "required": ["meta", "source_script"],
+  "properties": {
+    "meta": {
+      "type": "object",
+      "required": ["project_id", "style_pack"],
+      "properties": {
+        "project_id": { "type": "string" },
+        "title": { "type": "string" },
+        "style_pack": { "type": "string" },
+        "created_at": { "type": "string" },
+        "pipeline_version": { "type": "string" }
+      }
+    },
+    "source_script": { "type": "string" },
+    "story": { "type": ["object", "null"] },
+    "characters": { "type": "array" },
+    "scenes": { "type": "array" },
+    "dialogue": { "type": "array" },
+    "shots": { "type": "array" },
+    "look_bible": { "type": ["object", "null"] },
+    "generation_jobs": { "type": "array" },
+    "assets": { "type": "array" },
+    "reviews": { "type": "array" },
+    "stage_history": { "type": "array" }
+  }
+}
