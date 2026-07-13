@@ -32,14 +32,20 @@ class Pipeline:
         script: str,
         style_pack: str = "neo_noir",
         title: str | None = None,
-        model_profile: str = "generic_30s",
+        max_clip_sec: int = 30,
+        model_profile: str | None = None,
     ) -> dict[str, Any]:
+        from film_pipeline.runtime.clip_profile import profile_for_max_clip, resolve_clip_settings
+
+        clip = resolve_clip_settings(max_clip_sec=max_clip_sec, model_profile=model_profile)
         return {
             "meta": {
                 "project_id": project_id,
                 "title": title or project_id,
                 "style_pack": style_pack,
-                "model_profile": model_profile,
+                "max_clip_sec": clip["max_clip_sec"],
+                "model_profile": clip["model_profile"],
+                "video_clip_label": clip["label"],
                 "created_at": datetime.now(timezone.utc).isoformat(),
                 "pipeline_version": "0.1.0",
             },
@@ -98,13 +104,19 @@ class Pipeline:
         style_pack: str = "neo_noir",
         title: str | None = None,
         until: str | None = None,
-        model_profile: str = "generic_30s",
+        max_clip_sec: int = 30,
+        model_profile: str | None = None,
     ) -> dict[str, Any]:
+        """
+        max_clip_sec must be 15 or 30 — chosen by the user *before* pipeline work.
+        Final stage is prompt compilation only (no video API).
+        """
         bible = self.new_bible(
             project_id,
             script,
             style_pack=style_pack,
             title=title,
+            max_clip_sec=max_clip_sec,
             model_profile=model_profile,
         )
         self.save(bible)

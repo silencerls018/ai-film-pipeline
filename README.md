@@ -18,31 +18,36 @@
   → Critic        对照合同质检，精确打回
 ```
 
-### 视频最长 30 秒怎么解决？
+### 开始前：必须选择 15 秒或 30 秒
 
-模型限制的是 **单次生成 clip**，不是整部电影。
+视频模型只有两种单段上限，**跑流水线之前先问用户**：
 
-| 概念 | 说明 |
+| 选项 | 含义 |
 |------|------|
-| 场次 / 成片 | 可以很多分钟，由大量 clip 剪在一起 |
-| 单镜 `duration_sec` | 由台词朗读 + 停顿 + 运镜最小时间 + 头尾留白算出 |
-| 单次 API | ≤ `max_clip_sec`（默认 30，可改 10/5） |
-| 超时 | 自动拆 `generation_clips[]`，顺序生成再拼接 |
+| **15 秒** | 短时长视频模型 |
+| **30 秒** | 长时长视频模型 |
 
-时长公式（有台词时）：
+```bash
+# 交互询问（推荐）
+film-pipeline run --script ... --project demo
+
+# 或启动时直接指定（脚本/CI 用）
+film-pipeline run --script ... --project demo --max-clip 15
+film-pipeline run --script ... --project demo --max-clip 30
+```
+
+**本仓库终点是最终提示词**（`prompt_board.md` / `generation_jobs`），不调用视频 API。
+
+时长规划按所选上限拆 clip：
 
 ```text
 needed ≈ pre_roll + max(dialogue_sec, move_sec) + post_hold
+若 needed > max_clip → 拆 generation_clips[]（每段 ≤ 15 或 30）
 ```
 
 ```bash
-# 默认按 30s cap
-film-pipeline run --script ... --project demo --model-profile generic_30s
-
-# 若后端只有 10s
-film-pipeline run --script ... --project demo --model-profile short_10s
-
 film-pipeline timing --project demo
+film-pipeline prompts --project demo
 ```
 
 ### 最终提示词从哪来？
@@ -194,9 +199,9 @@ ruff check film_pipeline
 - [x] 状态机编排 + dry-run
 - [x] Look（影调）独立节点
 - [x] Prompt Compiler（合并全部成果为最终提示词 + prompt_board.md）
-- [x] Timing Planner（台词/运镜时长 + 30s cap 拆 clip）
+- [x] Timing Planner（台词/运镜时长 + 15/30s cap 拆 clip）
+- [x] 开始前强制选择视频上限 15s 或 30s（提示词为终点，不接 API）
 - [ ] 人审交互（approve / edit shot）
-- [ ] 关键帧 / 视频 API 适配器 + 自动拼接时间线
 - [ ] 向量检索 exemplars
 - [ ] Web 导演台（可选 TypeScript 前端）
 

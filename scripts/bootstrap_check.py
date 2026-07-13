@@ -16,7 +16,7 @@ from film_pipeline.paths import EXAMPLES_DIR
 
 def main() -> int:
     script = (EXAMPLES_DIR / "sample_script.txt").read_text(encoding="utf-8")
-    bible = Pipeline().run_all(project_id="bootstrap", script=script)
+    bible = Pipeline().run_all(project_id="bootstrap", script=script, max_clip_sec=30)
     print("shots:", len(bible.get("shots") or []))
     print("look:", (bible.get("look_bible") or {}).get("film_look", {}).get("key"))
     print("review:", bible.get("last_review"))

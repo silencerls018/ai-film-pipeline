@@ -1,34 +1,35 @@
 {
-  "default_model_profile": "generic_30s",
+  "default_model_profile": "max_30s",
+  "choices": [
+    {
+      "key": "15",
+      "profile": "max_15s",
+      "max_clip_sec": 15,
+      "label": "最长 15 秒（短时长视频模型）"
+    },
+    {
+      "key": "30",
+      "profile": "max_30s",
+      "max_clip_sec": 30,
+      "label": "最长 30 秒（长时长视频模型）"
+    }
+  ],
   "profiles": {
-    "generic_30s": {
-      "label": "Generic max 30s clip",
+    "max_15s": {
+      "label": "Video model max 15s per clip",
+      "max_clip_sec": 15,
+      "min_clip_sec": 2,
+      "preferred_clip_sec": 6,
+      "supports_extend": false,
+      "note": "单次生成提示词时长上限 15 秒；超长镜拆 clip 后拼成片"
+    },
+    "max_30s": {
+      "label": "Video model max 30s per clip",
       "max_clip_sec": 30,
       "min_clip_sec": 2,
       "preferred_clip_sec": 8,
       "supports_extend": false,
-      "note": "Many APIs are 5–10s; set profile per backend."
-    },
-    "short_10s": {
-      "label": "Short form 10s",
-      "max_clip_sec": 10,
-      "min_clip_sec": 2,
-      "preferred_clip_sec": 5,
-      "supports_extend": false
-    },
-    "short_5s": {
-      "label": "Ultra short 5s",
-      "max_clip_sec": 5,
-      "min_clip_sec": 2,
-      "preferred_clip_sec": 4,
-      "supports_extend": false
-    },
-    "extendable_30s": {
-      "label": "30s with extend/stitch",
-      "max_clip_sec": 30,
-      "min_clip_sec": 2,
-      "preferred_clip_sec": 10,
-      "supports_extend": true
+      "note": "单次生成提示词时长上限 30 秒；超长镜拆 clip 后拼成片"
     }
   }
 }

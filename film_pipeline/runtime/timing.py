@@ -291,16 +291,36 @@ def apply_timing_plan(
     store = store or KnowledgeStore()
     kb = _load_timing_kb(store)
     models = kb["models"]
-    profile_id = (
-        model_profile
-        or (bible.get("meta") or {}).get("model_profile")
-        or models.get("default_model_profile")
-        or "generic_30s"
+    meta = bible.get("meta") or {}
+    # User must have chosen 15 or 30 before pipeline work (stored on meta).
+    from film_pipeline.runtime.clip_profile import (
+        max_clip_from_profile,
+        normalize_max_clip,
+        profile_for_max_clip,
     )
-    profile = (models.get("profiles") or {}).get(profile_id) or models["profiles"]["generic_30s"]
-    max_clip = float(profile.get("max_clip_sec", 30))
+
+    if meta.get("max_clip_sec") is not None:
+        max_clip_i = normalize_max_clip(meta["max_clip_sec"])
+        profile_id = profile_for_max_clip(max_clip_i)
+    else:
+        profile_id = (
+            model_profile
+            or meta.get("model_profile")
+            or models.get("default_model_profile")
+            or "max_30s"
+        )
+        max_clip_i = max_clip_from_profile(profile_id) or 30
+        max_clip_i = normalize_max_clip(max_clip_i)
+        profile_id = profile_for_max_clip(max_clip_i)
+
+    profile = (models.get("profiles") or {}).get(profile_id) or {
+        "max_clip_sec": max_clip_i,
+        "min_clip_sec": 2,
+        "preferred_clip_sec": 6 if max_clip_i == 15 else 8,
+    }
+    max_clip = float(profile.get("max_clip_sec", max_clip_i))
     min_clip = float(profile.get("min_clip_sec", 2))
-    preferred = float(profile.get("preferred_clip_sec", 8))
+    preferred = float(profile.get("preferred_clip_sec", 6 if max_clip_i == 15 else 8))
     overlap = float(kb["holds"].get("overlap_stitch_sec", 0.5))
 
     scene_totals: dict[str, float] = {}
@@ -387,6 +407,7 @@ def apply_timing_plan(
     }
     meta = bible.setdefault("meta", {})
     meta["model_profile"] = profile_id
+    meta["max_clip_sec"] = int(max_clip)
     return bible
 
 

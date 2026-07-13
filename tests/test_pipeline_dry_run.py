@@ -13,8 +13,15 @@ def test_full_pipeline_dry_run(tmp_path, monkeypatch):
     # isolate project writes into package projects dir is fine for demo id
     script = (EXAMPLES_DIR / "sample_script.txt").read_text(encoding="utf-8")
     pipe = Pipeline()
-    bible = pipe.run_all(project_id="test_demo", script=script, style_pack="neo_noir")
+    bible = pipe.run_all(
+        project_id="test_demo",
+        script=script,
+        style_pack="neo_noir",
+        max_clip_sec=30,
+    )
 
+    assert bible["meta"]["max_clip_sec"] == 30
+    assert bible["meta"]["model_profile"] == "max_30s"
     assert bible["story"]["logline"]
     assert bible["scenes"]
     assert bible["dialogue"]
@@ -59,6 +66,39 @@ def test_split_when_over_cap():
     assert all(c["duration_sec"] <= 30 for c in clips)
     assert clips[0]["stitch"] == "first"
     assert clips[-1]["stitch"] == "last"
+
+    clips15 = split_into_clips(40, max_clip_sec=15, min_clip_sec=2, overlap_sec=0.5, shot_id="S01_T88")
+    assert len(clips15) >= 3
+    assert all(c["duration_sec"] <= 15 for c in clips15)
+
+
+def test_run_with_15s_cap(monkeypatch):
+    monkeypatch.setenv("FILM_PIPELINE_DRY_RUN", "1")
+    script = (EXAMPLES_DIR / "sample_script.txt").read_text(encoding="utf-8")
+    bible = Pipeline().run_all(
+        project_id="test_15s",
+        script=script,
+        max_clip_sec=15,
+    )
+    assert bible["meta"]["max_clip_sec"] == 15
+    assert bible["timing_plan"]["max_clip_sec"] == 15
+    for s in bible["shots"]:
+        for c in s["generation_clips"]:
+            assert c["duration_sec"] <= 15 + 1e-6
+
+
+def test_clip_profile_normalize():
+    from film_pipeline.runtime.clip_profile import normalize_max_clip, profile_for_max_clip
+
+    assert normalize_max_clip(15) == 15
+    assert normalize_max_clip("30") == 30
+    assert profile_for_max_clip(15) == "max_15s"
+    assert profile_for_max_clip(30) == "max_30s"
+    try:
+        normalize_max_clip(10)
+        assert False, "should reject 10"
+    except ValueError:
+        pass
 
 
 def test_dialogue_duration_zh():
