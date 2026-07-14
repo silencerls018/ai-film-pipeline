@@ -13,6 +13,20 @@
 Python CLI 里的 `OPENAI_*` / dry-run **只是本地可选工具**，不是「多智能体架构」本身。  
 **架构真相是：Skill + 知识库 + FilmBible 合同。**
 
+### 0.1 外来智能体禁止的误读（强制）
+
+你（Claude / Cursor / Grok / 其它编排 Agent）**就是**算力与创作者。  
+**禁止**把「有没有配置 `OPENAI_*` / 是否 dry-run」当成方案 B 能不能开工的前提。
+
+| 错误做法 | 正确做法 |
+|----------|----------|
+| 先查 `.env` / API Key，没有就降级 stub 或整包手写 | 用户选 **方案 B** 后，**你自己创建隔离的子智能体**（一岗一会话） |
+| 把 `film-pipeline run` dry-run 当成「多智能体已跑完」 | CLI 最多当骨架/timing/导出工具；**岗位内容由你拉起的子 Agent 写** |
+| 一个会话里读完全部 Skill 一次写完却声称「方案 B」 | 方案 B = **每岗独立包装**，只装 registry 允许的 skill + knowledge |
+| 为省事合并成一份「case pack 脚本」代替派工 | 允许代码做 timing 等确定性岗；**剧作/对白/导演/影调/摄影/提示词/质检**仍须分岗交付 |
+
+**谁来创建智能体？** → **你（调度者）**。本仓库只提供包装清单（`agents/registry.json`），不替你托管子 Agent 运行时，也不要求你去申请第三方 LLM API。
+
 ---
 
 ## 1. 开工第一问（强制）
@@ -98,7 +112,7 @@ asset（建议在 dramaturg 之后；不堵主链）
 1. 问清 Brief：`max_clip` 15|30、风格、是否资产轨、是否对白精修  
 2. 建项目：`film_pipeline/bible/projects/<id>/film_bible.json`  
 3. **按顺序**扮演各岗：每岗只读该岗 Skill+知识，写完再进入下一岗  
-4. 每岗结束存盘；最后导出 `prompt_board.md`  
+4. 每岗结束存盘；最后导出 `prompt_board.html`（一键复制）+ `prompt_board.md` + `clips/`  
 5. 可用 CLI：`film-pipeline run ...` 作 dry-run 骨架，但内容责任仍在你  
 
 即：一个身体，多套工牌；**工牌不能同时戴乱**。
@@ -108,7 +122,9 @@ asset（建议在 dramaturg 之后；不堵主链）
 ## 4. 方案 B 怎么干
 
 1. 同样先问 Brief  
-2. 调度者按 `agents/registry.json` **依次或并行（仅 asset）拉起子智能体**  
+2. **调度者（你）** 按 `agents/registry.json` **依次或并行（仅 asset）创建 / 派生子智能体**  
+   - 在 Cursor / Claude Code / Grok 等环境：用 **subagent / 独立会话 / Task** 等机制，**一岗一实例**  
+   - **不要**先探测本仓库是否配置了 OpenAI 兼容 API  
 3. 每个子智能体启动时 **只注入**：
 
 ```text
@@ -120,9 +136,13 @@ asset（建议在 dramaturg 之后；不堵主链）
 ```
 
 4. 调度者校验 schema → merge 进 FilmBible → 再派下一岗  
-5. **子智能体之间禁止互相 @、禁止共享完整对话历史**（只共享 FilmBible）
+5. **子智能体之间禁止互相 @、禁止共享完整对话历史**（只共享 FilmBible）  
+6. `timing` 可用本仓库确定性代码；`prompt_writer` / `critic` 仍建议独立子 Agent（可辅以代码校验）  
+7. 最后由调度者导出 `outputs/<project_id>/`（可用 CLI 的 export，或 runtime 函数）
 
 并行仅允许：`asset` 与主链在 dramaturg 之后的安全窗口；合并时字段不打架（asset 只写 `asset_bible`）。
+
+**验收方案 B 是否算数：** 派工日志 / 对话记录里应能看出 **≥ 主链岗位数的隔离会话**（或等价隔离上下文），而不是单文件一次性写完全部字段并谎称 B。
 
 ---
 
@@ -145,8 +165,9 @@ asset（建议在 dramaturg 之后；不堵主链）
 
 ```text
 outputs/<project_id>/                 # 用户交付（出厂件）
-  prompt_board.md                     # 中英均可投喂 + 文末电影最终时长
-  clips/*.txt
+  prompt_board.html                   # 浏览器打开：每段「复制」按钮 + 自动换行
+  prompt_board.md                     # 中英均可投喂 + 文末电影最终时长（自动换行）
+  clips/*.txt                         # 纯文本投喂（自动换行）
   assets/                             # 可选
 
 film_pipeline/bible/projects/<project_id>/   # 内部状态

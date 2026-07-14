@@ -7,6 +7,7 @@ This is deterministic assembly (template + fields), not free-form invention.
 
 from __future__ import annotations
 
+import html
 import re
 from typing import Any
 
@@ -325,7 +326,8 @@ def export_prompts_markdown(bible: dict[str, Any]) -> str:
         "",
         "- **中文 / 英文均为成品**：都可直接复制投喂视频模型",
         "- ① 演员自由发挥版  ② 导演指导版（更具体）",
-        "- 四段结构已自动换行，无需横向拖动阅读",
+        "- 四段结构已**自动换行**，无需横向拖动阅读",
+        "- 需要**一键复制按钮**：请打开同目录 `prompt_board.html`（浏览器打开）",
         "- 终稿由 **Prompt Writer** 根据 FilmBible 合同撰写",
         "",
     ]
@@ -375,16 +377,23 @@ def export_prompts_markdown(bible: dict[str, Any]) -> str:
             "",
             "### 技术层 visual / motion / negative",
             "```text",
-            "visual: " + (job.get("visual_prompt") or "")[:400],
-            "",
-            "motion: " + (job.get("motion_prompt") or ""),
-            "",
-            "negative: " + (job.get("negative_prompt") or ""),
+            format_prompt_for_delivery(
+                "visual: "
+                + (job.get("visual_prompt") or "")[:400]
+                + "\n\nmotion: "
+                + (job.get("motion_prompt") or "")
+                + "\n\nnegative: "
+                + (job.get("negative_prompt") or "")
+            ).rstrip(),
             "```",
             "",
         ]
 
-    # ── 全片时长统计（交付末尾）──
+    lines += _film_duration_stats_markdown(bible)
+    return "\n".join(lines)
+
+
+def _film_duration_stats(bible: dict[str, Any]) -> dict[str, Any]:
     plan = bible.get("timing_plan") or {}
     meta = bible.get("meta") or {}
     jobs_list = bible.get("generation_jobs") or []
@@ -401,23 +410,257 @@ def export_prompts_markdown(bible: dict[str, Any]) -> str:
     pkg_n = plan.get("generation_package_count") or len(
         bible.get("generation_packages") or jobs_list
     )
-    film_min = round(float(film_total) / 60.0, 2)
-    lines += [
+    return {
+        "film_total": film_total,
+        "gen_total": gen_total,
+        "max_clip": max_clip,
+        "pkg_n": pkg_n,
+        "film_min": round(float(film_total) / 60.0, 2),
+        "gen_min": round(float(gen_total) / 60.0, 2),
+    }
+
+
+def _film_duration_stats_markdown(bible: dict[str, Any]) -> list[str]:
+    s = _film_duration_stats(bible)
+    return [
         "---",
         "",
         "## 电影最终时长统计",
         "",
-        f"- **电影最终时长**：`{film_total}` 秒（约 `{film_min}` 分钟）← 戏剧分镜合计",
-        f"- **成片预估（按生成段拼接）**：`{gen_total}` 秒（约 `{round(float(gen_total)/60, 2)}` 分钟）",
-        f"- **模型单段上限**：`{max_clip}` 秒（用户选 15 或 30；**不是**整片上限）",
-        f"- **生成段数**：`{pkg_n}` 段（每段 ≤ 上限；段内用 0–2秒 / 3–12秒… 时间轴，模型自行切镜更流畅）",
-        f"- **生成请求总时长**：`{gen_total}` 秒",
+        f"- **电影最终时长**：`{s['film_total']}` 秒（约 `{s['film_min']}` 分钟）← 戏剧分镜合计",
+        f"- **成片预估（按生成段拼接）**：`{s['gen_total']}` 秒（约 `{s['gen_min']}` 分钟）",
+        f"- **模型单段上限**：`{s['max_clip']}` 秒（用户选 15 或 30；**不是**整片上限）",
+        f"- **生成段数**：`{s['pkg_n']}` 段（每段 ≤ 上限；段内用 0–2秒 / 3–12秒… 时间轴，模型自行切镜更流畅）",
+        f"- **生成请求总时长**：`{s['gen_total']}` 秒",
         "",
         "> **规则**：15/30 = 单次生成天花板。段内把分镜写成时间轴即可，模型自己切镜更顺；"
         "只有累计时长已经「到底」塞不进上限时，才开下一段生成。",
         "",
     ]
-    return "\n".join(lines)
+
+
+def _html_copy_block(block_id: str, label: str, body: str) -> str:
+    """One prompt card: label + copy button + pre-wrapped body."""
+    safe_body = html.escape(body or "", quote=False)
+    safe_label = html.escape(label, quote=True)
+    return (
+        f'<div class="prompt-card">\n'
+        f'  <div class="prompt-toolbar">\n'
+        f'    <span class="prompt-label">{safe_label}</span>\n'
+        f'    <button type="button" class="copy-btn" data-target="{html.escape(block_id, quote=True)}"'
+        f' onclick="copyPrompt(this)">复制</button>\n'
+        f"  </div>\n"
+        f'  <pre class="prompt-body" id="{html.escape(block_id, quote=True)}">{safe_body}</pre>\n'
+        f"</div>\n"
+    )
+
+
+def export_prompts_html(bible: dict[str, Any]) -> str:
+    """
+    Browser-friendly prompt board with one-click copy buttons.
+    All prompt bodies use white-space: pre-wrap (auto wrap, no horizontal drag).
+    """
+    from film_pipeline.runtime.prompt_writer import format_prompt_for_delivery
+
+    meta = bible.get("meta") or {}
+    title = str(meta.get("title") or "untitled")
+    style = str(meta.get("style_pack") or "")
+    story = bible.get("story") or {}
+    plan = bible.get("timing_plan") or {}
+    stats = _film_duration_stats(bible)
+
+    jobs = list(bible.get("generation_jobs") or [])
+    if not jobs:
+        try:
+            jobs = compile_generation_jobs(bible) if bible.get("shots") else []
+        except Exception:
+            jobs = []
+
+    parts: list[str] = []
+    parts.append(
+        f"""<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Prompt Board — {html.escape(title)}</title>
+<style>
+  :root {{
+    --bg: #0f1419;
+    --card: #1a2332;
+    --border: #2d3a4d;
+    --text: #e7ecf3;
+    --muted: #9aa7b8;
+    --accent: #3d8bfd;
+    --ok: #3dd68c;
+  }}
+  * {{ box-sizing: border-box; }}
+  body {{
+    margin: 0; padding: 24px 16px 64px;
+    font-family: "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+    background: var(--bg); color: var(--text); line-height: 1.5;
+  }}
+  .wrap {{ max-width: 920px; margin: 0 auto; }}
+  h1 {{ font-size: 1.45rem; margin: 0 0 8px; }}
+  h2 {{ font-size: 1.15rem; margin: 28px 0 12px; border-bottom: 1px solid var(--border); padding-bottom: 8px; }}
+  .meta, .hint {{ color: var(--muted); font-size: 0.92rem; }}
+  .hint {{ margin: 12px 0 20px; padding: 12px 14px; background: var(--card); border-radius: 8px; border: 1px solid var(--border); }}
+  .logline {{ color: var(--muted); font-style: italic; margin: 8px 0 16px; }}
+  .clip {{ margin-bottom: 28px; }}
+  .clip-meta {{ color: var(--muted); font-size: 0.88rem; margin-bottom: 10px; }}
+  .prompt-card {{
+    margin: 10px 0 14px; border: 1px solid var(--border); border-radius: 10px;
+    background: var(--card); overflow: hidden;
+  }}
+  .prompt-toolbar {{
+    display: flex; align-items: center; justify-content: space-between; gap: 12px;
+    padding: 8px 12px; border-bottom: 1px solid var(--border); background: #121a26;
+  }}
+  .prompt-label {{ font-size: 0.9rem; color: var(--muted); }}
+  .copy-btn {{
+    flex-shrink: 0; cursor: pointer; border: 1px solid var(--accent);
+    background: transparent; color: var(--accent); border-radius: 6px;
+    padding: 4px 12px; font-size: 0.85rem;
+  }}
+  .copy-btn:hover {{ background: rgba(61,139,253,0.12); }}
+  .copy-btn.copied {{ border-color: var(--ok); color: var(--ok); }}
+  /* auto wrap — never force horizontal scroll for long prompts */
+  .prompt-body {{
+    margin: 0; padding: 12px 14px; font-size: 0.88rem;
+    font-family: ui-monospace, "Cascadia Code", "Consolas", monospace;
+    white-space: pre-wrap; overflow-wrap: anywhere; word-break: break-word;
+    max-width: 100%; overflow-x: hidden; color: var(--text);
+  }}
+  .stats {{ margin-top: 36px; padding: 16px; border: 1px solid var(--border); border-radius: 10px; background: var(--card); }}
+  .stats ul {{ margin: 8px 0 0; padding-left: 1.2em; }}
+  a {{ color: var(--accent); }}
+</style>
+</head>
+<body>
+<div class="wrap">
+<h1>Prompt Board — {html.escape(title)}</h1>
+<p class="meta">Style: <code>{html.escape(style)}</code>
+ · Max clip: <strong>{html.escape(str(plan.get("max_clip_sec") or stats["max_clip"]))}s</strong>
+ · Film total: <strong>{html.escape(str(stats["film_total"]))}s</strong></p>
+"""
+    )
+    if story.get("logline"):
+        parts.append(f'<p class="logline">{html.escape(str(story["logline"]))}</p>\n')
+
+    parts.append(
+        '<div class="hint">'
+        "<strong>用法：</strong>每段提示词右上角点「复制」即可投喂视频模型。"
+        "中英均为成品。正文已自动换行（soft-wrap + pre-wrap），无需横向拖动。"
+        "同目录还有 <code>prompt_board.md</code> 与 <code>clips/*.txt</code>。"
+        "</div>\n"
+    )
+
+    # TOC
+    if jobs:
+        parts.append('<p class="meta"><strong>目录</strong> · ')
+        toc_bits = []
+        for i, job in enumerate(jobs):
+            cid = str(job.get("clip_id") or job.get("shot_id") or f"clip_{i}")
+            toc_bits.append(f'<a href="#clip-{html.escape(cid, quote=True)}">{html.escape(cid)}</a>')
+        parts.append(" · ".join(toc_bits))
+        parts.append("</p>\n")
+
+    for i, job in enumerate(jobs):
+        cid = str(job.get("clip_id") or job.get("shot_id") or f"clip_{i}")
+        free_en = format_prompt_for_delivery(
+            job.get("actor_free_prompt") or job.get("actor_free_prompt_en") or ""
+        )
+        free_zh = format_prompt_for_delivery(job.get("actor_free_prompt_zh") or "")
+        guided_en = format_prompt_for_delivery(
+            job.get("director_guided_prompt")
+            or job.get("director_guided_prompt_en")
+            or ""
+        )
+        guided_zh = format_prompt_for_delivery(
+            job.get("director_guided_prompt_zh") or ""
+        )
+        tech = format_prompt_for_delivery(
+            "visual: "
+            + (job.get("visual_prompt") or "")[:400]
+            + "\n\nmotion: "
+            + (job.get("motion_prompt") or "")
+            + "\n\nnegative: "
+            + (job.get("negative_prompt") or "")
+        )
+        safe_cid = re.sub(r"[^A-Za-z0-9_\-]", "_", cid)
+        summary = html.escape(str(job.get("zh_director_summary") or ""))
+        dur = html.escape(str(job.get("duration_sec") or ""))
+        stitch = html.escape(str(job.get("stitch") or ""))
+
+        parts.append(f'<section class="clip" id="clip-{html.escape(cid, quote=True)}">\n')
+        parts.append(f"<h2>{html.escape(cid)}</h2>\n")
+        if summary:
+            parts.append(f'<p class="clip-meta"><strong>镜头摘要:</strong> {summary}</p>\n')
+        parts.append(
+            f'<p class="clip-meta">时长: <code>{dur}s</code> · 拼接: <code>{stitch}</code></p>\n'
+        )
+        parts.append(
+            _html_copy_block(f"{safe_cid}_free_en", "① 演员自由发挥 · 英文（可直接投喂）", free_en)
+        )
+        parts.append(
+            _html_copy_block(f"{safe_cid}_free_zh", "① 演员自由发挥 · 中文（可直接投喂）", free_zh)
+        )
+        parts.append(
+            _html_copy_block(f"{safe_cid}_guided_en", "② 导演指导 · 英文（可直接投喂）", guided_en)
+        )
+        parts.append(
+            _html_copy_block(f"{safe_cid}_guided_zh", "② 导演指导 · 中文（可直接投喂）", guided_zh)
+        )
+        parts.append(
+            _html_copy_block(f"{safe_cid}_tech", "技术层 visual / motion / negative", tech)
+        )
+        parts.append("</section>\n")
+
+    parts.append(
+        f"""
+<div class="stats">
+  <h2>电影最终时长统计</h2>
+  <ul>
+    <li><strong>电影最终时长</strong>：{html.escape(str(stats["film_total"]))} 秒（约 {html.escape(str(stats["film_min"]))} 分钟）← 戏剧分镜合计</li>
+    <li><strong>成片预估（按生成段拼接）</strong>：{html.escape(str(stats["gen_total"]))} 秒（约 {html.escape(str(stats["gen_min"]))} 分钟）</li>
+    <li><strong>模型单段上限</strong>：{html.escape(str(stats["max_clip"]))} 秒（不是整片上限）</li>
+    <li><strong>生成段数</strong>：{html.escape(str(stats["pkg_n"]))} 段</li>
+    <li><strong>生成请求总时长</strong>：{html.escape(str(stats["gen_total"]))} 秒</li>
+  </ul>
+</div>
+</div>
+<script>
+async function copyPrompt(btn) {{
+  const id = btn.getAttribute("data-target");
+  const el = document.getElementById(id);
+  if (!el) return;
+  const text = el.innerText || el.textContent || "";
+  try {{
+    await navigator.clipboard.writeText(text);
+  }} catch (e) {{
+    const ta = document.createElement("textarea");
+    ta.value = text;
+    ta.style.position = "fixed";
+    ta.style.left = "-9999px";
+    document.body.appendChild(ta);
+    ta.select();
+    document.execCommand("copy");
+    document.body.removeChild(ta);
+  }}
+  const old = btn.textContent;
+  btn.textContent = "已复制";
+  btn.classList.add("copied");
+  setTimeout(function () {{
+    btn.textContent = old || "复制";
+    btn.classList.remove("copied");
+  }}, 1600);
+}}
+</script>
+</body>
+</html>
+"""
+    )
+    return "".join(parts)
 
 
 def export_asset_board_markdown(bible: dict[str, Any]) -> str:
@@ -522,8 +765,9 @@ def export_final_prompts_package(bible: dict[str, Any], dest: Any = None) -> Any
 
     Layout:
       outputs/<project_id>/
-        prompt_board.md          # shot prompts board
-        clips/                   # per-clip video prompts
+        prompt_board.md          # shot prompts board (auto-wrapped)
+        prompt_board.html        # same board + one-click copy buttons
+        clips/                   # per-clip video prompts (auto-wrapped)
         assets/                  # ALWAYS when asset_bible present
           asset_board.md
           asset_bible.json
@@ -553,6 +797,8 @@ def export_final_prompts_package(bible: dict[str, Any], dest: Any = None) -> Any
         clips_dir.mkdir(parents=True, exist_ok=True)
         board = export_prompts_markdown(bible)
         (root / "prompt_board.md").write_text(board, encoding="utf-8")
+        board_html = export_prompts_html(bible)
+        (root / "prompt_board.html").write_text(board_html, encoding="utf-8")
         for job in jobs:
             cid = str(job.get("clip_id") or job.get("shot_id") or "clip")
             safe = re.sub(r'[<>:"/\\|?*]', "_", cid)
@@ -594,15 +840,16 @@ def export_final_prompts_package(bible: dict[str, Any], dest: Any = None) -> Any
     ]
     if jobs:
         readme_lines += [
-            "prompt_board.md     — 镜头最终提示词板（中英均可投喂）",
-            "clips/              — 每镜 clip 可复制 txt（已自动换行）",
+            "prompt_board.html   — 浏览器打开：每段提示词带「复制」按钮 + 自动换行",
+            "prompt_board.md     — 镜头最终提示词板（中英均可投喂，已自动换行）",
+            "clips/              — 每镜 clip 纯文本（已自动换行，适合脚本/编辑器）",
             "  *_director_guided.en.txt  — 英文导演版（可直接投喂）",
             "  *_director_guided.zh.txt  — 中文导演版（可直接投喂）",
             "  *_actor_free.en.txt       — 英文自由发挥版",
             "  *_actor_free.zh.txt       — 中文自由发挥版",
             "",
             "每段 clip/package 为 ≤15/30s 的生成请求；段内时间轴分镜，模型自行切镜。",
-            "全片时长统计见 prompt_board.md 文末。",
+            "全片时长统计见 prompt_board.md / .html 文末。",
             "",
         ]
     if has_assets:

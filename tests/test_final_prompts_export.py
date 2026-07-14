@@ -70,6 +70,7 @@ def test_export_package_layout(tmp_path):
     root = export_final_prompts_package(bible, dest=tmp_path / "demo_export")
     assert root.name == "demo_export"
     assert (root / "prompt_board.md").exists()
+    assert (root / "prompt_board.html").exists()
     assert (root / "README.txt").exists()
     guided_out = (root / "clips" / "S01_T01_c01_director_guided.en.txt").read_text(
         encoding="utf-8"
@@ -88,6 +89,14 @@ def test_export_package_layout(tmp_path):
     assert (root / "assets" / "props").exists()
     readme = (root / "README.txt").read_text(encoding="utf-8")
     assert "assets/" in readme
+    assert "prompt_board.html" in readme
     board = (root / "prompt_board.md").read_text(encoding="utf-8")
     assert "电影最终时长" in board
     assert "42.5" in board
+    assert "prompt_board.html" in board
+    html_board = (root / "prompt_board.html").read_text(encoding="utf-8")
+    assert "copyPrompt" in html_board
+    assert "复制" in html_board
+    assert "pre-wrap" in html_board
+    assert "GUIDED EN" in html_board
+    assert "导演中文" in html_board

@@ -16,21 +16,25 @@
 | **时间轴分镜** | 段内写成 `0-2秒，…` / `3-12秒，…`；模型按时间轴表现；流程黑话不进正文 |
 | **到底才拆段** | 只有累计塞不进上限，才开下一段生成（`generation_packages`） |
 | **门禁质检** | Critic 查结构 / 对白覆盖 / 说话人 / 镜句绑定；无静默 stub 伪装成功 |
-| **可度量** | `prompt_board.md` 文末：**电影最终时长** + 生成段数 + 成片预估 |
-| **可交付** | 固定目录：`prompt_board` + `clips/` + `assets/` |
+| **可度量** | `prompt_board` 文末：**电影最终时长** + 生成段数 + 成片预估 |
+| **可交付** | 固定目录：`prompt_board.html`（复制按钮）+ `.md` + `clips/` + `assets/` |
 
 ## 给外来智能体（必读）
 
-**本仓库不托管视频模型 API，也不替你决定怎么分工。**
+**本仓库不托管视频模型 API，也不替你决定怎么分工。**  
+**方案 B 时：由你（外来智能体）自己创建隔离的、各司其职的子智能体——不是去找本仓库的 OpenAI Key。**
 
 任何 Agent 来跑本项目时，先读 **[`AGENTS.md`](AGENTS.md)**，并 **先问用户二选一**：
 
 | 方案 | 含义 |
 |------|------|
 | **A 单智能体全包** | 一个执行者按顺序干完全部岗位 |
-| **B 多智能体分工** | 每岗一个独立 Agent，**只装自己的 Skill + 知识库**，互不共享手册 |
+| **B 多智能体分工** | 每岗一个独立 Agent，**只装自己的 Skill + 知识库**，互不共享手册；**调度者负责 spawn/派工/merge** |
 
 独立包装清单：[`agents/registry.json`](agents/registry.json) · 说明：[`agents/README.md`](agents/README.md)
+
+> Python CLI 的 dry-run / `OPENAI_*` 是可选本地工具。  
+> **架构不等于「调了 `film-pipeline run`」**；架构 = Skill + 知识库 + FilmBible 合同 +（方案 B 时）隔离子 Agent。
 
 ## 架构
 
@@ -115,8 +119,9 @@ needed ≈ pre_roll + max(dialogue_sec, move_sec) + post_hold
 ```text
 outputs/<project_id>/
   README.txt
-  prompt_board.md          # 全片提示词板 + 文末「电影最终时长统计」
-  clips/
+  prompt_board.html        # 浏览器打开：一键「复制」+ 自动换行
+  prompt_board.md          # 全片提示词板 + 文末「电影最终时长统计」（自动换行）
+  clips/                   # 每段纯文本（自动换行，可直接投喂）
     G01_director_guided.zh.txt
     G01_director_guided.en.txt
     ...
