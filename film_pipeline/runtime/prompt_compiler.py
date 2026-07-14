@@ -97,13 +97,20 @@ def compile_visual_prompt(bible: dict[str, Any], shot: dict[str, Any], style_pac
         parts.append("Camera: " + ", ".join(cam_bits) + ".")
 
     mov = cam.get("movement") or {}
-    if mov.get("type"):
-        parts.append(
-            f"Camera move planned for video: {mov.get('type')}"
-            + (f", speed {mov.get('speed')}" if mov.get("speed") else "")
-            + (f" — {mov.get('motivation')}" if mov.get("motivation") else "")
-            + "."
-        )
+    if mov.get("type") or mov.get("prompt_en"):
+        # Prefer Excel-catalog English prompt fragment when present
+        if mov.get("prompt_en"):
+            parts.append(f"Camera movement: {mov.get('prompt_en')}.")
+        else:
+            parts.append(
+                f"Camera move planned for video: {mov.get('type')}"
+                + (f", speed {mov.get('speed')}" if mov.get("speed") else "")
+                + "."
+            )
+        if mov.get("motivation"):
+            parts.append(f"Move motivation: {mov.get('motivation')}.")
+        if mov.get("zh"):
+            parts.append(f"Move (zh): {mov.get('zh')}.")
 
     # Look / grade
     look_bits = []
@@ -135,6 +142,19 @@ def compile_visual_prompt(bible: dict[str, Any], shot: dict[str, Any], style_pac
     if pack_label:
         parts.append(f"Style pack: {pack_label}.")
 
+    # Optional casting / set anchors (ids only — swap image_refs anytime)
+    ab = bible.get("asset_bible") or {}
+    char_ids = [c.get("asset_id") for c in (ab.get("characters") or []) if c.get("asset_id")]
+    if char_ids:
+        parts.append(
+            "Character consistency: match casting sheets "
+            + ", ".join(char_ids)
+            + " (use external reference images if provided; do not invent new faces)."
+        )
+    set_ids = [s.get("asset_id") for s in (ab.get("sets") or []) if s.get("asset_id")]
+    if set_ids:
+        parts.append("Location consistency: match set sheets " + ", ".join(set_ids) + ".")
+
     # Dialogue / performance (for image: facial acting cue only)
     for line in _dialogue_for_shot(bible, shot)[:2]:
         delivery = line.get("delivery") or ""
@@ -161,19 +181,21 @@ def compile_motion_prompt(
     mtype = mov.get("type") or "static_hold"
     speed = mov.get("speed") or "normal"
     motivation = mov.get("motivation") or ""
+    prompt_en = mov.get("prompt_en") or ""
     if clip and clip.get("duration_sec") is not None:
         duration = clip["duration_sec"]
     else:
         duration = shot.get("duration_sec") or 4
     bits = [
-        f"Camera movement: {mtype}.",
+        f"Camera movement: {prompt_en or mtype}.",
+        f"Move name: {mtype}.",
         f"Speed: {speed}.",
         f"Duration exactly about {duration} seconds (do not exceed model clip limit).",
         "Keep subject identity and lighting continuous.",
         "Natural physics, subtle film grain ok.",
     ]
     if motivation:
-        bits.insert(2, f"Motivation: {motivation}.")
+        bits.insert(3, f"Motivation: {motivation}.")
     if clip and clip.get("stitch") in {"continue", "last"}:
         bits.append(
             f"Continuation segment {clip.get('index')}: match end frame of previous clip; "
@@ -255,8 +277,20 @@ def compile_zh_summary(shot: dict[str, Any], clip: dict[str, Any] | None = None)
 def compile_generation_jobs(bible: dict[str, Any], style_pack: dict[str, Any] | None = None) -> list[dict[str, Any]]:
     """
     One API job per generation clip (not merely per shot).
-    Long shots that exceed model max_clip_sec become multiple jobs to stitch later.
+    Each job includes TWO final prompt versions:
+      - actor_free_prompt: emotion tags only (actor improvises)
+      - director_guided_prompt: performance + shot + move + light unified
     """
+    from film_pipeline.runtime.performance import (
+        compile_actor_free_prompt,
+        compile_director_guided_prompt,
+        enrich_shots_with_performance,
+    )
+
+    # Ensure performance packages exist even if director stage was skipped
+    if any(not s.get("performance") for s in bible.get("shots") or []):
+        enrich_shots_with_performance(bible)
+
     jobs: list[dict[str, Any]] = []
     max_clip = (bible.get("timing_plan") or {}).get("max_clip_sec")
     for shot in bible.get("shots") or []:
@@ -279,6 +313,22 @@ def compile_generation_jobs(bible: dict[str, Any], style_pack: dict[str, Any] | 
                 dur = min(dur, float(max_clip))
             motion = compile_motion_prompt(shot, clip=clip)
             master = compile_master_prompt(bible, shot, style_pack, clip=clip)
+            from film_pipeline.runtime.performance import (
+                compile_actor_free_prompt_en,
+                compile_actor_free_prompt_zh,
+                compile_director_guided_prompt_en,
+                compile_director_guided_prompt_zh,
+            )
+
+            # 主：全英文（生成用）  辅：全中文（阅读对照）
+            actor_free_en = compile_actor_free_prompt_en(shot, clip=clip)
+            director_guided_en = compile_director_guided_prompt_en(
+                bible, shot, style_pack=style_pack, clip=clip
+            )
+            actor_free_zh = compile_actor_free_prompt_zh(shot, clip=clip)
+            director_guided_zh = compile_director_guided_prompt_zh(
+                bible, shot, style_pack=style_pack, clip=clip
+            )
             jobs.append(
                 {
                     "shot_id": shot.get("shot_id"),
@@ -287,6 +337,14 @@ def compile_generation_jobs(bible: dict[str, Any], style_pack: dict[str, Any] | 
                     "visual_prompt": visual,
                     "motion_prompt": motion,
                     "master_prompt": master,
+                    # 主产品：英文（复制去视频模型）
+                    "actor_free_prompt": actor_free_en,
+                    "director_guided_prompt": director_guided_en,
+                    "actor_free_prompt_en": actor_free_en,
+                    "director_guided_prompt_en": director_guided_en,
+                    # 辅助：中文对照（帮你看懂内容）
+                    "actor_free_prompt_zh": actor_free_zh,
+                    "director_guided_prompt_zh": director_guided_zh,
                     "negative_prompt": negative,
                     "zh_director_summary": compile_zh_summary(shot, clip),
                     "duration_sec": dur,
@@ -298,6 +356,7 @@ def compile_generation_jobs(bible: dict[str, Any], style_pack: dict[str, Any] | 
                         "dramatic_beat": shot.get("dramatic_beat"),
                         "shot_size": shot.get("shot_size"),
                         "emotion": shot.get("emotion"),
+                        "performance": shot.get("performance"),
                         "camera": shot.get("camera"),
                         "look": shot.get("look"),
                         "linked_dialogue": shot.get("linked_dialogue"),
@@ -330,35 +389,53 @@ def export_prompts_markdown(bible: dict[str, Any]) -> str:
             "",
         ]
 
+    lines += [
+        "## 提示词说明",
+        "",
+        "- **主语言：英文**（`actor_free_prompt` / `director_guided_prompt`）→ 复制去视频模型",
+        "- **辅助：中文对照**（`*_zh`）→ 只帮你看懂内容，不是主生成稿",
+        "- ① 演员自由发挥版：只给情绪词  ② 导演指导版：表演+景别+运镜+灯光",
+        "",
+    ]
+
     for job in bible.get("generation_jobs") or compile_generation_jobs(bible):
         title = job.get("clip_id") or job.get("shot_id")
         lines += [
             f"## {title}",
             "",
-            f"**中文摘要:** {job.get('zh_director_summary', '')}",
+            f"**镜头摘要（中文）:** {job.get('zh_director_summary', '')}",
             "",
-            f"- duration: `{job.get('duration_sec')}s`",
-            f"- stitch: `{job.get('stitch')}`",
-            f"- timeline: `{job.get('timeline_start_sec')} → {job.get('timeline_end_sec')}`",
+            f"- 时长: `{job.get('duration_sec')}s` · 拼接: `{job.get('stitch')}`",
             "",
-            "### Visual prompt",
+            "### ① 演员自由发挥版 — 英文主稿（生成用）",
             "```",
-            job.get("visual_prompt") or "",
+            job.get("actor_free_prompt") or job.get("actor_free_prompt_en") or "",
             "```",
             "",
-            "### Motion / I2V prompt",
+            "#### 中文对照（辅助理解，不优先投喂）",
             "```",
-            job.get("motion_prompt") or "",
-            "```",
-            "",
-            "### Master prompt",
-            "```",
-            job.get("master_prompt") or "",
+            job.get("actor_free_prompt_zh") or "",
             "```",
             "",
-            "### Negative",
+            "### ② 导演指导版 — 英文主稿（生成用）",
             "```",
-            job.get("negative_prompt") or "",
+            job.get("director_guided_prompt")
+            or job.get("director_guided_prompt_en")
+            or "",
+            "```",
+            "",
+            "#### 中文对照（辅助理解，不优先投喂）",
+            "```",
+            job.get("director_guided_prompt_zh") or "",
+            "```",
+            "",
+            "### 技术层 visual / motion / negative",
+            "```",
+            "visual: " + (job.get("visual_prompt") or "")[:400],
+            "",
+            "motion: " + (job.get("motion_prompt") or ""),
+            "",
+            "negative: " + (job.get("negative_prompt") or ""),
             "```",
             "",
         ]

@@ -1,0 +1,42 @@
+{
+  "version": "1.0",
+  "shot_sizes": ["EWS", "WS", "FS", "MS", "MCU", "CU", "ECU", "INSERT"],
+  "shot_size_aliases": {
+    "Extreme Wide Shot": "EWS",
+    "Wide Shot": "WS",
+    "Full Shot": "FS",
+    "Medium Shot": "MS",
+    "Medium Close-Up": "MCU",
+    "Close-Up": "CU",
+    "Extreme Close-Up": "ECU",
+    "Insert Shot": "INSERT",
+    "大远景": "EWS",
+    "全景": "WS",
+    "全身景": "FS",
+    "中景": "MS",
+    "中近景": "MCU",
+    "特写": "CU",
+    "大特写": "ECU",
+    "插入": "INSERT"
+  },
+  "dialogue_functions": [
+    "advance",
+    "reveal",
+    "mislead",
+    "relationship",
+    "atmosphere",
+    "reaction"
+  ],
+  "scene_functions": [
+    "establish",
+    "escalate",
+    "reverse",
+    "reveal",
+    "aftermath",
+    "relationship_turn",
+    "plant",
+    "payoff"
+  ],
+  "max_clip_options_sec": [15, 30],
+  "end_product": "prompts_only"
+}

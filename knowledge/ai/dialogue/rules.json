@@ -1,0 +1,18 @@
+{
+  "version": "1.0",
+  "human_doc": "human/02_dialogue.md",
+  "rules": [
+    "One primary dramatic function per line when possible",
+    "Prefer subtext over exposition",
+    "Cut lines that only describe what the image already shows",
+    "Keep character.voice consistent",
+    "Allow silence_beats_ms as intentional rhythm",
+    "Do not change plot facts or character goals",
+    "Do not write camera or look parameters"
+  ],
+  "quality_checks": [
+    "every line has function and subtext",
+    "function in allowed enum",
+    "no dual-function cram without split"
+  ]
+}

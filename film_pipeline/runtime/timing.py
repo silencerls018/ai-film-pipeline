@@ -134,7 +134,33 @@ def move_budget_sec(shot: dict[str, Any], moves: dict[str, Any]) -> float:
     mov = cam.get("movement") or {}
     mtype = (mov.get("type") or "static_hold").strip()
     speed = (mov.get("speed") or "").lower()
-    rule = moves.get(mtype) or moves.get("default") or {"min_sec": 2.0, "preferred_sec": 3.5}
+    # Exact key, slug, or fuzzy contains (Excel names like "Slow Dolly In")
+    rule = moves.get(mtype) or moves.get("default")
+    if rule is None or rule is moves.get("default"):
+        key_l = mtype.lower().replace(" ", "_")
+        for k, v in moves.items():
+            if k.startswith("_") or not isinstance(v, dict):
+                continue
+            if k.lower() == key_l or key_l in k.lower() or k.lower() in key_l:
+                rule = v
+                break
+            en = str(v.get("en") or "").lower()
+            if en and (en == mtype.lower() or mtype.lower() in en):
+                rule = v
+                break
+    if not isinstance(rule, dict):
+        rule = {"min_sec": 2.0, "preferred_sec": 3.5}
+    # Heuristic for catalog free-text moves not in move_durations.json
+    ml = mtype.lower()
+    if "preferred_sec" not in rule or rule is moves.get("default"):
+        if any(x in ml for x in ("static", "locked", "hold", "freeze")):
+            rule = {"min_sec": 1.5, "preferred_sec": 2.5}
+        elif any(x in ml for x in ("dolly", "push", "truck", "crane", "orbit", "arc")):
+            rule = {"min_sec": 3.5, "preferred_sec": 5.0}
+        elif any(x in ml for x in ("whip", "crash", "snap", "shake")):
+            rule = {"min_sec": 1.0, "preferred_sec": 1.8}
+        elif any(x in ml for x in ("pan", "tilt", "roll")):
+            rule = {"min_sec": 2.0, "preferred_sec": 3.5}
     sec = float(rule.get("preferred_sec", rule.get("min_sec", 3.0)))
     if "very_slow" in speed or speed == "very_slow":
         sec *= 1.25

@@ -1,0 +1,60 @@
+{
+  "version": "1.2",
+  "source": "E:/AI/skill/三视图.skill (character-ref-sheet) + user: left 50% face, ethnicity, no negative",
+  "human_doc": "human/07_asset.md",
+  "language": "prompt_must_be_english",
+  "image_size_hint": "1792x1024",
+  "use_negative_prompt": false,
+  "layout": {
+    "background": "neutral gray",
+    "left_ratio": "50%",
+    "left": "ultra-large facial close-up filling the entire left half (50% of frame width)",
+    "right_ratio": "50%",
+    "right": "front / back / side full-body; faces covered by solid black rectangular censor boxes"
+  },
+  "template_en": "A professional e-commerce fashion reference sheet on neutral gray background. Strict left-right 50/50 split layout composition.\n\n【LEFT SIDE — 50% of the image width — Ultra-Large Facial Close-Up】\nThe entire left half of the frame (exactly about 50% width) is filled by one ultra-large facial close-up only. Face fills most of this left half. Core emphasis on extremely realistic skin texture: clearly visible pores, subtle skin texture, natural uneven skin tone, and tiny imperfections (such as freckles or moles). Fine peach fuzz on the face. No airbrushing, no plastic-smooth AI-generated look. Natural, sheer makeup. Eyes focused on camera.\nEthnicity / race: {ETHNICITY}.\nCharacter features: {HAIR_STYLE_AND_COLOR}, {FACIAL_FEATURES}, {EARRINGS_AND_NECKLACE}, {HEAD_ACCESSORIES}.\n\n【RIGHT SIDE — 50% of the image width — Full-Body Multi-Angle Views】\nThe entire right half (about 50% width) shows three full-body standing views: front view, back view, side view.\nIMPORTANT: The face area of each full-body figure must be covered with a solid black rectangular censor box, completely hiding all facial features. This is a mandatory privacy requirement for the reference sheet.\n1. Posture and temperament: {POSTURE_DESCRIPTION}.\n2. Clothing: {CLOTHING_DESCRIPTION}. Footwear: {SHOES_DESCRIPTION}. Holding: {PROPS_OR_EMPTY}.\n\n【Overall Style】\nCommercial studio lighting, bright and even illumination with preserved dimensionality. 8K resolution, ultra HD, macro lens details, real photography style, RAW format quality.",
+  "negative_prompt_en": "",
+  "posture_options": {
+    "confident_professional": "Confident power stance, one hand on hip, chin slightly raised, commanding presence",
+    "elegant": "Poised and graceful posture, hands gently clasped in front, soft shoulders",
+    "cool_street": "Relaxed swagger, weight on one leg, slightly tilted head, effortless cool",
+    "cute_playful": "Playful energy, one foot slightly forward, bright cheerful expression",
+    "intellectual": "Thoughtful elegance, one hand near chin, contemplative gaze",
+    "animal": "Natural standing pose of {SPECIES}, alert ears, dignified stance"
+  },
+  "ethnicity_defaults": {
+    "neo_noir": "East Asian",
+    "warm_realism": "East Asian",
+    "default": "East Asian"
+  },
+  "ethnicity_options_en": [
+    "East Asian",
+    "Southeast Asian",
+    "South Asian",
+    "White / Caucasian",
+    "Black / African",
+    "Hispanic / Latino",
+    "Middle Eastern",
+    "Mixed race"
+  ],
+  "animal_adjustments": {
+    "left": "head close-up filling left 50%, fur texture, eyes, nose detail",
+    "right": "front/side/back full body natural stance",
+    "breed_accuracy": true
+  },
+  "extraction_fields": [
+    "name",
+    "ethnicity",
+    "gender_or_species",
+    "age_or_breed",
+    "hair_style_and_color",
+    "facial_features",
+    "clothing",
+    "shoes",
+    "accessories",
+    "posture_temperament",
+    "held_props"
+  ],
+  "missing_info_policy": "Infer ethnicity and look from brief/style if missing; mark inferred in zh summary",
+  "zh_summary_template": "【三视图】{name}（人种：{ethnicity}）：画面左50%超大面部特写；右50%正面/背面/侧面全身（脸部黑块遮挡）。灰底。"
+}

@@ -1,0 +1,13 @@
+{
+  "version": "1.0",
+  "functions": [
+    {"id": "establish", "zh": "建立", "desc": "世界、关系、状态的基线"},
+    {"id": "escalate", "zh": "加压", "desc": "障碍升级、赌注提高"},
+    {"id": "reverse", "zh": "反转", "desc": "预期被推翻"},
+    {"id": "reveal", "zh": "揭示", "desc": "关键信息曝光"},
+    {"id": "aftermath", "zh": "余波", "desc": "结果消化、情绪落地"},
+    {"id": "relationship_turn", "zh": "关系转折", "desc": "人物关系质变"},
+    {"id": "plant", "zh": "埋线", "desc": "安放后续回收的信息/道具"},
+    {"id": "payoff", "zh": "回收", "desc": "兑现先前埋线"}
+  ]
+}

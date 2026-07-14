@@ -1,0 +1,110 @@
+{
+  "version": "1.0",
+  "human_doc": "human/00_shared_emotions_and_handoffs.md",
+  "stages": {
+    "dramaturg": {
+      "reads": ["production_brief", "source_script"],
+      "writes": ["story", "characters", "scenes"],
+      "must_include": [
+        "scenes[].scene_id",
+        "scenes[].dramatic_function",
+        "scenes[].emotion.start",
+        "scenes[].emotion.end",
+        "characters[].voice"
+      ],
+      "downstream": ["dialogue", "asset", "director"]
+    },
+    "dialogue": {
+      "reads": ["story", "characters", "scenes", "source_script"],
+      "writes": ["dialogue"],
+      "must_include": [
+        "dialogue[].scene_id",
+        "dialogue[].lines[].function",
+        "dialogue[].lines[].subtext",
+        "dialogue[].lines[].text"
+      ],
+      "line_functions": ["advance", "reveal", "mislead", "relationship", "atmosphere", "reaction"],
+      "downstream": ["director"]
+    },
+    "director": {
+      "reads": ["story", "characters", "scenes", "dialogue", "production_brief"],
+      "writes": ["shots"],
+      "must_include": [
+        "shots[].shot_id",
+        "shots[].scene_id",
+        "shots[].dramatic_beat",
+        "shots[].emotion.primary",
+        "shots[].shot_size",
+        "shots[].subject",
+        "shots[].edit_intent"
+      ],
+      "emotion_must_be_canonical": true,
+      "downstream": ["look", "cinematography"]
+    },
+    "look": {
+      "reads": ["story", "scenes", "shots", "production_brief"],
+      "writes": ["look_bible"],
+      "must_include": [
+        "look_bible.film_look.key",
+        "look_bible.film_look.contrast",
+        "look_bible.film_look.palette",
+        "look_bible.scene_looks[].scene_id",
+        "look_bible.scene_looks[].base_tone"
+      ],
+      "downstream": ["cinematography", "asset", "generator"]
+    },
+    "cinematography": {
+      "reads": ["shots", "look_bible", "scenes", "dialogue", "production_brief"],
+      "writes": ["shots.camera", "shots.look"],
+      "must_include": [
+        "shots[].camera.lens_mm",
+        "shots[].camera.angle",
+        "shots[].camera.movement.type",
+        "shots[].camera.movement.motivation",
+        "shots[].look.tone",
+        "shots[].look.motivation"
+      ],
+      "downstream": ["timing", "generator"]
+    },
+    "timing": {
+      "reads": ["shots", "dialogue", "meta.max_clip_sec"],
+      "writes": ["shots.duration_sec", "shots.timing", "shots.generation_clips", "timing_plan"],
+      "must_include": ["timing_plan.max_clip_sec", "shots[].duration_sec", "shots[].generation_clips"],
+      "constraints": {"max_clip_sec_in": [15, 30]},
+      "downstream": ["generator"]
+    },
+    "asset": {
+      "reads": ["characters", "scenes", "story", "look_bible", "production_brief"],
+      "writes": ["asset_bible"],
+      "must_include": ["asset_bible.characters", "asset_bible.props", "asset_bible.sets"],
+      "parallel": true,
+      "downstream": ["generator"]
+    },
+    "generator": {
+      "reads": ["shots", "look_bible", "dialogue", "timing_plan", "asset_bible", "production_brief"],
+      "writes": ["generation_jobs"],
+      "must_include": [
+        "generation_jobs[].visual_prompt",
+        "generation_jobs[].motion_prompt",
+        "generation_jobs[].duration_sec"
+      ],
+      "rule": "assemble_only_no_invent",
+      "downstream": ["critic"]
+    },
+    "critic": {
+      "reads": ["*"],
+      "writes": ["reviews", "last_review"],
+      "must_include": ["review.pass", "review.failures"],
+      "may_reroute_to": [
+        "dramaturg",
+        "dialogue",
+        "director",
+        "look",
+        "cinematography",
+        "timing",
+        "generator",
+        "asset"
+      ]
+    }
+  }
+}

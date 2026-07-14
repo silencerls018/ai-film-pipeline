@@ -1,0 +1,11 @@
+{
+  "version": "1.0",
+  "functions": [
+    {"id": "advance", "zh": "推进", "desc": "推动情节下一步"},
+    {"id": "reveal", "zh": "揭示", "desc": "抛出关键信息"},
+    {"id": "mislead", "zh": "误导", "desc": "隐瞒或转移"},
+    {"id": "relationship", "zh": "关系", "desc": "改变或暴露人物关系"},
+    {"id": "atmosphere", "zh": "氛围", "desc": "建立气场，信息量低"},
+    {"id": "reaction", "zh": "反应", "desc": "情绪落点，可极短"}
+  ]
+}

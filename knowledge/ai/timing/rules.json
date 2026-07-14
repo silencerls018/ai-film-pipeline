@@ -1,0 +1,21 @@
+{
+  "version": "1.0",
+  "human_doc": "human/06_timing.md",
+  "formulas": {
+    "with_dialogue": "pre + max(dialogue_sec, move_sec) + post",
+    "without_dialogue": "pre + move_sec + post"
+  },
+  "max_clip_allowed": [15, 30],
+  "rules": [
+    "User max_clip_sec must be chosen before pipeline",
+    "Split generation_clips when needed_sec > max_clip_sec",
+    "Never delete dialogue to fit cap; split shots or clips instead",
+    "Write duration into generation jobs"
+  ],
+  "param_paths": {
+    "model_limits": "timing/model_limits.json",
+    "speaking_rates": "timing/speaking_rates.json",
+    "move_durations": "timing/move_durations.json",
+    "holds": "timing/holds.json"
+  }
+}

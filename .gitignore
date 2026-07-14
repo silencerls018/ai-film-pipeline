@@ -24,6 +24,7 @@ film_pipeline/bible/projects/*
 !film_pipeline/bible/projects/.gitkeep
 film_pipeline/bible/examples/*.generated.json
 .cache/
+.tmp_threeview/
 outputs/
 *.log
 

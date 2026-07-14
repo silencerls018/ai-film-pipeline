@@ -1,0 +1,32 @@
+{
+  "version": "1.0",
+  "human_doc": "human/05_cinematography.md",
+  "decision_order": [
+    "read emotion.primary + dramatic_beat + shot_size",
+    "load emotion_to_camera candidates (catalog)",
+    "filter by style_pack avoid lists",
+    "pick move + lens + angle",
+    "write movement.motivation and look.motivation",
+    "obey look_bible or set break_look_reason"
+  ],
+  "hard_rules": [
+    "movement.motivation required",
+    "look.motivation required",
+    "no unmotivated dutch / orbit / crash zoom",
+    "do not rewrite dialogue or story",
+    "prefer movement.prompt_en from catalog when available"
+  ],
+  "lens_guidance_mm": {
+    "24_28": "space pressure, environment dominance",
+    "35_40": "versatile dialogue and body-in-space",
+    "50": "human neutral to mild isolation",
+    "65_85": "intimacy, portrait isolation"
+  },
+  "catalog_paths": {
+    "moves_catalog": "camera/moves_catalog.json",
+    "emotion_to_camera": "camera/emotion_to_camera.json",
+    "shot_sizes": "camera/shot_sizes.json",
+    "lens_language": "camera/lens_language.json"
+  },
+  "note": "Full 158-move library lives under knowledge/camera via Excel import"
+}

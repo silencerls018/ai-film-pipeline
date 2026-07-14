@@ -1,0 +1,3176 @@
+{
+  "meta": {
+    "source_xlsx": "E:\\AI\\知识库\\提示词\\运镜Prompt精品库_清洗版.xlsx",
+    "imported_at": "2026-07-13T19:20:02.144583+00:00",
+    "move_count": 158,
+    "shot_size_count": 14,
+    "sheets": [
+      "运镜Prompt精品库",
+      "景别词库_非运镜"
+    ],
+    "note": "Excel is edit source; runtime should read these JSON files."
+  },
+  "moves": [
+    {
+      "id": "pan",
+      "index": 1,
+      "en": "Pan",
+      "zh": "横摇",
+      "aliases": [
+        "水平摇",
+        "Panning"
+      ],
+      "move_type": "基础运镜",
+      "scenes": [
+        "纪录片",
+        "建立场景"
+      ],
+      "narrative_emotion": "展示空间、跟随视线、交代环境",
+      "emotions": [
+        "revelation",
+        "calm"
+      ],
+      "prompt_en": "slow pan left to right across the landscape, cinematic",
+      "note_zh": "机位不动，镜头水平左右转动。用于扫视环境、跟随横向动作或揭示画面外信息。"
+    },
+    {
+      "id": "pan_left",
+      "index": 2,
+      "en": "Pan Left",
+      "zh": "左摇",
+      "aliases": [
+        "Pan to the left"
+      ],
+      "move_type": "基础运镜",
+      "scenes": [
+        "对话",
+        "空间揭示"
+      ],
+      "narrative_emotion": "引导视线向左、发现左侧信息",
+      "emotions": [
+        "revelation"
+      ],
+      "prompt_en": "camera pans left revealing the character in the doorway",
+      "note_zh": "镜头向左水平转动，常用于揭示左侧人物或空间。"
+    },
+    {
+      "id": "pan_right",
+      "index": 3,
+      "en": "Pan Right",
+      "zh": "右摇",
+      "aliases": [
+        "Pan to the right"
+      ],
+      "move_type": "基础运镜",
+      "scenes": [
+        "对话",
+        "空间揭示"
+      ],
+      "narrative_emotion": "引导视线向右、发现右侧信息",
+      "emotions": [
+        "revelation"
+      ],
+      "prompt_en": "camera pans right following the car driving past",
+      "note_zh": "镜头向右水平转动，常用于跟随右侧运动或揭示。"
+    },
+    {
+      "id": "tilt",
+      "index": 4,
+      "en": "Tilt",
+      "zh": "纵摇/俯仰",
+      "aliases": [
+        "上下摇",
+        "Tilting"
+      ],
+      "move_type": "基础运镜",
+      "scenes": [
+        "人物出场",
+        "建筑"
+      ],
+      "narrative_emotion": "展示高度、敬畏感、从细节到全貌",
+      "emotions": [],
+      "prompt_en": "slow tilt up from the shoes to the face, dramatic",
+      "note_zh": "机位不动，镜头垂直上下转动。适合展示高楼、人物全身或由物及人。"
+    },
+    {
+      "id": "tilt_up",
+      "index": 5,
+      "en": "Tilt Up",
+      "zh": "上仰",
+      "aliases": [
+        "Tilt upwards"
+      ],
+      "move_type": "基础运镜",
+      "scenes": [
+        "英雄出场",
+        "建筑"
+      ],
+      "narrative_emotion": "崇高、压迫感反转、揭示高度",
+      "emotions": [
+        "oppression",
+        "revelation"
+      ],
+      "prompt_en": "tilt up revealing the skyscraper against the sky",
+      "note_zh": "镜头从下往上仰，常表现威严、高耸或情绪上升。"
+    },
+    {
+      "id": "tilt_down",
+      "index": 6,
+      "en": "Tilt Down",
+      "zh": "下俯",
+      "aliases": [
+        "Tilt downwards"
+      ],
+      "move_type": "基础运镜",
+      "scenes": [
+        "结局",
+        "发现地面细节"
+      ],
+      "narrative_emotion": "沉重、落地、发现线索",
+      "emotions": [
+        "grief",
+        "revelation"
+      ],
+      "prompt_en": "tilt down from the sky to the empty street",
+      "note_zh": "镜头从上往下俯，常结束场景或落到关键道具。"
+    },
+    {
+      "id": "roll",
+      "index": 7,
+      "en": "Roll",
+      "zh": "滚转/旋转",
+      "aliases": [
+        "Camera roll",
+        "Barrel roll"
+      ],
+      "move_type": "基础运镜",
+      "scenes": [
+        "心理惊悚",
+        "动作"
+      ],
+      "narrative_emotion": "失衡、眩晕、世界观颠覆",
+      "emotions": [
+        "suspicion",
+        "dread"
+      ],
+      "prompt_en": "slow camera roll creating disorientation, thriller style",
+      "note_zh": "镜头绕光轴旋转，画面地平线倾斜转动，制造不安或超现实感。"
+    },
+    {
+      "id": "dutch_angle",
+      "index": 8,
+      "en": "Dutch Angle",
+      "zh": "荷兰角",
+      "aliases": [
+        "Dutch tilt",
+        "Canted angle"
+      ],
+      "move_type": "基础运镜",
+      "scenes": [
+        "惊悚",
+        "犯罪片"
+      ],
+      "narrative_emotion": "心理失衡、危险、不稳定",
+      "emotions": [
+        "suspicion",
+        "dread"
+      ],
+      "prompt_en": "dutch angle shot of the villain, tense atmosphere",
+      "note_zh": "固定倾斜构图（非动态滚转），表现不安与失序。严格说是角度，常与运镜并用。"
+    },
+    {
+      "id": "dolly_in",
+      "index": 9,
+      "en": "Dolly In",
+      "zh": "推镜",
+      "aliases": [
+        "Push in",
+        "Track in"
+      ],
+      "move_type": "基础运镜",
+      "scenes": [
+        "剧情高潮",
+        "情感戏"
+      ],
+      "narrative_emotion": "靠近内心、强调、紧张升级",
+      "emotions": [
+        "suspicion",
+        "intimacy"
+      ],
+      "prompt_en": "slow dolly in on the actor's face, emotional close-up",
+      "note_zh": "摄影机整体向前靠近主体。透视真实变化，比变焦更有临场感。"
+    },
+    {
+      "id": "dolly_out",
+      "index": 10,
+      "en": "Dolly Out",
+      "zh": "拉镜",
+      "aliases": [
+        "Pull out",
+        "Push out",
+        "Track out"
+      ],
+      "move_type": "基础运镜",
+      "scenes": [
+        "结尾",
+        "孤独场面"
+      ],
+      "narrative_emotion": "疏离、孤立、揭示环境",
+      "emotions": [
+        "revelation",
+        "calm"
+      ],
+      "prompt_en": "dolly out revealing the character alone in the empty room",
+      "note_zh": "摄影机整体后退远离主体，常表现孤独或交代环境全貌。"
+    },
+    {
+      "id": "truck_left",
+      "index": 11,
+      "en": "Truck Left",
+      "zh": "左横移",
+      "aliases": [
+        "Track left",
+        "Crab left"
+      ],
+      "move_type": "基础运镜",
+      "scenes": [
+        "平行跟拍",
+        "空间关系"
+      ],
+      "narrative_emotion": "保持距离横向观察",
+      "emotions": [],
+      "prompt_en": "truck left parallel to the walking couple, smooth",
+      "note_zh": "机位向左横向平移，镜头朝向大致不变。"
+    },
+    {
+      "id": "truck_right",
+      "index": 12,
+      "en": "Truck Right",
+      "zh": "右横移",
+      "aliases": [
+        "Track right",
+        "Crab right"
+      ],
+      "move_type": "基础运镜",
+      "scenes": [
+        "平行跟拍",
+        "广告"
+      ],
+      "narrative_emotion": "横向展示产品/空间",
+      "emotions": [],
+      "prompt_en": "truck right along a row of neon signs at night",
+      "note_zh": "机位向右横向平移，适合街道、货架、队列展示。"
+    },
+    {
+      "id": "pedestal_up",
+      "index": 13,
+      "en": "Pedestal Up",
+      "zh": "机位上升",
+      "aliases": [
+        "Boom up",
+        "Ped up"
+      ],
+      "move_type": "基础运镜",
+      "scenes": [
+        "对话站起",
+        "层次"
+      ],
+      "narrative_emotion": "视角升高、权力变化",
+      "emotions": [],
+      "prompt_en": "pedestal up from seated conversation to standing figure",
+      "note_zh": "整机垂直升高（非 tilt），保持水平轴线，区别于仰镜头。"
+    },
+    {
+      "id": "pedestal_down",
+      "index": 14,
+      "en": "Pedestal Down",
+      "zh": "机位下降",
+      "aliases": [
+        "Boom down",
+        "Ped down"
+      ],
+      "move_type": "基础运镜",
+      "scenes": [
+        "孩子视角",
+        "落地"
+      ],
+      "narrative_emotion": "视角降低、贴近地面",
+      "emotions": [],
+      "prompt_en": "pedestal down to a child's eye level",
+      "note_zh": "整机垂直降低，常接到儿童视点或地面细节。"
+    },
+    {
+      "id": "arc_shot",
+      "index": 15,
+      "en": "Arc Shot",
+      "zh": "弧形运镜",
+      "aliases": [
+        "Arc move"
+      ],
+      "move_type": "基础运镜",
+      "scenes": [
+        "对话张力",
+        "MV"
+      ],
+      "narrative_emotion": "环绕局部、关系张力",
+      "emotions": [],
+      "prompt_en": "arc shot around two people arguing, cinematic",
+      "note_zh": "沿弧线移动，部分环绕主体，比完整360更短更常用。"
+    },
+    {
+      "id": "orbit_shot",
+      "index": 16,
+      "en": "Orbit Shot",
+      "zh": "环绕拍摄",
+      "aliases": [
+        "360 orbit",
+        "Circle around"
+      ],
+      "move_type": "基础运镜",
+      "scenes": [
+        "产品",
+        "英雄定妆",
+        "MV"
+      ],
+      "narrative_emotion": "全方位展示、中心聚焦",
+      "emotions": [],
+      "prompt_en": "360 degree orbit around the subject, smooth cinematic",
+      "note_zh": "摄影机绕主体近似圆周运动，主体保持画面中心。"
+    },
+    {
+      "id": "spiral_shot",
+      "index": 17,
+      "en": "Spiral Shot",
+      "zh": "螺旋运镜",
+      "aliases": [
+        "Helix",
+        "Spiral crane"
+      ],
+      "move_type": "复合运镜",
+      "scenes": [
+        "梦境",
+        "高潮"
+      ],
+      "narrative_emotion": "眩晕、升腾、失控",
+      "emotions": [
+        "dread"
+      ],
+      "prompt_en": "spiral upward orbit around the dancer, dreamlike",
+      "note_zh": "环绕同时升降，形成螺旋轨迹，视觉冲击强。"
+    },
+    {
+      "id": "tracking_shot",
+      "index": 18,
+      "en": "Tracking Shot",
+      "zh": "跟踪/跟移镜头",
+      "aliases": [
+        "Traveling shot"
+      ],
+      "move_type": "基础运镜",
+      "scenes": [
+        "动作",
+        "长镜头"
+      ],
+      "narrative_emotion": "沉浸、连贯、跟随事件",
+      "emotions": [],
+      "prompt_en": "long tracking shot following the character through the crowd",
+      "note_zh": "机位在场景中持续移动的统称，常跟随或穿过空间。"
+    },
+    {
+      "id": "follow_shot",
+      "index": 19,
+      "en": "Follow Shot",
+      "zh": "跟拍",
+      "aliases": [
+        "Following shot"
+      ],
+      "move_type": "基础运镜",
+      "scenes": [
+        "人物行走",
+        "短剧"
+      ],
+      "narrative_emotion": "贴身跟随、临场",
+      "emotions": [],
+      "prompt_en": "follow shot behind the hero walking down the hallway",
+      "note_zh": "镜头跟随运动主体，速度与方向大致同步。"
+    },
+    {
+      "id": "lead_shot",
+      "index": 20,
+      "en": "Lead Shot",
+      "zh": "领拍/前跟",
+      "aliases": [
+        "Leading shot",
+        "Front tracking"
+      ],
+      "move_type": "基础运镜",
+      "scenes": [
+        "行走对话",
+        "逃亡"
+      ],
+      "narrative_emotion": "看清表情、被牵引前进",
+      "emotions": [],
+      "prompt_en": "lead shot walking backward in front of the running character",
+      "note_zh": "摄影机在主体前方倒退拍摄，面向主体。"
+    },
+    {
+      "id": "side_tracking",
+      "index": 21,
+      "en": "Side Tracking",
+      "zh": "侧跟",
+      "aliases": [
+        "Lateral follow",
+        "Profile track"
+      ],
+      "move_type": "基础运镜",
+      "scenes": [
+        "走路",
+        "训练蒙太奇"
+      ],
+      "narrative_emotion": "平行陪伴感",
+      "emotions": [],
+      "prompt_en": "side tracking shot of athlete running along the beach",
+      "note_zh": "从侧面与主体同向同速移动，经典跑步/行走镜头。"
+    },
+    {
+      "id": "reverse_tracking",
+      "index": 22,
+      "en": "Reverse Tracking",
+      "zh": "倒退跟拍",
+      "aliases": [
+        "Backwards tracking"
+      ],
+      "move_type": "基础运镜",
+      "scenes": [
+        "追逐",
+        "恐惧逃离"
+      ],
+      "narrative_emotion": "被追感、压迫",
+      "emotions": [
+        "oppression"
+      ],
+      "prompt_en": "reverse tracking as the character runs toward camera in panic",
+      "note_zh": "摄影机后退，主体冲向镜头，增强冲击与紧迫。"
+    },
+    {
+      "id": "walk_and_talk",
+      "index": 23,
+      "en": "Walk and Talk",
+      "zh": "走谈跟拍",
+      "aliases": [
+        "Walk-and-talk"
+      ],
+      "move_type": "功能运镜",
+      "scenes": [
+        "剧集",
+        "职场剧"
+      ],
+      "narrative_emotion": "信息密度、动态对话",
+      "emotions": [
+        "revelation"
+      ],
+      "prompt_en": "steadicam walk and talk through a busy newsroom",
+      "note_zh": "对话中边走边拍，常用稳定器一气呵成。"
+    },
+    {
+      "id": "chase_shot",
+      "index": 24,
+      "en": "Chase Shot",
+      "zh": "追逐镜头",
+      "aliases": [
+        "Pursuit track"
+      ],
+      "move_type": "功能运镜",
+      "scenes": [
+        "动作片",
+        "惊悚"
+      ],
+      "narrative_emotion": "速度、紧张、肾上腺素",
+      "emotions": [
+        "suspicion"
+      ],
+      "prompt_en": "frantic chase shot through narrow alleyways, handheld energy",
+      "note_zh": "高速跟随逃与追，可手持或车载。"
+    },
+    {
+      "id": "zoom_in",
+      "index": 25,
+      "en": "Zoom In",
+      "zh": "变焦推近",
+      "aliases": [
+        "Zoom-in"
+      ],
+      "move_type": "光学运镜",
+      "scenes": [
+        "惊悚",
+        "强调细节"
+      ],
+      "narrative_emotion": "注意力聚焦、略不自然",
+      "emotions": [],
+      "prompt_en": "slow zoom in on the mysterious letter, suspenseful",
+      "note_zh": "改变焦距使主体变大，机位不动；透视与推镜不同。"
+    },
+    {
+      "id": "zoom_out",
+      "index": 26,
+      "en": "Zoom Out",
+      "zh": "变焦拉远",
+      "aliases": [
+        "Zoom-out"
+      ],
+      "move_type": "光学运镜",
+      "scenes": [
+        "结尾",
+        "揭示环境"
+      ],
+      "narrative_emotion": "从细节回到全局",
+      "emotions": [],
+      "prompt_en": "zoom out from the tear on the cheek to the whole room",
+      "note_zh": "焦距变短，画面由特写扩为全景，机位可不动。"
+    },
+    {
+      "id": "crash_zoom",
+      "index": 27,
+      "en": "Crash Zoom",
+      "zh": "急变焦",
+      "aliases": [
+        "Smash zoom",
+        "Snap zoom"
+      ],
+      "move_type": "光学运镜",
+      "scenes": [
+        "喜剧",
+        "恐怖",
+        "动作"
+      ],
+      "narrative_emotion": "惊吓、笑点、突然强调",
+      "emotions": [],
+      "prompt_en": "crash zoom onto the character's shocked face",
+      "note_zh": "极快速变焦推近，风格化强，慎用于严肃写实。"
+    },
+    {
+      "id": "dolly_zoom",
+      "index": 28,
+      "en": "Dolly Zoom",
+      "zh": "滑动变焦",
+      "aliases": [
+        "Vertigo shot",
+        "Hitchcock zoom",
+        "Zolly"
+      ],
+      "move_type": "光学运镜",
+      "scenes": [
+        "心理恐惧",
+        "顿悟"
+      ],
+      "narrative_emotion": "眩晕、认知崩塌、命运感",
+      "emotions": [
+        "dread"
+      ],
+      "prompt_en": "dolly zoom vertigo effect as realization hits, background warps",
+      "note_zh": "推/拉与反向变焦同步，主体大小近似不变而背景透视扭曲。"
+    },
+    {
+      "id": "reverse_dolly_zoom",
+      "index": 29,
+      "en": "Reverse Dolly Zoom",
+      "zh": "反向滑动变焦",
+      "aliases": [
+        "Opposite vertigo"
+      ],
+      "move_type": "光学运镜",
+      "scenes": [
+        "奇幻",
+        "觉醒"
+      ],
+      "narrative_emotion": "世界向主体挤压或打开",
+      "emotions": [],
+      "prompt_en": "reverse dolly zoom, background expands unnaturally",
+      "note_zh": "与经典希区柯克变焦方向组合相反，氛围不同。"
+    },
+    {
+      "id": "rack_focus",
+      "index": 30,
+      "en": "Rack Focus",
+      "zh": "移焦/调焦",
+      "aliases": [
+        "Focus pull",
+        "Focus rack"
+      ],
+      "move_type": "光学运镜",
+      "scenes": [
+        "对话",
+        "线索揭示"
+      ],
+      "narrative_emotion": "注意力转移",
+      "emotions": [],
+      "prompt_en": "rack focus from foreground gun to background face",
+      "note_zh": "焦点在不同景深平面间切换；非机位运动，但是画面运镜感常用。"
+    },
+    {
+      "id": "whip_pan",
+      "index": 31,
+      "en": "Whip Pan",
+      "zh": "甩镜头",
+      "aliases": [
+        "Swish pan",
+        "Whip-pan"
+      ],
+      "move_type": "复合运镜",
+      "scenes": [
+        "转场",
+        "喜剧",
+        "音乐片"
+      ],
+      "narrative_emotion": "能量、连接时空",
+      "emotions": [],
+      "prompt_en": "whip pan transition from city day to night club",
+      "note_zh": "极快水平摇产生运动模糊，常作转场或同一场景快速切换注意力。"
+    },
+    {
+      "id": "whip_tilt",
+      "index": 32,
+      "en": "Whip Tilt",
+      "zh": "急俯仰甩",
+      "aliases": [
+        "Swish tilt"
+      ],
+      "move_type": "复合运镜",
+      "scenes": [
+        "动作",
+        "MV"
+      ],
+      "narrative_emotion": "垂直方向的爆发能量",
+      "emotions": [],
+      "prompt_en": "whip tilt from floor to ceiling lights, energetic",
+      "note_zh": "极快上下 tilt，效果类似甩镜的垂直版。"
+    },
+    {
+      "id": "push_and_pan",
+      "index": 33,
+      "en": "Push and Pan",
+      "zh": "推摇组合",
+      "aliases": [
+        "Dolly pan",
+        "Push-pan"
+      ],
+      "move_type": "复合运镜",
+      "scenes": [
+        "入场",
+        "戏剧"
+      ],
+      "narrative_emotion": "边靠近边扫视",
+      "emotions": [
+        "intimacy"
+      ],
+      "prompt_en": "dolly in while panning to keep subject framed",
+      "note_zh": "前进同时水平摇，保持主体构图或扫过空间。"
+    },
+    {
+      "id": "crane_push_in",
+      "index": 34,
+      "en": "Crane Push In",
+      "zh": "摇臂推进",
+      "aliases": [
+        "Crane dolly in"
+      ],
+      "move_type": "复合运镜",
+      "scenes": [
+        "史诗开场",
+        "高潮"
+      ],
+      "narrative_emotion": "从环境落入人物",
+      "emotions": [],
+      "prompt_en": "crane down and push in toward the lone figure in the field",
+      "note_zh": "升降与推进结合，大场面收束到人物。"
+    },
+    {
+      "id": "orbit_push_in",
+      "index": 35,
+      "en": "Orbit Push In",
+      "zh": "环绕推进",
+      "aliases": [
+        "Spiral in",
+        "Orbit dolly in"
+      ],
+      "move_type": "复合运镜",
+      "scenes": [
+        "定妆",
+        "反派登场"
+      ],
+      "narrative_emotion": "聚焦中心、气场",
+      "emotions": [
+        "intimacy"
+      ],
+      "prompt_en": "orbit while slowly pushing in on the protagonist",
+      "note_zh": "绕主体转的同时逐渐靠近。"
+    },
+    {
+      "id": "tracking_crane",
+      "index": 36,
+      "en": "Tracking Crane",
+      "zh": "跟拍升降",
+      "aliases": [
+        "Boom follow",
+        "Crane track"
+      ],
+      "move_type": "复合运镜",
+      "scenes": [
+        "一镜到底",
+        "舞台"
+      ],
+      "narrative_emotion": "立体跟随",
+      "emotions": [],
+      "prompt_en": "tracking crane shot rising as the crowd cheers",
+      "note_zh": "跟随主体移动并同时改变高度。"
+    },
+    {
+      "id": "parallax_move",
+      "index": 37,
+      "en": "Parallax Move",
+      "zh": "视差横移",
+      "aliases": [
+        "Parallax tracking",
+        "Slider parallax"
+      ],
+      "move_type": "复合运镜",
+      "scenes": [
+        "产品",
+        "人像",
+        "广告"
+      ],
+      "narrative_emotion": "立体层次、电影感",
+      "emotions": [],
+      "prompt_en": "subtle parallax slider move past foreground leaves to subject",
+      "note_zh": "横移利用前景制造视差，增强空间深度。"
+    },
+    {
+      "id": "handheld",
+      "index": 38,
+      "en": "Handheld",
+      "zh": "手持",
+      "aliases": [
+        "Hand-held",
+        "Shaky cam (stylized)"
+      ],
+      "move_type": "设备质感",
+      "scenes": [
+        "战争",
+        "纪实",
+        "惊悚"
+      ],
+      "narrative_emotion": "真实、混乱、亲密",
+      "emotions": [
+        "suspicion",
+        "intimacy"
+      ],
+      "prompt_en": "raw handheld camera, documentary realism, slight shake",
+      "note_zh": "摄影师手持拍摄，带自然晃动，增强纪实与紧张感。"
+    },
+    {
+      "id": "steadicam",
+      "index": 39,
+      "en": "Steadicam",
+      "zh": "斯坦尼康",
+      "aliases": [
+        "Stabilized vest rig"
+      ],
+      "move_type": "设备质感",
+      "scenes": [
+        "长镜头",
+        "穿梭空间"
+      ],
+      "narrative_emotion": "流畅、幽灵般跟随",
+      "emotions": [],
+      "prompt_en": "smooth steadicam shot gliding through the hotel corridors",
+      "note_zh": "机械稳定背心系统，手持自由度加轨道般顺滑。"
+    },
+    {
+      "id": "gimbal_shot",
+      "index": 40,
+      "en": "Gimbal Shot",
+      "zh": "稳定器运镜",
+      "aliases": [
+        "3-axis gimbal",
+        "Ronin-style"
+      ],
+      "move_type": "设备质感",
+      "scenes": [
+        "短视频",
+        "旅拍",
+        "剧集"
+      ],
+      "narrative_emotion": "现代流畅跟拍",
+      "emotions": [],
+      "prompt_en": "gimbal tracking shot, ultra smooth modern cinematic",
+      "note_zh": "三轴电机稳定，轻便实现推拉移跟。"
+    },
+    {
+      "id": "shoulder_rig",
+      "index": 41,
+      "en": "Shoulder Rig",
+      "zh": "肩扛",
+      "aliases": [
+        "Shoulder-mounted"
+      ],
+      "move_type": "设备质感",
+      "scenes": [
+        "新闻感",
+        "动作"
+      ],
+      "narrative_emotion": "半稳半晃、职业纪实",
+      "emotions": [],
+      "prompt_en": "shoulder rig follow, news-crew aesthetic",
+      "note_zh": "肩托支撑，晃动小于纯手持，偏新闻/片场感。"
+    },
+    {
+      "id": "slider_shot",
+      "index": 42,
+      "en": "Slider Shot",
+      "zh": "滑轨运镜",
+      "aliases": [
+        "Mini dolly",
+        "Slider"
+      ],
+      "move_type": "设备质感",
+      "scenes": [
+        "访谈",
+        "产品",
+        "B-roll"
+      ],
+      "narrative_emotion": "微小电影感位移",
+      "emotions": [],
+      "prompt_en": "slow slider move left to right on product hero shot",
+      "note_zh": "短行程精密平移，适合桌面、采访轻微运动。"
+    },
+    {
+      "id": "dolly_on_rails",
+      "index": 43,
+      "en": "Dolly on Rails",
+      "zh": "轨道车运镜",
+      "aliases": [
+        "Rail dolly"
+      ],
+      "move_type": "设备质感",
+      "scenes": [
+        "电影剧情",
+        "精准调度"
+      ],
+      "narrative_emotion": "稳定、可重复",
+      "emotions": [],
+      "prompt_en": "classic dolly on rails push in, film set precision",
+      "note_zh": "铺轨推行，运动路径精确，片厂经典方式。"
+    },
+    {
+      "id": "jib_shot",
+      "index": 44,
+      "en": "Jib Shot",
+      "zh": "小摇臂",
+      "aliases": [
+        "Jib arm"
+      ],
+      "move_type": "设备质感",
+      "scenes": [
+        "活动",
+        "婚礼",
+        "中小成本"
+      ],
+      "narrative_emotion": "轻量升降弧线",
+      "emotions": [],
+      "prompt_en": "jib up from cake to the dancing crowd",
+      "note_zh": "较短臂升降，比大型 crane 灵活便宜。"
+    },
+    {
+      "id": "crane_shot",
+      "index": 45,
+      "en": "Crane Shot",
+      "zh": "大摇臂/吊臂",
+      "aliases": [
+        "Camera crane"
+      ],
+      "move_type": "设备质感",
+      "scenes": [
+        "史诗",
+        "开场结尾"
+      ],
+      "narrative_emotion": "气势、上帝视点过渡",
+      "emotions": [],
+      "prompt_en": "sweeping crane shot rising over the battlefield",
+      "note_zh": "长臂大范围升降扫过，强调规模与戏剧性。"
+    },
+    {
+      "id": "techno_crane",
+      "index": 46,
+      "en": "Techno Crane",
+      "zh": "伸缩摇臂",
+      "aliases": [
+        "Telescopic crane"
+      ],
+      "move_type": "设备质感",
+      "scenes": [
+        "高成本电影",
+        "广告"
+      ],
+      "narrative_emotion": "复杂三维路径",
+      "emotions": [],
+      "prompt_en": "techno crane telescoping in through the window",
+      "note_zh": "臂可伸缩，能完成穿窗、复杂曲线等高难运动。"
+    },
+    {
+      "id": "aerial_shot",
+      "index": 47,
+      "en": "Aerial Shot",
+      "zh": "航拍",
+      "aliases": [
+        "Helicopter aerial"
+      ],
+      "move_type": "设备质感",
+      "scenes": [
+        "建立大环境",
+        "旅行"
+      ],
+      "narrative_emotion": "辽阔、史诗",
+      "emotions": [],
+      "prompt_en": "aerial shot of mountains at sunrise, cinematic wide",
+      "note_zh": "高空机位总称，传统用直升机，现多用无人机。"
+    },
+    {
+      "id": "drone_shot",
+      "index": 48,
+      "en": "Drone Shot",
+      "zh": "无人机运镜",
+      "aliases": [
+        "UAV shot"
+      ],
+      "move_type": "设备质感",
+      "scenes": [
+        "地产",
+        "旅行",
+        "电影外景"
+      ],
+      "narrative_emotion": "灵活高空路径",
+      "emotions": [],
+      "prompt_en": "drone flying forward over ocean cliffs, golden hour",
+      "note_zh": "多旋翼航拍，可完成俯冲、环绕、穿越等。"
+    },
+    {
+      "id": "fpv_drone",
+      "index": 49,
+      "en": "FPV Drone",
+      "zh": "FPV穿越机",
+      "aliases": [
+        "FPV chase"
+      ],
+      "move_type": "设备质感",
+      "scenes": [
+        "运动",
+        "科幻",
+        "广告大片"
+      ],
+      "narrative_emotion": "极速沉浸、第一人称飞感",
+      "emotions": [],
+      "prompt_en": "fpv drone racing through forest trees, high speed",
+      "note_zh": "第一人称遥控穿越，速度快、路径激进。"
+    },
+    {
+      "id": "cable_cam",
+      "index": 50,
+      "en": "Cable Cam",
+      "zh": "索道/钢丝机位",
+      "aliases": [
+        "Wirecam",
+        "Spidercam"
+      ],
+      "move_type": "设备质感",
+      "scenes": [
+        "体育",
+        "演唱会",
+        "战场"
+      ],
+      "narrative_emotion": "空中直线高速穿越",
+      "emotions": [],
+      "prompt_en": "cable cam racing above the stadium crowd",
+      "note_zh": "沿缆绳高速移动，覆盖大场地。"
+    },
+    {
+      "id": "car_mount",
+      "index": 51,
+      "en": "Car Mount",
+      "zh": "车载固定",
+      "aliases": [
+        "Hood mount",
+        "Hostess tray"
+      ],
+      "move_type": "设备质感",
+      "scenes": [
+        "公路片",
+        "追逐"
+      ],
+      "narrative_emotion": "车内外交谈、速度感",
+      "emotions": [],
+      "prompt_en": "car mount shot of drivers talking, highway night lights",
+      "note_zh": "摄影机固定在车上拍车内或行驶外景。"
+    },
+    {
+      "id": "process_trailer",
+      "index": 52,
+      "en": "Process Trailer",
+      "zh": "过程拖车跟拍",
+      "aliases": [
+        "Camera trailer"
+      ],
+      "move_type": "设备质感",
+      "scenes": [
+        "对话驾车戏"
+      ],
+      "narrative_emotion": "安全可控的行驶对戏",
+      "emotions": [],
+      "prompt_en": "process trailer tracking two actors in a moving car",
+      "note_zh": "特制拖车承载演员车辆与机位，拍行驶戏。"
+    },
+    {
+      "id": "snorricam",
+      "index": 53,
+      "en": "Snorricam",
+      "zh": "绑身镜头",
+      "aliases": [
+        "Body-mounted camera"
+      ],
+      "move_type": "设备质感",
+      "scenes": [
+        "精神崩溃",
+        "毒瘾",
+        "迷茫"
+      ],
+      "narrative_emotion": "主体固定背景狂移",
+      "emotions": [],
+      "prompt_en": "snorricam bodycam on character walking through chaos",
+      "note_zh": "机位绑在演员身上，面部相对稳定、环境剧烈晃动。"
+    },
+    {
+      "id": "helmet_cam",
+      "index": 54,
+      "en": "Helmet Cam",
+      "zh": "头盔视角",
+      "aliases": [
+        "Headcam"
+      ],
+      "move_type": "设备质感",
+      "scenes": [
+        "极限运动",
+        "战争"
+      ],
+      "narrative_emotion": "极端主观",
+      "emotions": [],
+      "prompt_en": "helmet cam skiing downhill, immersive pov",
+      "note_zh": "装在头盔上的运动主观视角。"
+    },
+    {
+      "id": "bullet_time",
+      "index": 55,
+      "en": "Bullet Time",
+      "zh": "子弹时间",
+      "aliases": [
+        "Time slice",
+        "Matrix orbit freeze"
+      ],
+      "move_type": "特殊效果",
+      "scenes": [
+        "动作高潮",
+        "广告炫技"
+      ],
+      "narrative_emotion": "时间凝固、空间可绕",
+      "emotions": [],
+      "prompt_en": "bullet time orbit around frozen mid-air kick, matrix style",
+      "note_zh": "多机阵列或特效使瞬间近乎静止并环绕观察。"
+    },
+    {
+      "id": "time_slice_dolly",
+      "index": 56,
+      "en": "Time-Slice Dolly",
+      "zh": "时间切片推轨",
+      "aliases": [
+        "Frozen dolly slice"
+      ],
+      "move_type": "特殊效果",
+      "scenes": [
+        "体育",
+        "品牌大片"
+      ],
+      "narrative_emotion": "静止中推进",
+      "emotions": [],
+      "prompt_en": "time-slice push in on athlete frozen mid-jump",
+      "note_zh": "时间切片与推近结合。"
+    },
+    {
+      "id": "motion_control",
+      "index": 57,
+      "en": "Motion Control",
+      "zh": "运动控制重复运镜",
+      "aliases": [
+        "MoCo move"
+      ],
+      "move_type": "特殊效果",
+      "scenes": [
+        "VFX",
+        "定格",
+        "产品"
+      ],
+      "narrative_emotion": "完全可重复路径",
+      "emotions": [],
+      "prompt_en": "motion control camera move repeated for vfx plate",
+      "note_zh": "机械臂精确重复同一路径，便于特效合成。"
+    },
+    {
+      "id": "robot_arm_shot",
+      "index": 58,
+      "en": "Robot Arm Shot",
+      "zh": "机器臂运镜",
+      "aliases": [
+        "Cinematic robot arm"
+      ],
+      "move_type": "特殊效果",
+      "scenes": [
+        "广告",
+        "精密产品"
+      ],
+      "narrative_emotion": "超人类平滑/急停",
+      "emotions": [],
+      "prompt_en": "robot arm whip-around product reveal, ultra precise",
+      "note_zh": "工业机器臂拍摄，路径复杂且极稳。"
+    },
+    {
+      "id": "speed_ramp_tracking",
+      "index": 59,
+      "en": "Speed Ramp Tracking",
+      "zh": "变速跟拍",
+      "aliases": [
+        "Speed ramping track"
+      ],
+      "move_type": "特殊效果",
+      "scenes": [
+        "动作",
+        "体育",
+        "MV"
+      ],
+      "narrative_emotion": "节奏爆发",
+      "emotions": [],
+      "prompt_en": "tracking shot with speed ramp from slow-mo to real-time",
+      "note_zh": "跟拍中切换慢速与常速，强化冲击瞬间。"
+    },
+    {
+      "id": "slow_motion_orbit",
+      "index": 60,
+      "en": "Slow Motion Orbit",
+      "zh": "慢动作环绕",
+      "aliases": [
+        "Slow-mo 360"
+      ],
+      "move_type": "特殊效果",
+      "scenes": [
+        "定妆",
+        "浪漫",
+        "产品"
+      ],
+      "narrative_emotion": "仪式感、赞美主体",
+      "emotions": [],
+      "prompt_en": "slow motion 360 orbit around couple kissing, romantic",
+      "note_zh": "环绕配合慢动作，拉长情绪时间。"
+    },
+    {
+      "id": "hyperlapse_move",
+      "index": 61,
+      "en": "Hyperlapse Move",
+      "zh": "超时移运动",
+      "aliases": [
+        "Moving hyperlapse"
+      ],
+      "move_type": "特殊效果",
+      "scenes": [
+        "城市宣传",
+        "旅行"
+      ],
+      "narrative_emotion": "时空压缩穿越",
+      "emotions": [],
+      "prompt_en": "hyperlapse moving through city streets day to night",
+      "note_zh": "位移结合延时，产生快速穿越城市感。"
+    },
+    {
+      "id": "long_take",
+      "index": 62,
+      "en": "Long Take",
+      "zh": "长镜头/一镜到底",
+      "aliases": [
+        "Oner",
+        "Continuous take"
+      ],
+      "move_type": "功能运镜",
+      "scenes": [
+        "沉浸剧情",
+        "高难度场面"
+      ],
+      "narrative_emotion": "不打断的真实时间",
+      "emotions": [],
+      "prompt_en": "continuous long take through multiple rooms, no cuts",
+      "note_zh": "长时间不停机的运动镜头，可含多种运镜组合。"
+    },
+    {
+      "id": "invisible_cut_oner",
+      "index": 63,
+      "en": "Invisible Cut Oner",
+      "zh": "隐形剪辑长镜头",
+      "aliases": [
+        "Stitched oner"
+      ],
+      "move_type": "特殊效果",
+      "scenes": [
+        "伪一镜",
+        "大场面"
+      ],
+      "narrative_emotion": "一镜到底的观感",
+      "emotions": [],
+      "prompt_en": "seemingly one-shot sequence with invisible cuts",
+      "note_zh": "用动作/暗场/特效隐藏剪辑点，模拟单镜头。"
+    },
+    {
+      "id": "reveal_shot",
+      "index": 64,
+      "en": "Reveal Shot",
+      "zh": "揭示镜头",
+      "aliases": [
+        "Camera reveal"
+      ],
+      "move_type": "功能运镜",
+      "scenes": [
+        "悬念",
+        "喜剧反转"
+      ],
+      "narrative_emotion": "延迟给出关键信息",
+      "emotions": [
+        "revelation"
+      ],
+      "prompt_en": "pan reveal of the surprise waiting behind the door",
+      "note_zh": "用摇/移/拉等运动在适当时机揭开被遮挡信息。"
+    },
+    {
+      "id": "establishing_move",
+      "index": 65,
+      "en": "Establishing Move",
+      "zh": "建立镜头运动",
+      "aliases": [
+        "Establishing aerial",
+        "crane"
+      ],
+      "move_type": "功能运镜",
+      "scenes": [
+        "场次开头"
+      ],
+      "narrative_emotion": "交代时间地点规模",
+      "emotions": [
+        "calm"
+      ],
+      "prompt_en": "establishing crane shot over the coastal town at dusk",
+      "note_zh": "以运动方式建立场景地理与氛围，不仅是静态大远景。"
+    },
+    {
+      "id": "pov_move",
+      "index": 66,
+      "en": "POV Move",
+      "zh": "主观视角运动",
+      "aliases": [
+        "Subjective camera",
+        "POV shot move"
+      ],
+      "move_type": "功能运镜",
+      "scenes": [
+        "恐怖",
+        "沉浸叙事"
+      ],
+      "narrative_emotion": "代入角色感官",
+      "emotions": [],
+      "prompt_en": "pov walking down dark corridor, breathing handheld",
+      "note_zh": "模拟角色眼睛所见，常含行走晃动与视线摇移。"
+    },
+    {
+      "id": "semi_pov",
+      "index": 67,
+      "en": "Semi-POV",
+      "zh": "半主观跟随",
+      "aliases": [
+        "Over-shoulder follow"
+      ],
+      "move_type": "功能运镜",
+      "scenes": [
+        "惊悚跟随",
+        "尾随"
+      ],
+      "narrative_emotion": "既跟角色又保留距离",
+      "emotions": [],
+      "prompt_en": "semi-pov over shoulder following suspect through market",
+      "note_zh": "过肩式跟随，介于纯主观与客观之间。"
+    },
+    {
+      "id": "ots_tracking",
+      "index": 68,
+      "en": "OTS Tracking",
+      "zh": "过肩跟移",
+      "aliases": [
+        "Over-the-shoulder track"
+      ],
+      "move_type": "功能运镜",
+      "scenes": [
+        "对话走动",
+        "对峙"
+      ],
+      "narrative_emotion": "关系轴线清晰",
+      "emotions": [],
+      "prompt_en": "ots tracking behind detective approaching the witness",
+      "note_zh": "过肩构图下的移动，强调谁在看谁。"
+    },
+    {
+      "id": "entrance_follow",
+      "index": 69,
+      "en": "Entrance Follow",
+      "zh": "入场跟拍",
+      "aliases": [
+        "Character entrance track"
+      ],
+      "move_type": "功能运镜",
+      "scenes": [
+        "人物登场"
+      ],
+      "narrative_emotion": "气场、注目",
+      "emotions": [],
+      "prompt_en": "follow the star entering the ballroom as heads turn",
+      "note_zh": "跟随角色进入空间，完成登场仪式。"
+    },
+    {
+      "id": "exit_pull_out",
+      "index": 70,
+      "en": "Exit Pull Out",
+      "zh": "离场拉出",
+      "aliases": [
+        "Exit reveal pull"
+      ],
+      "move_type": "功能运镜",
+      "scenes": [
+        "场景收束"
+      ],
+      "narrative_emotion": "余韵、孤独、落幕",
+      "emotions": [],
+      "prompt_en": "pull out as character exits frame into the night",
+      "note_zh": "角色离开时拉远或停下，留下空间余味。"
+    },
+    {
+      "id": "match_pan",
+      "index": 71,
+      "en": "Match Pan",
+      "zh": "匹配摇镜",
+      "aliases": [
+        "Match cut pan"
+      ],
+      "move_type": "功能运镜",
+      "scenes": [
+        "蒙太奇转场"
+      ],
+      "narrative_emotion": "时空跳跃仍连贯",
+      "emotions": [],
+      "prompt_en": "whip pan match cut from classroom to battlefield",
+      "note_zh": "摇镜动作匹配剪到下一场景，形成转场。"
+    },
+    {
+      "id": "god_s_eye_dive",
+      "index": 72,
+      "en": "God's Eye Dive",
+      "zh": "神视角俯冲",
+      "aliases": [
+        "Top-down dive",
+        "God's eye drop"
+      ],
+      "move_type": "功能运镜",
+      "scenes": [
+        "命运感",
+        "犯罪全景"
+      ],
+      "narrative_emotion": "全知、审判感",
+      "emotions": [],
+      "prompt_en": "god's eye view slowly descending onto the crime scene",
+      "note_zh": "接近垂直俯视并下降，强调布局与宿命。"
+    },
+    {
+      "id": "bird_s_eye_move",
+      "index": 73,
+      "en": "Bird's Eye Move",
+      "zh": "鸟瞰移动",
+      "aliases": [
+        "Overhead track",
+        "Top-down move"
+      ],
+      "move_type": "功能运镜",
+      "scenes": [
+        "舞蹈",
+        "迷宫",
+        "战术"
+      ],
+      "narrative_emotion": "图案化、抽象空间",
+      "emotions": [],
+      "prompt_en": "bird's eye tracking over maze-like city blocks",
+      "note_zh": "高角度俯拍并移动，突出地面几何与调度。"
+    },
+    {
+      "id": "worm_s_eye_rise",
+      "index": 74,
+      "en": "Worm's Eye Rise",
+      "zh": "虫视角爬升",
+      "aliases": [
+        "Low angle rise"
+      ],
+      "move_type": "功能运镜",
+      "scenes": [
+        "英雄化",
+        "巨物"
+      ],
+      "narrative_emotion": "压迫转崇高",
+      "emotions": [
+        "oppression"
+      ],
+      "prompt_en": "worm's eye view pedestal up the towering robot",
+      "note_zh": "极低角度向上看并升高或仰摇，放大体量。"
+    },
+    {
+      "id": "window_through_move",
+      "index": 75,
+      "en": "Window Through Move",
+      "zh": "穿窗/穿越运镜",
+      "aliases": [
+        "Through-window",
+        "Impossible cam"
+      ],
+      "move_type": "特殊效果",
+      "scenes": [
+        "开场炫技",
+        "VFX"
+      ],
+      "narrative_emotion": "无缝空间穿越",
+      "emotions": [],
+      "prompt_en": "camera flies through window into the apartment interior",
+      "note_zh": "实体或CGI让镜头穿过玻璃/墙壁进入下空间。"
+    },
+    {
+      "id": "crash_in",
+      "index": 76,
+      "en": "Crash In",
+      "zh": "急推撞击感",
+      "aliases": [
+        "Crash push",
+        "Smash in"
+      ],
+      "move_type": "复合运镜",
+      "scenes": [
+        "惊吓",
+        "动作命中"
+      ],
+      "narrative_emotion": "暴力强调",
+      "emotions": [],
+      "prompt_en": "crash push-in as the punch lands, impactful",
+      "note_zh": "极快速推近，类似视觉撞击。"
+    },
+    {
+      "id": "creep_in",
+      "index": 77,
+      "en": "Creep In",
+      "zh": "缓推/潜行推",
+      "aliases": [
+        "Slow creep push"
+      ],
+      "move_type": "基础运镜",
+      "scenes": [
+        "恐怖",
+        "凝视"
+      ],
+      "narrative_emotion": "不安逼近",
+      "emotions": [
+        "oppression",
+        "suspicion",
+        "dread"
+      ],
+      "prompt_en": "creepy slow push in on sleeping figure, horror",
+      "note_zh": "极慢推进，制造窥视与压迫。"
+    },
+    {
+      "id": "creep_out",
+      "index": 78,
+      "en": "Creep Out",
+      "zh": "缓拉",
+      "aliases": [
+        "Slow creep pull"
+      ],
+      "move_type": "基础运镜",
+      "scenes": [
+        "觉醒",
+        "疏离"
+      ],
+      "narrative_emotion": "慢慢抽离",
+      "emotions": [
+        "revelation"
+      ],
+      "prompt_en": "slow creep out leaving the argument in wide shot",
+      "note_zh": "极慢拉远，情绪降温或揭示全貌。"
+    },
+    {
+      "id": "circle_reveal",
+      "index": 79,
+      "en": "Circle Reveal",
+      "zh": "环绕揭示",
+      "aliases": [
+        "Orbit reveal"
+      ],
+      "move_type": "功能运镜",
+      "scenes": [
+        "产品",
+        "反派",
+        "秘密"
+      ],
+      "narrative_emotion": "转出来看清真相",
+      "emotions": [
+        "revelation"
+      ],
+      "prompt_en": "orbit reveal around pillar to show hidden figure",
+      "note_zh": "环绕过程中从遮挡到露出主体。"
+    },
+    {
+      "id": "foreground_wipe_move",
+      "index": 80,
+      "en": "Foreground Wipe Move",
+      "zh": "前景擦除式横移",
+      "aliases": [
+        "Foreground wipe track"
+      ],
+      "move_type": "功能运镜",
+      "scenes": [
+        "转场",
+        "街道"
+      ],
+      "narrative_emotion": "自然切场感",
+      "emotions": [],
+      "prompt_en": "truck past foreground pillar wiping to new scene",
+      "note_zh": "横移用前景遮满画面再露新场景，可作软转场。"
+    },
+    {
+      "id": "pedestal_reveal",
+      "index": 81,
+      "en": "Pedestal Reveal",
+      "zh": "升降揭示",
+      "aliases": [
+        "Boom reveal"
+      ],
+      "move_type": "功能运镜",
+      "scenes": [
+        "舞台",
+        "地标"
+      ],
+      "narrative_emotion": "先抑后扬",
+      "emotions": [],
+      "prompt_en": "pedestal up reveal of the illuminated bridge at night",
+      "note_zh": "先低后升，逐步展示高大主体。"
+    },
+    {
+      "id": "tilt_reveal",
+      "index": 82,
+      "en": "Tilt Reveal",
+      "zh": "俯仰揭示",
+      "aliases": [
+        "Tilt-up reveal"
+      ],
+      "move_type": "功能运镜",
+      "scenes": [
+        "巨人",
+        "建筑",
+        "服装"
+      ],
+      "narrative_emotion": "期待到震撼",
+      "emotions": [],
+      "prompt_en": "tilt up reveal from boots to the masked superhero",
+      "note_zh": "由下至上摇出完整形象，经典英雄出场。"
+    },
+    {
+      "id": "pull_focus_dolly",
+      "index": 83,
+      "en": "Pull Focus Dolly",
+      "zh": "推拉中移焦",
+      "aliases": [
+        "Dolly rack focus"
+      ],
+      "move_type": "复合运镜",
+      "scenes": [
+        "复杂调度"
+      ],
+      "narrative_emotion": "运动中注意力切换",
+      "emotions": [
+        "revelation"
+      ],
+      "prompt_en": "dolly past crowd racking focus to the spy",
+      "note_zh": "机位移动同时改变焦点，信息层次丰富。"
+    },
+    {
+      "id": "counter_move",
+      "index": 84,
+      "en": "Counter Move",
+      "zh": "反向对位运镜",
+      "aliases": [
+        "Counter-tracking"
+      ],
+      "move_type": "复合运镜",
+      "scenes": [
+        "舞蹈",
+        "动作设计"
+      ],
+      "narrative_emotion": "相对运动张力",
+      "emotions": [],
+      "prompt_en": "camera moves left while subject runs right, dynamic",
+      "note_zh": "机位与主体反向运动，增强速度与张力。"
+    },
+    {
+      "id": "static_locked_off",
+      "index": 85,
+      "en": "Static Locked-Off",
+      "zh": "锁定固定",
+      "aliases": [
+        "Lock-off",
+        "Locked shot"
+      ],
+      "move_type": "基础运镜",
+      "scenes": [
+        "对话",
+        "监控感",
+        "构图"
+      ],
+      "narrative_emotion": "冷静、客观、表演优先",
+      "emotions": [
+        "calm"
+      ],
+      "prompt_en": "locked-off static wide shot, characters move in frame",
+      "note_zh": "完全锁死机位；不动也是运镜选择。纳入词库便于对比提示。"
+    },
+    {
+      "id": "subtle_drift",
+      "index": 86,
+      "en": "Subtle Drift",
+      "zh": "微漂移",
+      "aliases": [
+        "Breathing room",
+        "Gentle drift"
+      ],
+      "move_type": "设备质感",
+      "scenes": [
+        "访谈",
+        "情感近景"
+      ],
+      "narrative_emotion": "活着的画面、避免死板",
+      "emotions": [],
+      "prompt_en": "subtle gimbal drift, almost static but alive",
+      "note_zh": "几乎固定但有极轻微位移，现代对话常用。"
+    },
+    {
+      "id": "handheld_zoom",
+      "index": 87,
+      "en": "Handheld Zoom",
+      "zh": "手持变焦",
+      "aliases": [
+        "Docu zoom",
+        "News zoom"
+      ],
+      "move_type": "复合运镜",
+      "scenes": [
+        "伪纪录片",
+        "喜剧"
+      ],
+      "narrative_emotion": "临场抓拍感",
+      "emotions": [],
+      "prompt_en": "handheld crash zoom like found-footage documentary",
+      "note_zh": "手持配合随意变焦，强化现场拍到的感觉。"
+    },
+    {
+      "id": "steadicam_float",
+      "index": 88,
+      "en": "Steadicam Float",
+      "zh": "斯坦尼康漂浮",
+      "aliases": [
+        "Floating steadicam"
+      ],
+      "move_type": "设备质感",
+      "scenes": [
+        "超现实",
+        "梦境"
+      ],
+      "narrative_emotion": "失重、幽灵视角",
+      "emotions": [],
+      "prompt_en": "floating steadicam through empty hospital, eerie calm",
+      "note_zh": "高度平滑的漂浮感跟随，常带超现实气质。"
+    },
+    {
+      "id": "drone_orbit",
+      "index": 89,
+      "en": "Drone Orbit",
+      "zh": "无人机环绕",
+      "aliases": [
+        "Aerial orbit"
+      ],
+      "move_type": "设备质感",
+      "scenes": [
+        "地标",
+        "婚礼",
+        "汽车"
+      ],
+      "narrative_emotion": "华丽展示",
+      "emotions": [],
+      "prompt_en": "drone orbit around lighthouse on cliff, epic",
+      "note_zh": "航拍高度的环绕主体。"
+    },
+    {
+      "id": "drone_dive",
+      "index": 90,
+      "en": "Drone Dive",
+      "zh": "无人机俯冲",
+      "aliases": [
+        "Aerial dive",
+        "Top-down dive"
+      ],
+      "move_type": "设备质感",
+      "scenes": [
+        "开场",
+        "体育"
+      ],
+      "narrative_emotion": "从天而降的冲击",
+      "emotions": [
+        "calm"
+      ],
+      "prompt_en": "drone dive from clouds down to street level",
+      "note_zh": "高空快速下降到场景，强建立镜头。"
+    },
+    {
+      "id": "drone_flyover",
+      "index": 91,
+      "en": "Drone Flyover",
+      "zh": "无人机飞越",
+      "aliases": [
+        "Fly-over",
+        "Fly-through"
+      ],
+      "move_type": "设备质感",
+      "scenes": [
+        "风景",
+        "城市宣传"
+      ],
+      "narrative_emotion": "穿越式巡游",
+      "emotions": [],
+      "prompt_en": "drone flyover of misty forest canopy at dawn",
+      "note_zh": "从上方飞过表面，强调地貌延伸。"
+    },
+    {
+      "id": "drone_reveal",
+      "index": 92,
+      "en": "Drone Reveal",
+      "zh": "无人机揭示",
+      "aliases": [
+        "Aerial pull reveal"
+      ],
+      "move_type": "功能运镜",
+      "scenes": [
+        "旅游",
+        "房地产"
+      ],
+      "narrative_emotion": "从小到大的震撼",
+      "emotions": [],
+      "prompt_en": "drone rising reveal of island resort in turquoise sea",
+      "note_zh": "上升或后退揭开宏大景观。"
+    },
+    {
+      "id": "gimbal_orbit_low",
+      "index": 93,
+      "en": "Gimbal Orbit Low",
+      "zh": "低机位稳定环绕",
+      "aliases": [
+        "Low mode orbit"
+      ],
+      "move_type": "设备质感",
+      "scenes": [
+        "汽车",
+        "潮人",
+        "产品"
+      ],
+      "narrative_emotion": "力量感、时尚",
+      "emotions": [],
+      "prompt_en": "low gimbal orbit around sports car, reflective paint",
+      "note_zh": "接近地面的环绕，放大体量与质感。"
+    },
+    {
+      "id": "gimbal_chase",
+      "index": 94,
+      "en": "Gimbal Chase",
+      "zh": "稳定器追逐",
+      "aliases": [
+        "Gimbal run"
+      ],
+      "move_type": "设备质感",
+      "scenes": [
+        "短剧",
+        "动作"
+      ],
+      "narrative_emotion": "稳中带速",
+      "emotions": [],
+      "prompt_en": "gimbal chase through night market, fluid and fast",
+      "note_zh": "奔跑跟拍但画面相对稳定。"
+    },
+    {
+      "id": "slider_push_in",
+      "index": 95,
+      "en": "Slider Push In",
+      "zh": "滑轨轻推",
+      "aliases": [
+        "Slider dolly in"
+      ],
+      "move_type": "设备质感",
+      "scenes": [
+        "美食",
+        "美妆",
+        "桌面"
+      ],
+      "narrative_emotion": "精致强调",
+      "emotions": [],
+      "prompt_en": "slider push in on steaming bowl of ramen",
+      "note_zh": "短距离精密推近，电商与食物摄影常用。"
+    },
+    {
+      "id": "tabletop_orbit",
+      "index": 96,
+      "en": "Tabletop Orbit",
+      "zh": "桌面环绕",
+      "aliases": [
+        "Product turntable orbit"
+      ],
+      "move_type": "特殊效果",
+      "scenes": [
+        "电商",
+        "珠宝"
+      ],
+      "narrative_emotion": "360展示商品",
+      "emotions": [],
+      "prompt_en": "tabletop orbit around luxury watch on black glass",
+      "note_zh": "转盘或环绕拍产品细节。"
+    },
+    {
+      "id": "underwater_tracking",
+      "index": 97,
+      "en": "Underwater Tracking",
+      "zh": "水下跟拍",
+      "aliases": [
+        "Underwater follow"
+      ],
+      "move_type": "设备质感",
+      "scenes": [
+        "游泳",
+        "幻想",
+        "广告"
+      ],
+      "narrative_emotion": "失重、空灵",
+      "emotions": [],
+      "prompt_en": "underwater tracking beside swimmer, caustic light rays",
+      "note_zh": "水下壳体跟拍，光斑与阻力形成独特质感。"
+    },
+    {
+      "id": "overhead_slider",
+      "index": 98,
+      "en": "Overhead Slider",
+      "zh": "顶视滑移",
+      "aliases": [
+        "Top-down slider"
+      ],
+      "move_type": "设备质感",
+      "scenes": [
+        "烹饪",
+        "工艺",
+        "舞蹈"
+      ],
+      "narrative_emotion": "图纸感、仪式",
+      "emotions": [],
+      "prompt_en": "overhead slider across ingredients being arranged",
+      "note_zh": "垂直俯拍下的平移，ASMR/烹饪常见。"
+    },
+    {
+      "id": "vertigo_walk",
+      "index": 99,
+      "en": "Vertigo Walk",
+      "zh": "眩晕行走推拉变焦",
+      "aliases": [
+        "Walking dolly zoom"
+      ],
+      "move_type": "复合运镜",
+      "scenes": [
+        "精神崩溃",
+        "恐高"
+      ],
+      "narrative_emotion": "行走中的认知扭曲",
+      "emotions": [],
+      "prompt_en": "walking dolly zoom down hallway as anxiety peaks",
+      "note_zh": "移动拍摄中做滑动变焦，难度高、效果极强。"
+    },
+    {
+      "id": "crash_zoom_whip",
+      "index": 100,
+      "en": "Crash Zoom Whip",
+      "zh": "急变焦+甩",
+      "aliases": [
+        "Snap zoom whip pan"
+      ],
+      "move_type": "复合运镜",
+      "scenes": [
+        "漫威式动作",
+        "网感"
+      ],
+      "narrative_emotion": "连击式视觉刺激",
+      "emotions": [],
+      "prompt_en": "crash zoom then whip pan to next fighter",
+      "note_zh": "急推后接甩镜，节奏极快，偏商业动作风格。"
+    },
+    {
+      "id": "push_through_crowd",
+      "index": 101,
+      "en": "Push Through Crowd",
+      "zh": "穿人群推进",
+      "aliases": [
+        "Crowd push-in"
+      ],
+      "move_type": "功能运镜",
+      "scenes": [
+        "派对",
+        "战场",
+        "车站"
+      ],
+      "narrative_emotion": "从混乱找到主角",
+      "emotions": [],
+      "prompt_en": "push through dancing crowd to find the protagonist",
+      "note_zh": "镜头挤过人群落到关键人物。"
+    },
+    {
+      "id": "pull_to_wide_ending",
+      "index": 102,
+      "en": "Pull to Wide Ending",
+      "zh": "拉至大远景收束",
+      "aliases": [
+        "Emotional pull-out ending"
+      ],
+      "move_type": "功能运镜",
+      "scenes": [
+        "章节结尾",
+        "片尾"
+      ],
+      "narrative_emotion": "释然或苍凉",
+      "emotions": [],
+      "prompt_en": "slow pull out to extreme wide of figure on empty beach",
+      "note_zh": "情感句号式拉远，人物变小融入环境。"
+    },
+    {
+      "id": "sidewinder_move",
+      "index": 103,
+      "en": "Sidewinder Move",
+      "zh": "侧向蛇形",
+      "aliases": [
+        "S-curve track",
+        "Snake move"
+      ],
+      "move_type": "复合运镜",
+      "scenes": [
+        "舞蹈",
+        "时装"
+      ],
+      "narrative_emotion": "优雅流动",
+      "emotions": [],
+      "prompt_en": "s-curve gimbal move weaving through models backstage",
+      "note_zh": "S形路径穿行，时尚片常用。"
+    },
+    {
+      "id": "boom_over_obstacle",
+      "index": 104,
+      "en": "Boom Over Obstacle",
+      "zh": "越障升降",
+      "aliases": [
+        "Crane over wall",
+        "car"
+      ],
+      "move_type": "复合运镜",
+      "scenes": [
+        "警匪",
+        "体育"
+      ],
+      "narrative_emotion": "越过遮挡见真相",
+      "emotions": [
+        "revelation"
+      ],
+      "prompt_en": "crane over police barricade into the riot",
+      "note_zh": "升高越过墙、车等障碍后进入新空间。"
+    },
+    {
+      "id": "rotate_around_axis",
+      "index": 105,
+      "en": "Rotate Around Axis",
+      "zh": "绕轴自旋跟",
+      "aliases": [
+        "Axis spin with subject"
+      ],
+      "move_type": "复合运镜",
+      "scenes": [
+        "舞蹈",
+        "吻戏",
+        "魔力时刻"
+      ],
+      "narrative_emotion": "世界旋转、唯美",
+      "emotions": [],
+      "prompt_en": "camera rotates around kissing couple, world spins",
+      "note_zh": "以主体为轴的旋转，背景扫成弧线。"
+    },
+    {
+      "id": "fpv_through_object",
+      "index": 106,
+      "en": "FPV Through Object",
+      "zh": "FPV穿物",
+      "aliases": [
+        "FPV fly-through"
+      ],
+      "move_type": "特殊效果",
+      "scenes": [
+        "汽车广告",
+        "科幻"
+      ],
+      "narrative_emotion": "不可能路径",
+      "emotions": [],
+      "prompt_en": "fpv flies through car window and out the rear",
+      "note_zh": "穿越狭窄空隙，强调自由与速度。"
+    },
+    {
+      "id": "matrix_orbit",
+      "index": 107,
+      "en": "Matrix Orbit",
+      "zh": "矩阵式环绕",
+      "aliases": [
+        "Multi-cam orbit"
+      ],
+      "move_type": "特殊效果",
+      "scenes": [
+        "动作定格展示"
+      ],
+      "narrative_emotion": "技术奇观",
+      "emotions": [],
+      "prompt_en": "multi-camera matrix orbit around frozen punch",
+      "note_zh": "子弹时间类多机环绕的通俗叫法。"
+    },
+    {
+      "id": "ken_burns_move",
+      "index": 108,
+      "en": "Ken Burns Move",
+      "zh": "肯·伯恩斯运镜",
+      "aliases": [
+        "Digital pan and zoom on still"
+      ],
+      "move_type": "特殊效果",
+      "scenes": [
+        "纪录片",
+        "照片叙事"
+      ],
+      "narrative_emotion": "静图动起来",
+      "emotions": [],
+      "prompt_en": "ken burns slow zoom into archival photo faces",
+      "note_zh": "对静态照片做推拉摇，纪录片经典手法。"
+    },
+    {
+      "id": "digital_push_in",
+      "index": 109,
+      "en": "Digital Push-In",
+      "zh": "数字裁切推近",
+      "aliases": [
+        "Reframe push",
+        "Post push-in"
+      ],
+      "move_type": "特殊效果",
+      "scenes": [
+        "后期补救",
+        "访谈"
+      ],
+      "narrative_emotion": "强调表情",
+      "emotions": [],
+      "prompt_en": "subtle digital push-in on interview subject",
+      "note_zh": "后期放大裁切模拟推进，注意画质损失。"
+    },
+    {
+      "id": "stabilized_handheld",
+      "index": 110,
+      "en": "Stabilized Handheld",
+      "zh": "稳化手持感",
+      "aliases": [
+        "Post-stabilized handheld"
+      ],
+      "move_type": "设备质感",
+      "scenes": [
+        "写实剧集"
+      ],
+      "narrative_emotion": "真实但不晕",
+      "emotions": [],
+      "prompt_en": "stabilized handheld, natural micro-movement only",
+      "note_zh": "保留轻微手持呼吸感并抑制剧烈抖动。"
+    },
+    {
+      "id": "one_take_steadicam",
+      "index": 111,
+      "en": "One-Take Steadicam",
+      "zh": "一镜斯坦尼康",
+      "aliases": [
+        "Steadicam oner"
+      ],
+      "move_type": "功能运镜",
+      "scenes": [
+        "高概念段落"
+      ],
+      "narrative_emotion": "炫技+沉浸",
+      "emotions": [],
+      "prompt_en": "one-take steadicam from street into elevator into apartment",
+      "note_zh": "单一稳定器镜头穿越多空间。"
+    },
+    {
+      "id": "battle_tracking",
+      "index": 112,
+      "en": "Battle Tracking",
+      "zh": "战场跟拍",
+      "aliases": [
+        "Combat track"
+      ],
+      "move_type": "功能运镜",
+      "scenes": [
+        "战争片",
+        "游戏CG"
+      ],
+      "narrative_emotion": "残酷临场",
+      "emotions": [],
+      "prompt_en": "chaotic tracking through trenches, dirt hits lens",
+      "note_zh": "在混乱动作中保持跟随，常手持或稳定器。"
+    },
+    {
+      "id": "romantic_orbit",
+      "index": 113,
+      "en": "Romantic Orbit",
+      "zh": "浪漫环绕",
+      "aliases": [
+        "Lovers' circle"
+      ],
+      "move_type": "功能运镜",
+      "scenes": [
+        "爱情戏",
+        "MV"
+      ],
+      "narrative_emotion": "甜蜜、世界只有两人",
+      "emotions": [],
+      "prompt_en": "gentle orbit around couple under string lights",
+      "note_zh": "轻柔环绕双人，弱化环境杂讯。"
+    },
+    {
+      "id": "horror_creep",
+      "index": 114,
+      "en": "Horror Creep",
+      "zh": "恐怖潜行运镜",
+      "aliases": [
+        "Horror creep-in"
+      ],
+      "move_type": "功能运镜",
+      "scenes": [
+        "恐怖片"
+      ],
+      "narrative_emotion": "未知逼近",
+      "emotions": [
+        "oppression"
+      ],
+      "prompt_en": "slow horror creep down basement stairs, dim light",
+      "note_zh": "缓慢、压抑、常伴随主观或半主观。"
+    },
+    {
+      "id": "comedy_whip",
+      "index": 115,
+      "en": "Comedy Whip",
+      "zh": "喜剧甩接",
+      "aliases": [
+        "Comedic whip pan"
+      ],
+      "move_type": "功能运镜",
+      "scenes": [
+        "情景喜剧",
+        "短视频"
+      ],
+      "narrative_emotion": "笑点切换",
+      "emotions": [],
+      "prompt_en": "whip pan to character's deadpan reaction for comedy",
+      "note_zh": "甩到反应镜头制造笑点。"
+    },
+    {
+      "id": "product_hero_push",
+      "index": 116,
+      "en": "Product Hero Push",
+      "zh": "产品英雄推",
+      "aliases": [
+        "Hero product push-in"
+      ],
+      "move_type": "功能运镜",
+      "scenes": [
+        "广告",
+        "电商"
+      ],
+      "narrative_emotion": "渴望感、品质感",
+      "emotions": [],
+      "prompt_en": "slow hero push-in on smartphone with rim light",
+      "note_zh": "对产品主视觉缓慢推近，突出质感。"
+    },
+    {
+      "id": "fashion_tracking",
+      "index": 117,
+      "en": "Fashion Tracking",
+      "zh": "时装跟拍",
+      "aliases": [
+        "Runway track",
+        "Fashion follow"
+      ],
+      "move_type": "功能运镜",
+      "scenes": [
+        "时尚片",
+        "秀场"
+      ],
+      "narrative_emotion": "姿态与服装流动",
+      "emotions": [],
+      "prompt_en": "side tracking fashion model in slow motion, wind",
+      "note_zh": "侧面或前方跟拍模特步态。"
+    },
+    {
+      "id": "interview_slider",
+      "index": 118,
+      "en": "Interview Slider",
+      "zh": "访谈滑轨",
+      "aliases": [
+        "Talking-head slider"
+      ],
+      "move_type": "功能运镜",
+      "scenes": [
+        "访谈",
+        "纪录片口述"
+      ],
+      "narrative_emotion": "避免死画面",
+      "emotions": [],
+      "prompt_en": "very slow slider on interview subject, soft bokeh",
+      "note_zh": "访谈人物轻微横移，保持生动。"
+    },
+    {
+      "id": "musical_crane",
+      "index": 119,
+      "en": "Musical Crane",
+      "zh": "音乐剧摇臂",
+      "aliases": [
+        "Musical crane flourish"
+      ],
+      "move_type": "功能运镜",
+      "scenes": [
+        "音乐剧",
+        "舞台电影"
+      ],
+      "narrative_emotion": "华丽、舞台调度",
+      "emotions": [],
+      "prompt_en": "crane rising over chorus line as song peaks",
+      "note_zh": "歌曲高潮时升高扫过群舞。"
+    },
+    {
+      "id": "noir_truck",
+      "index": 120,
+      "en": "Noir Truck",
+      "zh": "黑色电影横移",
+      "aliases": [
+        "Noir lateral track"
+      ],
+      "move_type": "功能运镜",
+      "scenes": [
+        "黑色电影",
+        "雨夜"
+      ],
+      "narrative_emotion": "疏离、窥视城市",
+      "emotions": [
+        "suspicion"
+      ],
+      "prompt_en": "noir truck past rainy neon alley reflections",
+      "note_zh": "侧向移动拍湿街霓虹，强调冷峻气质。"
+    },
+    {
+      "id": "western_dolly",
+      "index": 121,
+      "en": "Western Dolly",
+      "zh": "西部片推轨",
+      "aliases": [
+        "Classic western push"
+      ],
+      "move_type": "功能运镜",
+      "scenes": [
+        "对决前",
+        "西部"
+      ],
+      "narrative_emotion": "宿命逼近",
+      "emotions": [
+        "oppression"
+      ],
+      "prompt_en": "slow dolly in on gunslinger eyes before duel",
+      "note_zh": "决斗前缓慢推近面部或手部。"
+    },
+    {
+      "id": "sci_fi_tech_orbit",
+      "index": 122,
+      "en": "Sci-Fi Tech Orbit",
+      "zh": "科幻技术环绕",
+      "aliases": [
+        "Tech reveal orbit"
+      ],
+      "move_type": "功能运镜",
+      "scenes": [
+        "科幻",
+        "汽车发布"
+      ],
+      "narrative_emotion": "未来感、精密",
+      "emotions": [],
+      "prompt_en": "cold blue orbit around sleek spaceship interior",
+      "note_zh": "干净环绕展示未来载具或装置。"
+    },
+    {
+      "id": "documentary_observe",
+      "index": 123,
+      "en": "Documentary Observe",
+      "zh": "纪录片观察式跟拍",
+      "aliases": [
+        "Observational follow"
+      ],
+      "move_type": "功能运镜",
+      "scenes": [
+        "纪录片"
+      ],
+      "narrative_emotion": "不介入、旁观",
+      "emotions": [],
+      "prompt_en": "quiet observational follow of fishermen at dawn",
+      "note_zh": "克制跟随，少炫技，尊重真实时空。"
+    },
+    {
+      "id": "surveillance_pan",
+      "index": 124,
+      "en": "Surveillance Pan",
+      "zh": "监控式摇镜",
+      "aliases": [
+        "CCTV pan aesthetic"
+      ],
+      "move_type": "功能运镜",
+      "scenes": [
+        "惊悚",
+        "犯罪"
+      ],
+      "narrative_emotion": "被监视感",
+      "emotions": [
+        "suspicion"
+      ],
+      "prompt_en": "slow mechanical surveillance pan across parking lot",
+      "note_zh": "模仿监控的机械摇移与固定机位感。"
+    },
+    {
+      "id": "security_static_then_snap",
+      "index": 125,
+      "en": "Security Static then Snap",
+      "zh": "监控静转急摇",
+      "aliases": [
+        "Security snap pan"
+      ],
+      "move_type": "复合运镜",
+      "scenes": [
+        "发现目标"
+      ],
+      "narrative_emotion": "警报、锁定",
+      "emotions": [],
+      "prompt_en": "static security cam then sudden snap pan to intruder",
+      "note_zh": "长时间静止后突然摇向异常，制造惊吓。"
+    },
+    {
+      "id": "mirror_move",
+      "index": 126,
+      "en": "Mirror Move",
+      "zh": "镜子运镜",
+      "aliases": [
+        "Mirror reveal move"
+      ],
+      "move_type": "功能运镜",
+      "scenes": [
+        "身份",
+        "心理"
+      ],
+      "narrative_emotion": "自我对视、分裂",
+      "emotions": [
+        "revelation"
+      ],
+      "prompt_en": "dolly past mirror catching dual reflection of character",
+      "note_zh": "利用镜子在运动中制造双重形象或信息。"
+    },
+    {
+      "id": "shadow_track",
+      "index": 127,
+      "en": "Shadow Track",
+      "zh": "影子跟拍",
+      "aliases": [
+        "Silhouette track"
+      ],
+      "move_type": "功能运镜",
+      "scenes": [
+        "悬疑",
+        "片头"
+      ],
+      "narrative_emotion": "神秘、身份隐藏",
+      "emotions": [],
+      "prompt_en": "tracking silhouette of figure in fog, side light",
+      "note_zh": "跟随剪影而非正脸，保留悬念。"
+    },
+    {
+      "id": "rainy_handheld",
+      "index": 128,
+      "en": "Rainy Handheld",
+      "zh": "雨中手持",
+      "aliases": [
+        "Rain-soaked handheld"
+      ],
+      "move_type": "设备质感",
+      "scenes": [
+        "情绪低谷",
+        "浪漫悲剧"
+      ],
+      "narrative_emotion": "湿冷真实",
+      "emotions": [],
+      "prompt_en": "handheld in heavy rain, droplets on lens, emotional",
+      "note_zh": "手持加雨滴沾镜，强化情绪质感。"
+    },
+    {
+      "id": "lens_flare_push",
+      "index": 129,
+      "en": "Lens Flare Push",
+      "zh": "光斑推进",
+      "aliases": [
+        "Flare push-in"
+      ],
+      "move_type": "复合运镜",
+      "scenes": [
+        "逆光人像",
+        "商业"
+      ],
+      "narrative_emotion": "神圣、梦幻",
+      "emotions": [],
+      "prompt_en": "slow push into backlight with anamorphic lens flares",
+      "note_zh": "逆光推进并保留光斑，电影感符号。"
+    },
+    {
+      "id": "anamorphic_drift",
+      "index": 130,
+      "en": "Anamorphic Drift",
+      "zh": "变形宽银幕漂移",
+      "aliases": [
+        "Anamorphic subtle move"
+      ],
+      "move_type": "设备质感",
+      "scenes": [
+        "院线感短片"
+      ],
+      "narrative_emotion": "椭圆形光斑、横向呼吸",
+      "emotions": [],
+      "prompt_en": "anamorphic subtle lateral drift, cinematic bokeh",
+      "note_zh": "强调变形镜头特性的轻微运动。"
+    },
+    {
+      "id": "imax_tilt_up",
+      "index": 131,
+      "en": "IMAX Tilt Up",
+      "zh": "巨幕上仰",
+      "aliases": [
+        "Large-format tilt up"
+      ],
+      "move_type": "功能运镜",
+      "scenes": [
+        "科幻巨物",
+        "自然奇观"
+      ],
+      "narrative_emotion": "敬畏、尺度震撼",
+      "emotions": [],
+      "prompt_en": "large format tilt up the monolith, awe-inspiring scale",
+      "note_zh": "大画幅上仰强调极端垂直尺度。"
+    },
+    {
+      "id": "crowd_crane_rise",
+      "index": 132,
+      "en": "Crowd Crane Rise",
+      "zh": "人群中升起",
+      "aliases": [
+        "Crane rise over crowd"
+      ],
+      "move_type": "功能运镜",
+      "scenes": [
+        "集会",
+        "演唱会",
+        "战争"
+      ],
+      "narrative_emotion": "个人到群体",
+      "emotions": [],
+      "prompt_en": "crane rises from one face to thousands in the square",
+      "note_zh": "从个体升到人群规模，情绪升级。"
+    },
+    {
+      "id": "single_tear_push",
+      "index": 133,
+      "en": "Single Tear Push",
+      "zh": "微表情缓推",
+      "aliases": [
+        "Micro-expression push"
+      ],
+      "move_type": "功能运镜",
+      "scenes": [
+        "表演重场"
+      ],
+      "narrative_emotion": "情感破防",
+      "emotions": [],
+      "prompt_en": "imperceptibly slow push to tear forming in eye",
+      "note_zh": "极慢推到眼睛/嘴角等微表情。"
+    },
+    {
+      "id": "doorway_dolly",
+      "index": 134,
+      "en": "Doorway Dolly",
+      "zh": "门框推入",
+      "aliases": [
+        "Dolly through doorway"
+      ],
+      "move_type": "功能运镜",
+      "scenes": [
+        "探访",
+        "惊悚开门"
+      ],
+      "narrative_emotion": "进入未知空间",
+      "emotions": [],
+      "prompt_en": "dolly through dark doorway into lit living room",
+      "note_zh": "穿过门框进入下一空间，完成场景跨越。"
+    },
+    {
+      "id": "elevator_vertical",
+      "index": 135,
+      "en": "Elevator Vertical",
+      "zh": "电梯垂直运镜",
+      "aliases": [
+        "Elevator shaft move"
+      ],
+      "move_type": "特殊效果",
+      "scenes": [
+        "高楼",
+        "惊悚"
+      ],
+      "narrative_emotion": "垂直世界",
+      "emotions": [],
+      "prompt_en": "camera rises in glass elevator overlooking city night",
+      "note_zh": "沿垂直井道或玻璃梯升降，强调高度。"
+    },
+    {
+      "id": "train_lateral",
+      "index": 136,
+      "en": "Train Lateral",
+      "zh": "列车侧移",
+      "aliases": [
+        "Train window track"
+      ],
+      "move_type": "设备质感",
+      "scenes": [
+        "旅行",
+        "回忆"
+      ],
+      "narrative_emotion": "时间流动",
+      "emotions": [],
+      "prompt_en": "lateral view from train window, landscape streaming by",
+      "note_zh": "列车横向运动形成的自然 tracking。"
+    },
+    {
+      "id": "bike_pov",
+      "index": 137,
+      "en": "Bike POV",
+      "zh": "骑行主观",
+      "aliases": [
+        "Bicycle pov"
+      ],
+      "move_type": "功能运镜",
+      "scenes": [
+        "青春",
+        "城市"
+      ],
+      "narrative_emotion": "轻快自由",
+      "emotions": [],
+      "prompt_en": "bicycle pov through tree-lined street, morning light",
+      "note_zh": "自行车第一人称穿街。"
+    },
+    {
+      "id": "drone_chase_vehicle",
+      "index": 138,
+      "en": "Drone Chase Vehicle",
+      "zh": "无人机追车",
+      "aliases": [
+        "Aerial car chase"
+      ],
+      "move_type": "设备质感",
+      "scenes": [
+        "动作",
+        "公路"
+      ],
+      "narrative_emotion": "立体追逐",
+      "emotions": [],
+      "prompt_en": "drone chasing sports car along coastal highway",
+      "note_zh": "航拍高度追汽车，展现路线与速度。"
+    },
+    {
+      "id": "gimbal_360_product",
+      "index": 139,
+      "en": "Gimbal 360 Product",
+      "zh": "稳定器产品360",
+      "aliases": [
+        "Handheld 360 product"
+      ],
+      "move_type": "功能运镜",
+      "scenes": [
+        "直播带货",
+        "开箱"
+      ],
+      "narrative_emotion": "信息完整",
+      "emotions": [
+        "revelation"
+      ],
+      "prompt_en": "smooth 360 around sneaker on pedestal, studio lights",
+      "note_zh": "围绕商品走一圈展示全貌。"
+    },
+    {
+      "id": "reaction_push",
+      "index": 140,
+      "en": "Reaction Push",
+      "zh": "反应式推进",
+      "aliases": [
+        "Reaction push-in"
+      ],
+      "move_type": "功能运镜",
+      "scenes": [
+        "听到真相",
+        "反转"
+      ],
+      "narrative_emotion": "内心震动外化",
+      "emotions": [
+        "revelation"
+      ],
+      "prompt_en": "push in on reaction as the secret is revealed",
+      "note_zh": "在角色接收信息时推进，强调心理冲击。"
+    },
+    {
+      "id": "isolation_pull",
+      "index": 141,
+      "en": "Isolation Pull",
+      "zh": "孤立式拉远",
+      "aliases": [
+        "Isolation pull-out"
+      ],
+      "move_type": "功能运镜",
+      "scenes": [
+        "被抛弃",
+        "失败"
+      ],
+      "narrative_emotion": "渺小、无助",
+      "emotions": [],
+      "prompt_en": "pull out isolating the character in vast desert",
+      "note_zh": "拉远使人物在环境中显得孤立。"
+    },
+    {
+      "id": "power_pedestal",
+      "index": 142,
+      "en": "Power Pedestal",
+      "zh": "权力升降",
+      "aliases": [
+        "Power angle pedestal"
+      ],
+      "move_type": "功能运镜",
+      "scenes": [
+        "谈判",
+        "对峙"
+      ],
+      "narrative_emotion": "地位消长",
+      "emotions": [],
+      "prompt_en": "pedestal from low hero angle up to equal eye level",
+      "note_zh": "用机位高度变化暗示权力关系改变。"
+    },
+    {
+      "id": "anxiety_spiral",
+      "index": 143,
+      "en": "Anxiety Spiral",
+      "zh": "焦虑螺旋",
+      "aliases": [
+        "Anxiety spiral orbit"
+      ],
+      "move_type": "复合运镜",
+      "scenes": [
+        "惊恐发作",
+        "精神题材"
+      ],
+      "narrative_emotion": "失控旋转",
+      "emotions": [],
+      "prompt_en": "tight spiral orbit accelerating with character panic",
+      "note_zh": "环绕加速叠加轻微滚转，模拟焦虑。"
+    },
+    {
+      "id": "calm_slider",
+      "index": 144,
+      "en": "Calm Slider",
+      "zh": "平静滑轨",
+      "aliases": [
+        "Meditative slider"
+      ],
+      "move_type": "功能运镜",
+      "scenes": [
+        "治愈",
+        "风景",
+        "冥想"
+      ],
+      "narrative_emotion": "安宁",
+      "emotions": [],
+      "prompt_en": "ultra slow slider on candle flame, peaceful",
+      "note_zh": "极慢微小位移，营造静谧。"
+    },
+    {
+      "id": "epic_establishing_drone",
+      "index": 145,
+      "en": "Epic Establishing Drone",
+      "zh": "史诗建立航拍",
+      "aliases": [
+        "Epic establishing aerial"
+      ],
+      "move_type": "功能运镜",
+      "scenes": [
+        "奇幻",
+        "历史史诗"
+      ],
+      "narrative_emotion": "世界观展开",
+      "emotions": [
+        "calm"
+      ],
+      "prompt_en": "epic drone establishing shot of fantasy capital city",
+      "note_zh": "大远景航拍建立奇观地理。"
+    },
+    {
+      "id": "intimacy_handheld_cu",
+      "index": 146,
+      "en": "Intimacy Handheld CU",
+      "zh": "亲密手持特写运动",
+      "aliases": [
+        "Intimate handheld close-up"
+      ],
+      "move_type": "功能运镜",
+      "scenes": [
+        "爱情",
+        "家庭"
+      ],
+      "narrative_emotion": "呼吸可闻的近",
+      "emotions": [
+        "intimacy"
+      ],
+      "prompt_en": "intimate handheld close-up, soft movement, warm light",
+      "note_zh": "近距离手持微动，强调亲密而非混乱。"
+    },
+    {
+      "id": "war_reportage",
+      "index": 147,
+      "en": "War Reportage",
+      "zh": "战地手持报道感",
+      "aliases": [
+        "Combat reportage cam"
+      ],
+      "move_type": "设备质感",
+      "scenes": [
+        "战争伪纪录片"
+      ],
+      "narrative_emotion": "新闻前线",
+      "emotions": [],
+      "prompt_en": "war reportage handheld, dust, sudden pans to explosions",
+      "note_zh": "粗糙手持、突然摇向声源，仿战地记者。"
+    },
+    {
+      "id": "vlog_gimbal_walk",
+      "index": 148,
+      "en": "Vlog Gimbal Walk",
+      "zh": "Vlog稳定器行走",
+      "aliases": [
+        "Vlog walk-and-talk gimbal"
+      ],
+      "move_type": "功能运镜",
+      "scenes": [
+        "口播",
+        "探店"
+      ],
+      "narrative_emotion": "亲切、清晰",
+      "emotions": [],
+      "prompt_en": "gimbal vlog walk and talk facing camera in city",
+      "note_zh": "面向镜头边走边说，稳定器保持脸部清晰。"
+    },
+    {
+      "id": "asmr_macro_slide",
+      "index": 149,
+      "en": "ASMR Macro Slide",
+      "zh": "ASMR微距滑移",
+      "aliases": [
+        "Macro ASMR slider"
+      ],
+      "move_type": "功能运镜",
+      "scenes": [
+        "解压",
+        "美妆细节"
+      ],
+      "narrative_emotion": "质感放大",
+      "emotions": [],
+      "prompt_en": "macro slider across fabric texture, satisfying detail",
+      "note_zh": "微距下缓慢滑过表面纹理。"
+    },
+    {
+      "id": "sports_cable_follow",
+      "index": 150,
+      "en": "Sports Cable Follow",
+      "zh": "体育索道跟拍",
+      "aliases": [
+        "Stadium cable follow"
+      ],
+      "move_type": "设备质感",
+      "scenes": [
+        "足球",
+        "演唱会"
+      ],
+      "narrative_emotion": "赛事规模",
+      "emotions": [],
+      "prompt_en": "cable cam following striker toward goal, stadium roar",
+      "note_zh": "索道快速跟运动员或歌手。"
+    },
+    {
+      "id": "stage_jib_sweep",
+      "index": 151,
+      "en": "Stage Jib Sweep",
+      "zh": "舞台摇臂横扫",
+      "aliases": [
+        "Concert jib sweep"
+      ],
+      "move_type": "设备质感",
+      "scenes": [
+        "演唱会",
+        "晚会"
+      ],
+      "narrative_emotion": "华丽舞台",
+      "emotions": [],
+      "prompt_en": "jib sweep across stage lights and cheering fans",
+      "note_zh": "舞台前快速摇臂扫过灯与观众。"
+    },
+    {
+      "id": "horror_dutch_roll",
+      "index": 152,
+      "en": "Horror Dutch Roll",
+      "zh": "恐怖荷兰滚转",
+      "aliases": [
+        "Horror rolling dutch"
+      ],
+      "move_type": "复合运镜",
+      "scenes": [
+        "鬼屋",
+        "精神错乱"
+      ],
+      "narrative_emotion": "现实崩坏",
+      "emotions": [
+        "suspicion",
+        "dread"
+      ],
+      "prompt_en": "slow rolling dutch angle in haunted hallway",
+      "note_zh": "倾斜同时缓慢滚转，极度不安。"
+    },
+    {
+      "id": "hero_low_orbit",
+      "index": 153,
+      "en": "Hero Low Orbit",
+      "zh": "英雄低环绕",
+      "aliases": [
+        "Hero low-mode circle"
+      ],
+      "move_type": "功能运镜",
+      "scenes": [
+        "预告片",
+        "角色海报动态"
+      ],
+      "narrative_emotion": "偶像化",
+      "emotions": [],
+      "prompt_en": "low orbit around hero in windblown coat, epic score feel",
+      "note_zh": "低机位环绕英雄角色，塑造传奇感。"
+    },
+    {
+      "id": "villain_push_in",
+      "index": 154,
+      "en": "Villain Push In",
+      "zh": "反派逼近推",
+      "aliases": [
+        "Menacing push-in"
+      ],
+      "move_type": "功能运镜",
+      "scenes": [
+        "反派台词",
+        "威胁"
+      ],
+      "narrative_emotion": "压迫、危险",
+      "emotions": [
+        "oppression",
+        "dread"
+      ],
+      "prompt_en": "slow menacing push in on villain smiling in shadow",
+      "note_zh": "对反派缓慢推近，配合阴影与微笑。"
+    },
+    {
+      "id": "memory_soft_drift",
+      "index": 155,
+      "en": "Memory Soft Drift",
+      "zh": "回忆柔焦漂移",
+      "aliases": [
+        "Memory haze drift"
+      ],
+      "move_type": "功能运镜",
+      "scenes": [
+        "闪回",
+        "梦"
+      ],
+      "narrative_emotion": "不确定、怀念",
+      "emotions": [],
+      "prompt_en": "soft focus gentle drift, dreamlike memory sequence",
+      "note_zh": "轻微漂移加柔焦，标记非现实时间。"
+    },
+    {
+      "id": "flashback_whip",
+      "index": 156,
+      "en": "Flashback Whip",
+      "zh": "闪回甩镜",
+      "aliases": [
+        "Flashback whip pan"
+      ],
+      "move_type": "功能运镜",
+      "scenes": [
+        "回忆触发"
+      ],
+      "narrative_emotion": "瞬间穿越过去",
+      "emotions": [],
+      "prompt_en": "whip pan into warm-graded flashback classroom",
+      "note_zh": "甩镜切入不同色调的回忆段落。"
+    },
+    {
+      "id": "match_dolly_cut",
+      "index": 157,
+      "en": "Match Dolly Cut",
+      "zh": "匹配推镜剪辑",
+      "aliases": [
+        "Match push cut"
+      ],
+      "move_type": "功能运镜",
+      "scenes": [
+        "蒙太奇",
+        "主题连接"
+      ],
+      "narrative_emotion": "动作形态匹配",
+      "emotions": [],
+      "prompt_en": "dolly in on eye match cut to dolly in on planet",
+      "note_zh": "相似推镜动作连接两个时空。"
+    },
+    {
+      "id": "end_credit_pull",
+      "index": 158,
+      "en": "End Credit Pull",
+      "zh": "字幕拉远",
+      "aliases": [
+        "Credits pull-out"
+      ],
+      "move_type": "功能运镜",
+      "scenes": [
+        "片尾"
+      ],
+      "narrative_emotion": "故事结束、世界仍在",
+      "emotions": [],
+      "prompt_en": "final pull out to city skyline as credits begin",
+      "note_zh": "片尾常用大拉远结束叙事。"
+    }
+  ],
+  "by_type": {
+    "基础运镜": [
+      "pan",
+      "pan_left",
+      "pan_right",
+      "tilt",
+      "tilt_up",
+      "tilt_down",
+      "roll",
+      "dutch_angle",
+      "dolly_in",
+      "dolly_out",
+      "truck_left",
+      "truck_right",
+      "pedestal_up",
+      "pedestal_down",
+      "arc_shot",
+      "orbit_shot",
+      "tracking_shot",
+      "follow_shot",
+      "lead_shot",
+      "side_tracking",
+      "reverse_tracking",
+      "creep_in",
+      "creep_out",
+      "static_locked_off"
+    ],
+    "复合运镜": [
+      "spiral_shot",
+      "whip_pan",
+      "whip_tilt",
+      "push_and_pan",
+      "crane_push_in",
+      "orbit_push_in",
+      "tracking_crane",
+      "parallax_move",
+      "crash_in",
+      "pull_focus_dolly",
+      "counter_move",
+      "handheld_zoom",
+      "vertigo_walk",
+      "crash_zoom_whip",
+      "sidewinder_move",
+      "boom_over_obstacle",
+      "rotate_around_axis",
+      "security_static_then_snap",
+      "lens_flare_push",
+      "anxiety_spiral",
+      "horror_dutch_roll"
+    ],
+    "功能运镜": [
+      "walk_and_talk",
+      "chase_shot",
+      "long_take",
+      "reveal_shot",
+      "establishing_move",
+      "pov_move",
+      "semi_pov",
+      "ots_tracking",
+      "entrance_follow",
+      "exit_pull_out",
+      "match_pan",
+      "god_s_eye_dive",
+      "bird_s_eye_move",
+      "worm_s_eye_rise",
+      "circle_reveal",
+      "foreground_wipe_move",
+      "pedestal_reveal",
+      "tilt_reveal",
+      "drone_reveal",
+      "push_through_crowd",
+      "pull_to_wide_ending",
+      "one_take_steadicam",
+      "battle_tracking",
+      "romantic_orbit",
+      "horror_creep",
+      "comedy_whip",
+      "product_hero_push",
+      "fashion_tracking",
+      "interview_slider",
+      "musical_crane",
+      "noir_truck",
+      "western_dolly",
+      "sci_fi_tech_orbit",
+      "documentary_observe",
+      "surveillance_pan",
+      "mirror_move",
+      "shadow_track",
+      "imax_tilt_up",
+      "crowd_crane_rise",
+      "single_tear_push",
+      "doorway_dolly",
+      "bike_pov",
+      "gimbal_360_product",
+      "reaction_push",
+      "isolation_pull",
+      "power_pedestal",
+      "calm_slider",
+      "epic_establishing_drone",
+      "intimacy_handheld_cu",
+      "vlog_gimbal_walk",
+      "asmr_macro_slide",
+      "hero_low_orbit",
+      "villain_push_in",
+      "memory_soft_drift",
+      "flashback_whip",
+      "match_dolly_cut",
+      "end_credit_pull"
+    ],
+    "光学运镜": [
+      "zoom_in",
+      "zoom_out",
+      "crash_zoom",
+      "dolly_zoom",
+      "reverse_dolly_zoom",
+      "rack_focus"
+    ],
+    "设备质感": [
+      "handheld",
+      "steadicam",
+      "gimbal_shot",
+      "shoulder_rig",
+      "slider_shot",
+      "dolly_on_rails",
+      "jib_shot",
+      "crane_shot",
+      "techno_crane",
+      "aerial_shot",
+      "drone_shot",
+      "fpv_drone",
+      "cable_cam",
+      "car_mount",
+      "process_trailer",
+      "snorricam",
+      "helmet_cam",
+      "subtle_drift",
+      "steadicam_float",
+      "drone_orbit",
+      "drone_dive",
+      "drone_flyover",
+      "gimbal_orbit_low",
+      "gimbal_chase",
+      "slider_push_in",
+      "underwater_tracking",
+      "overhead_slider",
+      "stabilized_handheld",
+      "rainy_handheld",
+      "anamorphic_drift",
+      "train_lateral",
+      "drone_chase_vehicle",
+      "war_reportage",
+      "sports_cable_follow",
+      "stage_jib_sweep"
+    ],
+    "特殊效果": [
+      "bullet_time",
+      "time_slice_dolly",
+      "motion_control",
+      "robot_arm_shot",
+      "speed_ramp_tracking",
+      "slow_motion_orbit",
+      "hyperlapse_move",
+      "invisible_cut_oner",
+      "window_through_move",
+      "tabletop_orbit",
+      "fpv_through_object",
+      "matrix_orbit",
+      "ken_burns_move",
+      "digital_push_in",
+      "elevator_vertical"
+    ]
+  }
+}

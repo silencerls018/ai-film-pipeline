@@ -1,0 +1,38 @@
+{
+  "version": "1.1",
+  "human_doc": "human/07_asset.md",
+  "template_file": "asset/three_view_template.json",
+  "source_skill": "E:/AI/skill/三视图.skill",
+  "asset_types": ["character", "prop", "set"],
+  "required_fields": [
+    "asset_id",
+    "name",
+    "type",
+    "sheet_prompt",
+    "negative_prompt",
+    "consistency_anchors",
+    "views",
+    "image_refs"
+  ],
+  "character_sheet_rules": [
+    "sheet_prompt MUST be English (for image models)",
+    "Use three_view_template.template_en with filled variables",
+    "Left 50% of frame: ultra-large facial close-up only",
+    "Right 50%: front/back/side full body; black censor boxes on faces",
+    "Must include Ethnicity / race explicitly",
+    "negative_prompt must be empty string (no negative prompts)",
+    "Background: neutral gray only",
+    "image_refs may be empty; swappable anytime",
+    "Provide sheet_prompt_zh_summary for human reading (Chinese aid)",
+    "Do not block main track"
+  ],
+  "prop_and_set_rules": [
+    "Props/sets use multi-view product or location sheets (not face censor layout)",
+    "Still photoreal, consistent scale, obey style_pack"
+  ],
+  "default_views": {
+    "character": ["face_closeup_left", "full_front", "full_back", "full_side"],
+    "prop": ["top", "side", "three_quarter"],
+    "set": ["master_wide", "left", "right", "detail_corner"]
+  }
+}

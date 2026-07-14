@@ -257,17 +257,56 @@ def stub_cinematography(bible: dict[str, Any], kb: dict[str, Any]) -> dict[str, 
         cam_rules = store.emotion_camera(str(emo))
         look_rules = store.emotion_look(str(emo))
         scene_look = scene_look_map.get(shot.get("scene_id", ""), {})
-        move = (cam_rules.get("preferred_moves") or ["static_hold"])[0]
-        if habits.get("prefer_moves") and move not in habits["prefer_moves"]:
-            # keep rule move if style doesn't forbid
-            if move in (habits.get("avoid_moves") or []):
-                move = habits["prefer_moves"][0]
+        # Prefer Excel-imported catalog move
+        catalog_move = store.pick_move_for_emotion(str(emo))
+        if catalog_move:
+            move = catalog_move.get("en") or catalog_move.get("id") or "static hold"
+            move_prompt = catalog_move.get("prompt_en") or move
+            move_id = catalog_move.get("id")
+            move_zh = catalog_move.get("zh")
+        else:
+            move = (cam_rules.get("preferred_moves") or ["static_hold"])[0]
+            move_prompt = str(move)
+            move_id = None
+            move_zh = None
+        avoid = set(habits.get("avoid_moves") or [])
+        if move in avoid and habits.get("prefer_moves"):
+            move = habits["prefer_moves"][0]
+            move_prompt = move
         angle = (cam_rules.get("preferred_angles") or ["eye_level"])[0]
         lenses = cam_rules.get("lens_mm") or prefer_lenses
         lens = lenses[0] if lenses else 40
         if prefer_lenses and lens not in prefer_lenses:
             lens = prefer_lenses[0]
         tone = scene_look.get("base_tone") or (look_rules.get("tone") or ["low_key"])[0]
+        speed = "very_slow"
+        ml = str(move).lower()
+        if any(k in ml for k in ("static", "locked", "hold")):
+            speed = "none"
+        elif any(k in ml for k in ("whip", "crash", "snap")):
+            speed = "fast"
+        # Lighting from director performance plan / emotion lighting table
+        perf = shot.get("performance") or {}
+        light_plan = (perf.get("lighting_plan") or {}) if isinstance(perf, dict) else {}
+        light_table = light_plan.get("look_table") or {}
+        key_light = (
+            light_plan.get("key")
+            or light_table.get("sources", [None])[0]
+            or "soft side key from practical lamp"
+        )
+        if isinstance(key_light, list):
+            key_light = key_light[0] if key_light else "soft side key"
+        color_temp = (
+            light_plan.get("color")
+            or light_table.get("color_temp")
+            or scene_look.get("color")
+            or "cool fill / warm practical"
+        )
+        fill_ratio = "1:8" if emo in {"oppression", "revelation", "dread"} else "1:4"
+        if "half" in str(light_plan.get("ratio", "")).lower() or "high" in str(
+            light_plan.get("ratio", "")
+        ).lower():
+            fill_ratio = "1:8"
         patches.append(
             {
                 "shot_id": shot["shot_id"],
@@ -281,10 +320,13 @@ def stub_cinematography(bible: dict[str, Any], kb: dict[str, Any]) -> dict[str, 
                     "height": "chest" if shot.get("shot_size") in {"MCU", "CU"} else "eye",
                     "movement": {
                         "type": move,
-                        "speed": "very_slow" if "push" in move or "creep" in move else "none",
+                        "catalog_id": move_id,
+                        "zh": move_zh,
+                        "prompt_en": move_prompt,
+                        "speed": speed,
                         "motivation": (
                             f"服务 beat「{shot.get('dramatic_beat', '')}」与情绪 {emo}："
-                            f"选择 {move} / {angle}"
+                            f"知识库运镜「{move_zh or move}」/ {angle}，配合表演与灯光"
                         ),
                     },
                     "composition": "rule_of_thirds, protect eyeline",
@@ -294,16 +336,140 @@ def stub_cinematography(bible: dict[str, Any], kb: dict[str, Any]) -> dict[str, 
                     "tone": tone,
                     "contrast": scene_look.get("contrast")
                     or (look_rules.get("contrast") or ["high"])[0],
-                    "key_light": "soft side key from practical lamp",
-                    "fill_ratio": "1:8" if emo in {"oppression", "revelation", "dread"} else "1:4",
-                    "color_temp": scene_look.get("color")
-                    or "cool fill / warm practical",
+                    "key_light": key_light,
+                    "fill_ratio": fill_ratio,
+                    "color_temp": color_temp,
                     "grade_intent": "controlled blacks, protect facial detail",
-                    "motivation": f"影调跟随情绪 {emo}，并遵守场次 base_tone={tone}",
+                    "motivation": (
+                        f"影调跟随情绪 {emo}；"
+                        f"{light_plan.get('motivation') or light_table.get('face') or '服务情节氛围'}；"
+                        f"场次 base_tone={tone}"
+                    ),
                 },
             }
         )
     return {"shot_patches": patches}
+
+
+def stub_asset(bible: dict[str, Any], kb: dict[str, Any]) -> dict[str, Any]:
+    """
+    Casting / three-view prompts per 三视图.skill:
+    left face close-up + right front/back/side with black face censor boxes.
+    """
+    from film_pipeline.runtime.three_view import (
+        build_character_sheet_prompt,
+        build_prop_sheet_prompt,
+        build_set_sheet_prompt,
+    )
+
+    style = (bible.get("meta") or {}).get("style_pack", "neo_noir")
+    pack = dict((kb or {}).get("style_pack") or {})
+    pack.setdefault("id", style)
+
+    chars = []
+    for c in bible.get("characters") or []:
+        name = c.get("name") or c.get("id") or "Character"
+        aid = f"char_{(c.get('id') or name).lower()}"
+        built = build_character_sheet_prompt(c, style_pack=pack)
+        vars_ = built.get("template_vars") or {}
+        chars.append(
+            {
+                "asset_id": aid,
+                "name": name,
+                "type": "character",
+                "role": c.get("want") or "principal",
+                "consistency_anchors": [
+                    f"identity: {name}",
+                    f"voice/energy: {c.get('voice') or 'restrained'}",
+                    vars_.get("HAIR_STYLE_AND_COLOR", "consistent hair"),
+                    (vars_.get("CLOTHING_DESCRIPTION") or "consistent wardrobe")[:100],
+                    "same identity left close-up and right full-body views",
+                ],
+                "views": built.get("views")
+                or ["face_closeup_left", "full_front", "full_back", "full_side"],
+                "sheet_prompt": built["sheet_prompt"],
+                "negative_prompt": "",
+                "sheet_prompt_zh_summary": built.get("sheet_prompt_zh_summary"),
+                "ethnicity": built.get("ethnicity"),
+                "image_size_hint": built.get("image_size_hint"),
+                "image_refs": [],
+                "style_notes": (
+                    f"Template: 三视图 左50%大脸+人种; style={style}; image_refs swappable."
+                ),
+            }
+        )
+
+    env_prop = build_prop_sheet_prompt(
+        "kraft paper envelope with slightly lifted glue seal",
+        ["kraft paper", "lifted seal", "tea-table scale"],
+    )
+    props = [
+        {
+            "asset_id": "prop_envelope",
+            "name": "牛皮纸信封",
+            "type": "prop",
+            "role": "plot object",
+            "consistency_anchors": ["kraft paper", "lifted glue seal", "tea-table scale"],
+            "views": ["top", "side", "three_quarter"],
+            "sheet_prompt": env_prop["sheet_prompt"],
+            "negative_prompt": "",
+            "sheet_prompt_zh_summary": env_prop.get("sheet_prompt_zh_summary"),
+            "image_refs": [],
+        }
+    ]
+
+    sets = []
+    for sc in bible.get("scenes") or []:
+        sid = sc.get("scene_id") or "S01"
+        setting = sc.get("setting") or "interior"
+        built = build_set_sheet_prompt(
+            setting, [setting, "fixed furniture layout", "practical lamp"]
+        )
+        sets.append(
+            {
+                "asset_id": f"set_{str(sid).lower()}",
+                "name": setting,
+                "type": "set",
+                "role": sc.get("dramatic_function") or "location",
+                "consistency_anchors": [
+                    setting,
+                    "fixed furniture layout",
+                    "practical lamp placement",
+                ],
+                "views": ["master_wide", "left", "right", "detail_corner"],
+                "sheet_prompt": built["sheet_prompt"],
+                "negative_prompt": "",
+                "sheet_prompt_zh_summary": built.get("sheet_prompt_zh_summary"),
+                "image_refs": [],
+            }
+        )
+    if not sets:
+        built = build_set_sheet_prompt("apartment living room night rain")
+        sets.append(
+            {
+                "asset_id": "set_apartment_living",
+                "name": "公寓客厅",
+                "type": "set",
+                "consistency_anchors": ["sofa", "tea table", "window rain"],
+                "views": ["master_wide", "left", "right"],
+                "sheet_prompt": built["sheet_prompt"],
+                "negative_prompt": "",
+                "sheet_prompt_zh_summary": built.get("sheet_prompt_zh_summary"),
+                "image_refs": [],
+            }
+        )
+
+    return {
+        "asset_bible": {
+            "characters": chars,
+            "props": props,
+            "sets": sets,
+            "notes": (
+                "Character sheets follow 三视图.skill: EN primary; "
+                "zh_summary for reading; image_refs empty until user generates."
+            ),
+        }
+    }
 
 
 def stub_timing(bible: dict[str, Any], kb: dict[str, Any]) -> dict[str, Any]:
@@ -442,4 +608,5 @@ STUBS = {
     "timing": stub_timing,
     "generator": stub_generator,
     "critic": stub_critic,
+    "asset": stub_asset,
 }

@@ -1,0 +1,60 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "AssetOutput",
+  "type": "object",
+  "required": ["asset_bible"],
+  "additionalProperties": false,
+  "properties": {
+    "asset_bible": {
+      "type": "object",
+      "required": ["characters", "props", "sets"],
+      "properties": {
+        "characters": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/asset_item" }
+        },
+        "props": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/asset_item" }
+        },
+        "sets": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/asset_item" }
+        },
+        "notes": { "type": "string" }
+      }
+    }
+  },
+  "$defs": {
+    "asset_item": {
+      "type": "object",
+      "required": ["asset_id", "name", "type", "sheet_prompt"],
+      "properties": {
+        "asset_id": { "type": "string" },
+        "name": { "type": "string" },
+        "type": {
+          "type": "string",
+          "enum": ["character", "prop", "set"]
+        },
+        "role": { "type": "string" },
+        "consistency_anchors": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "views": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "sheet_prompt": { "type": "string" },
+        "negative_prompt": { "type": "string" },
+        "sheet_prompt_zh_summary": { "type": "string" },
+        "image_size_hint": { "type": "string" },
+        "image_refs": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "style_notes": { "type": "string" }
+      }
+    }
+  }
+}

@@ -1,0 +1,90 @@
+{
+  "version": "1.1",
+  "description": "导演三位一体：情绪 → 表演 + 景别 + 运镜 + 灯光",
+  "human_doc": "human/03_director.md",
+  "by_emotion": {
+    "calm": {
+      "shot_bias": ["WS", "MS", "MCU"],
+      "coverage": "先建立再落稳",
+      "move_bias": ["固定", "慢横摇", "慢横移", "锁死机位"],
+      "lighting": {
+        "key": "柔侧光或柔顺光实用灯",
+        "ratio": "几乎均匀到轻微半影",
+        "color": "中性略暖",
+        "motivation": "空间可读、气氛可呼吸"
+      }
+    },
+    "suspicion": {
+      "shot_bias": ["MCU", "CU", "INSERT", "MS"],
+      "coverage": "持续单人镜头 + 证据插入",
+      "move_bias": ["固定维持", "缓慢推进", "爬行逼近"],
+      "lighting": {
+        "key": "侧主光，可一眼略欠曝",
+        "ratio": "半影 / 中高反差",
+        "color": "冷补光 + 暖实用光",
+        "motivation": "不安，阴影里藏着信息"
+      }
+    },
+    "oppression": {
+      "shot_bias": ["MCU", "CU", "MS"],
+      "coverage": "逐渐收紧，不给宽景退路",
+      "move_bias": ["缓慢推进", "略仰", "爬行逼近"],
+      "lighting": {
+        "key": "偏硬侧光或顶侧光，面部部分被暗吞没",
+        "ratio": "高反差，大面积脸部阴影",
+        "color": "冷阴影主导",
+        "motivation": "心理重量，无路可退"
+      }
+    },
+    "revelation": {
+      "shot_bias": ["CU", "INSERT", "MCU"],
+      "coverage": "信息插入后接反应脸，或反过来",
+      "move_bias": ["缓慢推进", "揭示式横摇", "焦点转移", "拉镜制造孤立"],
+      "lighting": {
+        "key": "护眼，在揭示物/脸上抬局部反差",
+        "ratio": "节拍点抬反差",
+        "color": "世界偏冷，真相物件可一点暖边光",
+        "motivation": "真相落地，世界变硬"
+      }
+    },
+    "intimacy": {
+      "shot_bias": ["MCU", "CU"],
+      "coverage": "干净单人，少乱切",
+      "move_bias": ["固定", "极微漂移"],
+      "lighting": {
+        "key": "柔暖实用光，高光柔化",
+        "ratio": "柔，脸大体可读",
+        "color": "暖实用光",
+        "motivation": "安全与脆弱"
+      }
+    },
+    "grief": {
+      "shot_bias": ["MCU", "CU", "WS with negative space"],
+      "coverage": "长持反应，允许静默",
+      "move_bias": ["固定维持", "极慢推进"],
+      "lighting": {
+        "key": "柔低调，窗柔光或暗实用光",
+        "ratio": "柔高或中等，去饱和感",
+        "color": "冷补光，低饱和",
+        "motivation": "失去后的空"
+      }
+    },
+    "dread": {
+      "shot_bias": ["WS", "MS", "MCU", "ECU rare"],
+      "coverage": "先藏再逼近",
+      "move_bias": ["爬行逼近", "固定维持", "荷兰角仅在有动机时"],
+      "lighting": {
+        "key": "可选底光或硬侧光，深阴影",
+        "ratio": "高反差",
+        "color": "冷青或病态绿可选",
+        "motivation": "威胁与失序"
+      }
+    }
+  },
+  "director_rules": [
+    "同一情绪同时驱动表演、景别、运镜、灯光",
+    "禁止与表演目标打架的炫技运镜",
+    "反应镜头是表演的一部分",
+    "灯光尽量有故事内光源动机"
+  ]
+}

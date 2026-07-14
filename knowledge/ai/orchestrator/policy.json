@@ -1,0 +1,24 @@
+{
+  "version": "1.0",
+  "human_doc": "human/10_orchestrator.md",
+  "commander": "orchestrator",
+  "requires_brief_fields": ["max_clip_sec", "style_pack", "tracks"],
+  "main_order": [
+    "dramaturg",
+    "dialogue",
+    "director",
+    "look",
+    "cinematography",
+    "timing",
+    "generator",
+    "critic"
+  ],
+  "asset_fork_after": "dramaturg",
+  "rules": [
+    "Assign TaskTicket per stage with reads/writes/forbidden",
+    "Do not invent artistic content",
+    "End product is prompts_only",
+    "max_clip_sec only 15 or 30",
+    "Asset track is non-blocking for image_refs"
+  ]
+}

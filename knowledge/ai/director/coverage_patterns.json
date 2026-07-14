@@ -1,0 +1,18 @@
+{
+  "version": "1.0",
+  "coverage_minimum_for_dialogue_scene": [
+    "establishing_or_master",
+    "single_or_ots_a",
+    "single_or_ots_b",
+    "reaction_or_insert"
+  ],
+  "emotion_to_coverage_bias": {
+    "calm": ["wider", "fewer_cuts"],
+    "suspicion": ["inserts", "held_singles"],
+    "oppression": ["tighter_progression", "fewer_escapes_wide"],
+    "revelation": ["insert_or_push", "reaction_after"],
+    "intimacy": ["MCU_CU", "minimal_coverage_jump"],
+    "grief": ["hold_reaction", "negative_space"],
+    "dread": ["withhold_info", "slow_approach"]
+  }
+}

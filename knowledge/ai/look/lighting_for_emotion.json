@@ -1,0 +1,54 @@
+{
+  "version": "1.1",
+  "human_doc": "human/04_look.md",
+  "note": "动机光：用可见结果描述，不用勒克斯数值",
+  "by_emotion": {
+    "calm": {
+      "sources": ["柔和窗光", "暖色实用台灯"],
+      "face": "面部基本可读，阴影边缘柔和",
+      "contrast": "柔到中等",
+      "color_temp": "中性偏暖"
+    },
+    "suspicion": {
+      "sources": ["侧向实用光", "冷色环境补光"],
+      "face": "半明半暗，一侧略藏秘密",
+      "contrast": "中高",
+      "color_temp": "冷补暖主"
+    },
+    "oppression": {
+      "sources": ["偏硬侧光", "极少补光"],
+      "face": "大面积阴影，眼睛仍需可读",
+      "contrast": "高",
+      "color_temp": "冷色主导"
+    },
+    "revelation": {
+      "sources": ["主光收紧在脸或关键物件", "背景下沉"],
+      "face": "眼睛清晰，周边略压暗",
+      "contrast": "节拍点抬高反差",
+      "color_temp": "冷暖分离"
+    },
+    "intimacy": {
+      "sources": ["近处暖实用光", "柔和反弹"],
+      "face": "轻柔包裹，眼神柔和",
+      "contrast": "柔",
+      "color_temp": "暖"
+    },
+    "grief": {
+      "sources": ["偏暗柔窗光", "弱实用光"],
+      "face": "柔低调，可选湿润眼神高光",
+      "contrast": "柔高或中等",
+      "color_temp": "去饱和偏冷"
+    },
+    "dread": {
+      "sources": ["单一硬光源", "强负补光"],
+      "face": "可有深眼窝感，意图仍可读",
+      "contrast": "高",
+      "color_temp": "冷"
+    }
+  },
+  "rules": [
+    "优先故事内实用光动机",
+    "用视觉结果描述，不写精确光比数字作表演",
+    "look_bible.forbidden 优先于装饰性布光"
+  ]
+}

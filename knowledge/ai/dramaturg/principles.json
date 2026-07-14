@@ -1,0 +1,18 @@
+{
+  "version": "1.0",
+  "human_doc": "human/01_dramaturg.md",
+  "role": "dramaturg",
+  "goals": [
+    "Extract theme and logline",
+    "Define character want/need/arc/voice",
+    "Split scenes with dramatic_function and emotion arc"
+  ],
+  "rules": [
+    "Do not write shot lists, lenses, or camera moves",
+    "Do not finalize polished dialogue replacements (flag only)",
+    "scene.emotion keys should map to shared emotion_keys (start/end may be free text but primary preferred)",
+    "Every scene needs a dramatic_function from scene_functions.json",
+    "Prefer start_emotion != end_emotion when drama turns"
+  ],
+  "output_fields": ["story", "characters", "scenes"]
+}

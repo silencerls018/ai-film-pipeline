@@ -1,0 +1,17 @@
+{
+  "version": "1.0",
+  "human_doc": "human/04_look.md",
+  "tones": [
+    {"id": "high_key", "zh": "高调", "feel": "明快、通透、少阴影"},
+    {"id": "mid_key", "zh": "中间调", "feel": "日常自然"},
+    {"id": "mid_low", "zh": "中低调", "feel": "压抑前奏"},
+    {"id": "low_key", "zh": "低调", "feel": "戏剧、神秘、类型片"},
+    {"id": "soft_low", "zh": "柔低调", "feel": "伤感但不硬"}
+  ],
+  "contrast": ["soft", "medium", "medium_high", "high"],
+  "rules": [
+    "film_look sets global palette and contrast",
+    "scene_looks may arc within film_look",
+    "forbidden lists are hard constraints for cinematography and generator"
+  ]
+}

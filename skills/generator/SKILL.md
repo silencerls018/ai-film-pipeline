@@ -9,9 +9,11 @@
 
 | 字段 | 用途 |
 |------|------|
-| `visual_prompt` | 文生图 / 关键帧 |
+| **`actor_free_prompt`** | **演员自由发挥版：只写情绪词** |
+| **`director_guided_prompt`** | **导演指导版：表演+景别+运镜+灯光一体** |
+| `visual_prompt` | 文生图 / 关键帧（技术层） |
 | `motion_prompt` | 图生视频运镜 |
-| `master_prompt` | 单框模型（视觉+运动合一） |
+| `master_prompt` | 单框模型（视觉+运动合一，legacy） |
 | `negative_prompt` | 负向约束 |
 | `zh_director_summary` | 给人看的中文镜头摘要 |
 

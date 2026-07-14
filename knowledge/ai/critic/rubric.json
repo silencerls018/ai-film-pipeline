@@ -1,0 +1,50 @@
+{
+  "version": "1.0",
+  "human_doc": "human/09_critic.md",
+  "checks": [
+    {
+      "id": "emotion_canonical",
+      "if_fail": "director",
+      "desc": "shots[].emotion.primary in shared emotion keys"
+    },
+    {
+      "id": "movement_motivation",
+      "if_fail": "cinematography",
+      "desc": "camera.movement.motivation present"
+    },
+    {
+      "id": "look_motivation",
+      "if_fail": "cinematography",
+      "desc": "look.motivation present"
+    },
+    {
+      "id": "timing_plan",
+      "if_fail": "timing",
+      "desc": "timing_plan and duration_sec exist"
+    },
+    {
+      "id": "clip_cap",
+      "if_fail": "timing",
+      "desc": "each generation_clip.duration_sec <= max_clip_sec"
+    },
+    {
+      "id": "generation_coverage",
+      "if_fail": "generator",
+      "desc": "jobs cover shots/clips"
+    },
+    {
+      "id": "look_bible",
+      "if_fail": "look",
+      "desc": "look_bible present"
+    },
+    {
+      "id": "asset_if_enabled",
+      "if_fail": "asset",
+      "desc": "if tracks.assets, major characters have asset entries"
+    }
+  ],
+  "rules": [
+    "Do not rewrite art fields; only report failures with reroute_to",
+    "Prefer precise reroute over full pipeline restart"
+  ]
+}

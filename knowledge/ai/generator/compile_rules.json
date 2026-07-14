@@ -1,0 +1,38 @@
+{
+  "version": "1.0",
+  "human_doc": "human/08_generator.md",
+  "mode": "assemble_only",
+  "merge_order": [
+    "shot_size_subject_beat",
+    "emotion",
+    "camera_body_lens_angle",
+    "movement.prompt_en_or_type",
+    "look_tone_light_grade",
+    "style_pack",
+    "asset_id_anchors",
+    "dialogue_performance_cues",
+    "duration_and_stitch"
+  ],
+  "outputs": [
+    "actor_free_prompt",
+    "director_guided_prompt",
+    "visual_prompt",
+    "motion_prompt",
+    "master_prompt",
+    "negative_prompt",
+    "zh_director_summary",
+    "duration_sec"
+  ],
+  "dual_prompt": {
+    "actor_free": "emotion tags only; no muscle choreography",
+    "director_guided": "physiology + shot + move + lighting + delivery; no literary metaphor"
+  },
+  "rules": [
+    "Never invent plot, props, or characters absent from FilmBible",
+    "Prefer catalog prompt_en for camera movement",
+    "Include forbidden looks in negative_prompt",
+    "One job per generation clip",
+    "duration_sec must be <= meta.max_clip_sec",
+    "Always emit both actor_free_prompt and director_guided_prompt"
+  ]
+}

@@ -1,0 +1,39 @@
+{
+  "version": "1.0",
+  "human_doc": "human/03_director.md",
+  "shot_sizes": ["EWS", "WS", "FS", "MS", "MCU", "CU", "ECU", "INSERT"],
+  "patterns": [
+    {
+      "id": "establish_to_detail",
+      "sequence": ["WS", "MS", "CU", "MCU"],
+      "use_when": ["open_scene", "build_suspicion"]
+    },
+    {
+      "id": "dialogue_coverage",
+      "sequence": ["WS", "MS", "MCU", "MCU", "CU"],
+      "labels": ["master", "two_shot_or_ms", "single_a", "single_b", "pressure_cu"],
+      "use_when": ["dialogue"]
+    },
+    {
+      "id": "reveal_object_then_face",
+      "sequence": ["INSERT", "CU"],
+      "use_when": ["revelation"]
+    },
+    {
+      "id": "reveal_face_then_object",
+      "sequence": ["MCU", "INSERT"],
+      "use_when": ["revelation", "suspicion"]
+    },
+    {
+      "id": "reaction_hold",
+      "sequence": ["MCU", "CU"],
+      "use_when": ["aftermath", "grief", "oppression"]
+    }
+  ],
+  "rules": [
+    "Each shot needs dramatic_beat + emotion.primary from shared emotion_keys",
+    "Avoid talking-heads-only coverage",
+    "Prefer AI-friendly shot lengths; long takes must be splitable by timing",
+    "Do not finalize lens_mm or grade LUT"
+  ]
+}

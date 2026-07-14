@@ -1,0 +1,34 @@
+{
+  "version": "1.0",
+  "human_doc": "human/03_director.md",
+  "outputs": {
+    "actor_free": {
+      "id": "actor_free",
+      "label_zh": "演员自由发挥版",
+      "rule": "Only emotion tags + intensity + beat title. No muscle/face choreography. Camera and light still present as production frame but performance is open.",
+      "include": ["emotion_tags", "intensity", "dramatic_beat", "shot_size", "rough_duration"],
+      "exclude": ["muscle_detail", "micro_action_list", "forced_gesture"]
+    },
+    "director_guided": {
+      "id": "director_guided",
+      "label_zh": "导演指导版",
+      "rule": "Full trinity: physical performance + shot size + camera move (catalog prompt) + lighting for emotion + dialogue delivery. No literary metaphor. No exact mm/degree numbers in performance text.",
+      "include": [
+        "physiology",
+        "micro_actions",
+        "gaze",
+        "shot_size",
+        "camera_move_prompt",
+        "angle",
+        "lighting",
+        "dialogue_delivery",
+        "duration"
+      ]
+    }
+  },
+  "quality": [
+    "Both versions share same shot_id, duration, and story beat",
+    "Director-guided must not invent plot beyond FilmBible",
+    "Actor-free must not list contradictory emotions"
+  ]
+}

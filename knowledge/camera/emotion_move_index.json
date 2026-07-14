@@ -1,0 +1,79 @@
+{
+  "meta": {
+    "source_xlsx": "E:\\AI\\知识库\\提示词\\运镜Prompt精品库_清洗版.xlsx",
+    "imported_at": "2026-07-13T19:20:02.144583+00:00",
+    "move_count": 158,
+    "shot_size_count": 14,
+    "sheets": [
+      "运镜Prompt精品库",
+      "景别词库_非运镜"
+    ],
+    "note": "Excel is edit source; runtime should read these JSON files."
+  },
+  "index": {
+    "revelation": [
+      "pan",
+      "pan_left",
+      "pan_right",
+      "tilt_up",
+      "tilt_down",
+      "dolly_out",
+      "walk_and_talk",
+      "reveal_shot",
+      "creep_out",
+      "circle_reveal",
+      "pull_focus_dolly",
+      "boom_over_obstacle",
+      "mirror_move",
+      "gimbal_360_product",
+      "reaction_push"
+    ],
+    "calm": [
+      "pan",
+      "dolly_out",
+      "establishing_move",
+      "static_locked_off",
+      "drone_dive",
+      "epic_establishing_drone"
+    ],
+    "oppression": [
+      "tilt_up",
+      "reverse_tracking",
+      "worm_s_eye_rise",
+      "creep_in",
+      "horror_creep",
+      "western_dolly",
+      "villain_push_in"
+    ],
+    "grief": [
+      "tilt_down"
+    ],
+    "suspicion": [
+      "roll",
+      "dutch_angle",
+      "dolly_in",
+      "chase_shot",
+      "handheld",
+      "creep_in",
+      "noir_truck",
+      "surveillance_pan",
+      "horror_dutch_roll"
+    ],
+    "dread": [
+      "roll",
+      "dutch_angle",
+      "spiral_shot",
+      "dolly_zoom",
+      "creep_in",
+      "horror_dutch_roll",
+      "villain_push_in"
+    ],
+    "intimacy": [
+      "dolly_in",
+      "push_and_pan",
+      "orbit_push_in",
+      "handheld",
+      "intimacy_handheld_cu"
+    ]
+  }
+}

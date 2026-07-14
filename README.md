@@ -1,21 +1,28 @@
 # AI Film Pipeline
 
-多智能体「虚拟剧组」管线：把剧本推进为结构化 **FilmBible（电影圣经）**——含优化对白、分镜、**影调 Look**、摄影机语言（焦段 / 角度 / 运镜 / 动机），并为后续 AI 出图出片预留生成与质检节点。
+多智能体「虚拟剧组」管线：把剧本推进为结构化 **FilmBible**，终点是 **最终提示词**（不调用视频 API）。
 
-> **Skill = 岗位怎么干** · **Knowledge = 电影语法与规则** · **FilmBible = 本片状态**
+> **ProductionBrief = 创作意图** · **Orchestrator = 调度总指挥** · **TaskTicket = 派工单**  
+> **Skill = 岗位手册** · **Knowledge = 规则库** · **FilmBible = 本片状态**
 
-## 架构
+## 架构（更合理）
 
 ```text
-剧本
-  → Dramaturg     结构 / 人物 / 场次 / 情绪曲线
-  → Dialogue      对白深度（潜台词、功能、节奏）
-  → Director      分镜叙事（景别、beat、剪辑意图）
-  → Look          全片 & 分场影调 / 色彩剧本
-  → Cinematography  单镜：角度·焦段·运镜·光色落地
-  → Timing        **时长规划**：台词/运镜/留白 → duration；超 cap 拆 clip
-  → Generator     **Prompt 编译器**：合并全部成果 → 最终提示词（按 clip）
-  → Critic        对照合同质检，精确打回
+你 / Producer
+  → ProductionBrief（必选：15|30 秒、风格包、是否资产轨）
+       ↓
+Orchestrator（代码总指挥 · 唯一派工者）
+  ├─ 主链 main
+  │    dramaturg → dialogue → director → look
+  │    → cinematography → timing → generator → critic
+  └─ 资产旁路 assets（可选并行）
+       asset：人物/道具/场景三视图提示词
+       image_refs 可空，随时换图，不堵主链
+```
+
+```bash
+film-pipeline org          # 组织架构
+film-pipeline stages       # 岗位列表
 ```
 
 ### 开始前：必须选择 15 秒或 30 秒
@@ -62,15 +69,17 @@ film-pipeline prompts --project demo
 | Dialogue | 台词表演提示（delivery/subtext） |
 | Style pack | 类型气质 |
 
-每镜产出：
+每镜产出 **两版 × 双语**：
 
-- `visual_prompt` — 关键帧 / 文生图  
-- `motion_prompt` — 图生视频运镜  
-- `master_prompt` — 视觉+运动合一  
-- `negative_prompt` — 负向词  
-- `zh_director_summary` — 中文镜头摘要  
+| 字段 | 语言 | 用途 |
+|------|------|------|
+| **`actor_free_prompt`** | **英文主稿** | 自由发挥版，复制去视频模型 |
+| **`director_guided_prompt`** | **英文主稿** | 导演指导版，复制去视频模型 |
+| `actor_free_prompt_zh` / `director_guided_prompt_zh` | 中文辅助 | **只帮你看懂**，不优先投喂 |
+| `visual_prompt` / `motion_prompt` | 技术层 | 关键帧 / I2V |
+| `zh_director_summary` | 中文 | 镜头一句话摘要 |
 
-并导出可读文件：`film_pipeline/bible/projects/<id>/prompt_board.md`
+`prompt_board.md` 里每版都是：**英文主稿在上，中文对照在下**。
 
 ```bash
 film-pipeline prompts --project demo
@@ -84,15 +93,31 @@ film-pipeline prompts --project demo --shot S01_T05
 ```text
 ai-film-pipeline/
 ├── skills/                 # 岗位 Skill（SKILL.md + schema）
-├── knowledge/              # 知识库（影调、运镜、风格包…）
-├── schemas/                # 共享 JSON Schema
+├── knowledge/
+│   ├── human/              # 人维护版（Markdown 手册）
+│   ├── ai/                 # AI 运行版（JSON 规则/词表/交接合同）
+│   ├── camera/             # 运镜 Excel 导入大词库
+│   ├── timing/ · style_packs/
+│   └── README.md           # 双版本协作说明
+├── schemas/
 ├── film_pipeline/
-│   ├── cli.py              # 命令行入口
-│   ├── runtime/            # 加载 skill / 检索 kb / 调 LLM / 校验
-│   ├── orchestrator/       # 状态机流水线
-│   └── bible/              # 示例与项目实例
 ├── tests/
 └── scripts/
+    ├── import_camera_xlsx.py
+    └── validate_knowledge_dual.py
+```
+
+### 知识库双版本
+
+| 版本 | 路径 | 用途 |
+|------|------|------|
+| 人读 | `knowledge/human/` | 理念、案例、禁忌、上下游协作 |
+| AI | `knowledge/ai/` | 枚举、映射、交接合同、质检量表 |
+
+改完后校验：
+
+```bash
+python scripts/validate_knowledge_dual.py
 ```
 
 ## 快速开始
@@ -115,19 +140,36 @@ copy .env.example .env   # Windows
 
 默认 `FILM_PIPELINE_DRY_RUN=1`：**不调用在线 LLM**，用规则 + 模板跑通全流程，方便本地体验。
 
-### 2. 跑通示例剧本
+### 2. 跑通示例（先填 Brief，再由 Orchestrator 派工）
 
-```bash
-film-pipeline run --script film_pipeline/bible/examples/sample_script.txt --project demo
-```
-
-或：
+交互（推荐）——依次问：15/30、风格、是否资产轨：
 
 ```bash
 python -m film_pipeline.cli run --script film_pipeline/bible/examples/sample_script.txt --project demo
 ```
 
-输出目录：`film_pipeline/bible/projects/demo/film_bible.json`
+非交互一次给齐：
+
+```bash
+python -m film_pipeline.cli run --script film_pipeline/bible/examples/sample_script.txt --project demo --max-clip 30 --style neo_noir --assets
+```
+
+产出目录 `film_pipeline/bible/projects/demo/`：
+
+| 文件 | 含义 |
+|------|------|
+| `production_brief.json` | 开工意图 |
+| `film_bible.json` | 全状态 + task_log |
+| `prompt_board.md` | **主链终点：镜头提示词** |
+| `asset_board.md` | 三视图设定提示词（可换图） |
+| `timing_plan.md` | 时长账本 |
+
+```bash
+film-pipeline tasks --project demo    # 派工日志
+film-pipeline brief --project demo
+film-pipeline assets --project demo   # 仅重跑资产旁路
+film-pipeline prompts --project demo  # 最终提示词
+```
 
 ### 3. 只跑某一阶段
 
@@ -158,9 +200,10 @@ OPENAI_MODEL=gpt-4o-mini
 | Director | `skills/director` | `knowledge/directing` |
 | Look | `skills/look` | `knowledge/look`, `style_packs` |
 | Cinematography | `skills/cinematography` | `knowledge/camera`, `look`, `style_packs` |
-| Timing | `skills/timing` | `knowledge/timing`（语速、运镜时长、模型 cap） |
-| Generator | `skills/generator` | 模型能力 / prompt 模板 |
+| Timing | `skills/timing` | `knowledge/timing`（语速、运镜时长、15/30 cap） |
+| Generator | `skills/generator` | 编译最终镜头提示词 |
 | Critic | `skills/critic` | 评分与失败分类 |
+| **Asset（旁路）** | `skills/asset` | 人物/道具/场景三视图 prompt |
 
 扩展方式：
 
@@ -168,6 +211,25 @@ OPENAI_MODEL=gpt-4o-mini
 2. 改 `knowledge/**/*.json`（规则与候选集）
 3. 加 `knowledge/style_packs/*.json`（风格包）
 4. 加 `knowledge/exemplars/*.json`（好样本镜头合同）
+
+### 导入运镜 Excel 知识库
+
+维护源可以是你的 xlsx（如 `E:\AI\知识库\提示词\运镜Prompt精品库_清洗版.xlsx`），**运行时只读 JSON**：
+
+```bash
+python scripts/import_camera_xlsx.py
+# 或
+python scripts/import_camera_xlsx.py --xlsx "E:\AI\知识库\提示词\运镜Prompt精品库_清洗版.xlsx"
+```
+
+生成：
+
+- `knowledge/camera/moves_catalog.json` — 全量运镜词条 + 英文 Prompt
+- `knowledge/camera/shot_sizes.json` — 景别
+- `knowledge/camera/emotion_to_camera.json` — 情绪 → 候选运镜（供摄影岗）
+- `knowledge/camera/CATALOG_README.md` — 导入摘要
+
+Excel 继续当你的编辑台；大改后重新跑导入即可。
 
 ## FilmBible 核心字段
 
@@ -201,7 +263,8 @@ ruff check film_pipeline
 - [x] Prompt Compiler（合并全部成果为最终提示词 + prompt_board.md）
 - [x] Timing Planner（台词/运镜时长 + 15/30s cap 拆 clip）
 - [x] 开始前强制选择视频上限 15s 或 30s（提示词为终点，不接 API）
-- [ ] 人审交互（approve / edit shot）
+- [x] ProductionBrief + Orchestrator 派工（TaskTicket）+ 资产旁路
+- [ ] 人审 gate 真正暂停等待确认
 - [ ] 向量检索 exemplars
 - [ ] Web 导演台（可选 TypeScript 前端）
 

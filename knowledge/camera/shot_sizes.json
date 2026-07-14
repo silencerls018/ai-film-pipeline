@@ -1,0 +1,190 @@
+{
+  "meta": {
+    "source_xlsx": "E:\\AI\\知识库\\提示词\\运镜Prompt精品库_清洗版.xlsx",
+    "imported_at": "2026-07-13T19:20:02.144583+00:00",
+    "move_count": 158,
+    "shot_size_count": 14,
+    "sheets": [
+      "运镜Prompt精品库",
+      "景别词库_非运镜"
+    ],
+    "note": "Excel is edit source; runtime should read these JSON files."
+  },
+  "sizes": [
+    {
+      "id": "extreme_wide_shot",
+      "index": 1,
+      "en": "Extreme Wide Shot",
+      "zh": "大远景",
+      "code": "EWS",
+      "aliases": [
+        "EWS",
+        "Extreme long shot"
+      ],
+      "description": "展示渺小人物与宏大环境",
+      "remark": "请与运镜表搭配，勿单独当作运镜Prompt核心"
+    },
+    {
+      "id": "wide_shot",
+      "index": 2,
+      "en": "Wide Shot",
+      "zh": "全景/远景",
+      "code": "WS",
+      "aliases": [
+        "WS",
+        "Long shot",
+        "LS"
+      ],
+      "description": "全身加环境，交代位置关系",
+      "remark": "请与运镜表搭配，勿单独当作运镜Prompt核心"
+    },
+    {
+      "id": "full_shot",
+      "index": 3,
+      "en": "Full Shot",
+      "zh": "全身景",
+      "code": "FS",
+      "aliases": [
+        "FS"
+      ],
+      "description": "头到脚完整入画",
+      "remark": "请与运镜表搭配，勿单独当作运镜Prompt核心"
+    },
+    {
+      "id": "medium_wide_shot",
+      "index": 4,
+      "en": "Medium Wide Shot",
+      "zh": "中远景",
+      "code": "MWS",
+      "aliases": [
+        "MWS",
+        "Medium long",
+        "Knee shot"
+      ],
+      "description": "约膝部以上",
+      "remark": "请与运镜表搭配，勿单独当作运镜Prompt核心"
+    },
+    {
+      "id": "cowboy_shot",
+      "index": 5,
+      "en": "Cowboy Shot",
+      "zh": "牛仔景",
+      "code": "American shot",
+      "aliases": [
+        "American shot"
+      ],
+      "description": "大腿中部以上，源自西部片枪套构图",
+      "remark": "请与运镜表搭配，勿单独当作运镜Prompt核心"
+    },
+    {
+      "id": "medium_shot",
+      "index": 6,
+      "en": "Medium Shot",
+      "zh": "中景",
+      "code": "MS",
+      "aliases": [
+        "MS",
+        "Waist shot"
+      ],
+      "description": "腰部以上，对话最常用",
+      "remark": "请与运镜表搭配，勿单独当作运镜Prompt核心"
+    },
+    {
+      "id": "medium_close_up",
+      "index": 7,
+      "en": "Medium Close-Up",
+      "zh": "中近景",
+      "code": "MCU",
+      "aliases": [
+        "MCU"
+      ],
+      "description": "胸部以上，表情与肢体兼顾",
+      "remark": "请与运镜表搭配，勿单独当作运镜Prompt核心"
+    },
+    {
+      "id": "close_up",
+      "index": 8,
+      "en": "Close-Up",
+      "zh": "特写",
+      "code": "CU",
+      "aliases": [
+        "CU"
+      ],
+      "description": "面部或物体细节，强调情绪",
+      "remark": "请与运镜表搭配，勿单独当作运镜Prompt核心"
+    },
+    {
+      "id": "extreme_close_up",
+      "index": 9,
+      "en": "Extreme Close-Up",
+      "zh": "大特写",
+      "code": "ECU",
+      "aliases": [
+        "ECU",
+        "XCU"
+      ],
+      "description": "眼睛、嘴唇、物件局部",
+      "remark": "请与运镜表搭配，勿单独当作运镜Prompt核心"
+    },
+    {
+      "id": "two_shot",
+      "index": 10,
+      "en": "Two-Shot",
+      "zh": "双人镜头",
+      "code": "2-shot",
+      "aliases": [
+        "2-shot"
+      ],
+      "description": "两名主体同框",
+      "remark": "请与运镜表搭配，勿单独当作运镜Prompt核心"
+    },
+    {
+      "id": "over_the_shoulder",
+      "index": 11,
+      "en": "Over-the-Shoulder",
+      "zh": "过肩镜头",
+      "code": "OTS",
+      "aliases": [
+        "OTS"
+      ],
+      "description": "从一角色肩后看另一角色",
+      "remark": "请与运镜表搭配，勿单独当作运镜Prompt核心"
+    },
+    {
+      "id": "insert_shot",
+      "index": 12,
+      "en": "Insert Shot",
+      "zh": "插入镜头",
+      "code": "Insert",
+      "aliases": [
+        "Insert"
+      ],
+      "description": "细节物件插入，非运镜",
+      "remark": "请与运镜表搭配，勿单独当作运镜Prompt核心"
+    },
+    {
+      "id": "establishing_shot",
+      "index": 13,
+      "en": "Establishing Shot",
+      "zh": "建立镜头",
+      "code": "Establisher",
+      "aliases": [
+        "Establisher"
+      ],
+      "description": "开场交代地点，可为静可动",
+      "remark": "请与运镜表搭配，勿单独当作运镜Prompt核心"
+    },
+    {
+      "id": "master_shot",
+      "index": 14,
+      "en": "Master Shot",
+      "zh": "主镜头/总角度",
+      "code": "Master",
+      "aliases": [
+        "Master"
+      ],
+      "description": "覆盖整场调度的宽机位",
+      "remark": "请与运镜表搭配，勿单独当作运镜Prompt核心"
+    }
+  ]
+}

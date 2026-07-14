@@ -1,0 +1,1527 @@
+{
+  "pan": {
+    "en": "Pan",
+    "zh": "横摇",
+    "min_sec": 2.0,
+    "preferred_sec": 3.5,
+    "prompt_hint": "slow pan left to right across the landscape, cinematic",
+    "use_when": [
+      "revelation",
+      "calm"
+    ],
+    "move_type": "基础运镜"
+  },
+  "pan_left": {
+    "en": "Pan Left",
+    "zh": "左摇",
+    "min_sec": 2.0,
+    "preferred_sec": 3.5,
+    "prompt_hint": "camera pans left revealing the character in the doorway",
+    "use_when": [
+      "revelation"
+    ],
+    "move_type": "基础运镜"
+  },
+  "pan_right": {
+    "en": "Pan Right",
+    "zh": "右摇",
+    "min_sec": 2.0,
+    "preferred_sec": 3.5,
+    "prompt_hint": "camera pans right following the car driving past",
+    "use_when": [
+      "revelation"
+    ],
+    "move_type": "基础运镜"
+  },
+  "tilt": {
+    "en": "Tilt",
+    "zh": "纵摇/俯仰",
+    "min_sec": 2.0,
+    "preferred_sec": 3.5,
+    "prompt_hint": "slow tilt up from the shoes to the face, dramatic",
+    "use_when": [],
+    "move_type": "基础运镜"
+  },
+  "tilt_up": {
+    "en": "Tilt Up",
+    "zh": "上仰",
+    "min_sec": 2.0,
+    "preferred_sec": 3.5,
+    "prompt_hint": "tilt up revealing the skyscraper against the sky",
+    "use_when": [
+      "oppression",
+      "revelation"
+    ],
+    "move_type": "基础运镜"
+  },
+  "tilt_down": {
+    "en": "Tilt Down",
+    "zh": "下俯",
+    "min_sec": 2.0,
+    "preferred_sec": 3.5,
+    "prompt_hint": "tilt down from the sky to the empty street",
+    "use_when": [
+      "grief",
+      "revelation"
+    ],
+    "move_type": "基础运镜"
+  },
+  "roll": {
+    "en": "Roll",
+    "zh": "滚转/旋转",
+    "min_sec": 2.0,
+    "preferred_sec": 3.5,
+    "prompt_hint": "slow camera roll creating disorientation, thriller style",
+    "use_when": [
+      "suspicion",
+      "dread"
+    ],
+    "move_type": "基础运镜"
+  },
+  "dutch_angle": {
+    "en": "Dutch Angle",
+    "zh": "荷兰角",
+    "min_sec": 2.0,
+    "preferred_sec": 3.5,
+    "prompt_hint": "dutch angle shot of the villain, tense atmosphere",
+    "use_when": [
+      "suspicion",
+      "dread"
+    ],
+    "move_type": "基础运镜"
+  },
+  "dolly_in": {
+    "en": "Dolly In",
+    "zh": "推镜",
+    "min_sec": 2.0,
+    "preferred_sec": 3.5,
+    "prompt_hint": "slow dolly in on the actor's face, emotional close-up",
+    "use_when": [
+      "suspicion",
+      "intimacy"
+    ],
+    "move_type": "基础运镜"
+  },
+  "dolly_out": {
+    "en": "Dolly Out",
+    "zh": "拉镜",
+    "min_sec": 2.0,
+    "preferred_sec": 3.5,
+    "prompt_hint": "dolly out revealing the character alone in the empty room",
+    "use_when": [
+      "revelation",
+      "calm"
+    ],
+    "move_type": "基础运镜"
+  },
+  "truck_left": {
+    "en": "Truck Left",
+    "zh": "左横移",
+    "min_sec": 2.0,
+    "preferred_sec": 3.5,
+    "prompt_hint": "truck left parallel to the walking couple, smooth",
+    "use_when": [],
+    "move_type": "基础运镜"
+  },
+  "truck_right": {
+    "en": "Truck Right",
+    "zh": "右横移",
+    "min_sec": 2.0,
+    "preferred_sec": 3.5,
+    "prompt_hint": "truck right along a row of neon signs at night",
+    "use_when": [],
+    "move_type": "基础运镜"
+  },
+  "pedestal_up": {
+    "en": "Pedestal Up",
+    "zh": "机位上升",
+    "min_sec": 2.0,
+    "preferred_sec": 3.5,
+    "prompt_hint": "pedestal up from seated conversation to standing figure",
+    "use_when": [],
+    "move_type": "基础运镜"
+  },
+  "pedestal_down": {
+    "en": "Pedestal Down",
+    "zh": "机位下降",
+    "min_sec": 2.0,
+    "preferred_sec": 3.5,
+    "prompt_hint": "pedestal down to a child's eye level",
+    "use_when": [],
+    "move_type": "基础运镜"
+  },
+  "arc_shot": {
+    "en": "Arc Shot",
+    "zh": "弧形运镜",
+    "min_sec": 2.0,
+    "preferred_sec": 3.5,
+    "prompt_hint": "arc shot around two people arguing, cinematic",
+    "use_when": [],
+    "move_type": "基础运镜"
+  },
+  "orbit_shot": {
+    "en": "Orbit Shot",
+    "zh": "环绕拍摄",
+    "min_sec": 2.0,
+    "preferred_sec": 3.5,
+    "prompt_hint": "360 degree orbit around the subject, smooth cinematic",
+    "use_when": [],
+    "move_type": "基础运镜"
+  },
+  "spiral_shot": {
+    "en": "Spiral Shot",
+    "zh": "螺旋运镜",
+    "min_sec": 3.5,
+    "preferred_sec": 5.5,
+    "prompt_hint": "spiral upward orbit around the dancer, dreamlike",
+    "use_when": [
+      "dread"
+    ],
+    "move_type": "复合运镜"
+  },
+  "tracking_shot": {
+    "en": "Tracking Shot",
+    "zh": "跟踪/跟移镜头",
+    "min_sec": 2.0,
+    "preferred_sec": 3.5,
+    "prompt_hint": "long tracking shot following the character through the crowd",
+    "use_when": [],
+    "move_type": "基础运镜"
+  },
+  "follow_shot": {
+    "en": "Follow Shot",
+    "zh": "跟拍",
+    "min_sec": 2.0,
+    "preferred_sec": 3.5,
+    "prompt_hint": "follow shot behind the hero walking down the hallway",
+    "use_when": [],
+    "move_type": "基础运镜"
+  },
+  "lead_shot": {
+    "en": "Lead Shot",
+    "zh": "领拍/前跟",
+    "min_sec": 2.0,
+    "preferred_sec": 3.5,
+    "prompt_hint": "lead shot walking backward in front of the running character",
+    "use_when": [],
+    "move_type": "基础运镜"
+  },
+  "side_tracking": {
+    "en": "Side Tracking",
+    "zh": "侧跟",
+    "min_sec": 2.0,
+    "preferred_sec": 3.5,
+    "prompt_hint": "side tracking shot of athlete running along the beach",
+    "use_when": [],
+    "move_type": "基础运镜"
+  },
+  "reverse_tracking": {
+    "en": "Reverse Tracking",
+    "zh": "倒退跟拍",
+    "min_sec": 2.0,
+    "preferred_sec": 3.5,
+    "prompt_hint": "reverse tracking as the character runs toward camera in panic",
+    "use_when": [
+      "oppression"
+    ],
+    "move_type": "基础运镜"
+  },
+  "walk_and_talk": {
+    "en": "Walk and Talk",
+    "zh": "走谈跟拍",
+    "min_sec": 2.5,
+    "preferred_sec": 4.0,
+    "prompt_hint": "steadicam walk and talk through a busy newsroom",
+    "use_when": [
+      "revelation"
+    ],
+    "move_type": "功能运镜"
+  },
+  "chase_shot": {
+    "en": "Chase Shot",
+    "zh": "追逐镜头",
+    "min_sec": 2.5,
+    "preferred_sec": 4.0,
+    "prompt_hint": "frantic chase shot through narrow alleyways, handheld energy",
+    "use_when": [
+      "suspicion"
+    ],
+    "move_type": "功能运镜"
+  },
+  "zoom_in": {
+    "en": "Zoom In",
+    "zh": "变焦推近",
+    "min_sec": 2.0,
+    "preferred_sec": 3.0,
+    "prompt_hint": "slow zoom in on the mysterious letter, suspenseful",
+    "use_when": [],
+    "move_type": "光学运镜"
+  },
+  "zoom_out": {
+    "en": "Zoom Out",
+    "zh": "变焦拉远",
+    "min_sec": 2.0,
+    "preferred_sec": 3.0,
+    "prompt_hint": "zoom out from the tear on the cheek to the whole room",
+    "use_when": [],
+    "move_type": "光学运镜"
+  },
+  "crash_zoom": {
+    "en": "Crash Zoom",
+    "zh": "急变焦",
+    "min_sec": 2.0,
+    "preferred_sec": 3.0,
+    "prompt_hint": "crash zoom onto the character's shocked face",
+    "use_when": [],
+    "move_type": "光学运镜"
+  },
+  "dolly_zoom": {
+    "en": "Dolly Zoom",
+    "zh": "滑动变焦",
+    "min_sec": 2.0,
+    "preferred_sec": 3.0,
+    "prompt_hint": "dolly zoom vertigo effect as realization hits, background warps",
+    "use_when": [
+      "dread"
+    ],
+    "move_type": "光学运镜"
+  },
+  "reverse_dolly_zoom": {
+    "en": "Reverse Dolly Zoom",
+    "zh": "反向滑动变焦",
+    "min_sec": 2.0,
+    "preferred_sec": 3.0,
+    "prompt_hint": "reverse dolly zoom, background expands unnaturally",
+    "use_when": [],
+    "move_type": "光学运镜"
+  },
+  "rack_focus": {
+    "en": "Rack Focus",
+    "zh": "移焦/调焦",
+    "min_sec": 2.0,
+    "preferred_sec": 3.0,
+    "prompt_hint": "rack focus from foreground gun to background face",
+    "use_when": [],
+    "move_type": "光学运镜"
+  },
+  "whip_pan": {
+    "en": "Whip Pan",
+    "zh": "甩镜头",
+    "min_sec": 3.5,
+    "preferred_sec": 5.5,
+    "prompt_hint": "whip pan transition from city day to night club",
+    "use_when": [],
+    "move_type": "复合运镜"
+  },
+  "whip_tilt": {
+    "en": "Whip Tilt",
+    "zh": "急俯仰甩",
+    "min_sec": 3.5,
+    "preferred_sec": 5.5,
+    "prompt_hint": "whip tilt from floor to ceiling lights, energetic",
+    "use_when": [],
+    "move_type": "复合运镜"
+  },
+  "push_and_pan": {
+    "en": "Push and Pan",
+    "zh": "推摇组合",
+    "min_sec": 3.5,
+    "preferred_sec": 5.5,
+    "prompt_hint": "dolly in while panning to keep subject framed",
+    "use_when": [
+      "intimacy"
+    ],
+    "move_type": "复合运镜"
+  },
+  "crane_push_in": {
+    "en": "Crane Push In",
+    "zh": "摇臂推进",
+    "min_sec": 3.5,
+    "preferred_sec": 5.5,
+    "prompt_hint": "crane down and push in toward the lone figure in the field",
+    "use_when": [],
+    "move_type": "复合运镜"
+  },
+  "orbit_push_in": {
+    "en": "Orbit Push In",
+    "zh": "环绕推进",
+    "min_sec": 3.5,
+    "preferred_sec": 5.5,
+    "prompt_hint": "orbit while slowly pushing in on the protagonist",
+    "use_when": [
+      "intimacy"
+    ],
+    "move_type": "复合运镜"
+  },
+  "tracking_crane": {
+    "en": "Tracking Crane",
+    "zh": "跟拍升降",
+    "min_sec": 3.5,
+    "preferred_sec": 5.5,
+    "prompt_hint": "tracking crane shot rising as the crowd cheers",
+    "use_when": [],
+    "move_type": "复合运镜"
+  },
+  "parallax_move": {
+    "en": "Parallax Move",
+    "zh": "视差横移",
+    "min_sec": 3.5,
+    "preferred_sec": 5.5,
+    "prompt_hint": "subtle parallax slider move past foreground leaves to subject",
+    "use_when": [],
+    "move_type": "复合运镜"
+  },
+  "handheld": {
+    "en": "Handheld",
+    "zh": "手持",
+    "min_sec": 2.5,
+    "preferred_sec": 4.0,
+    "prompt_hint": "raw handheld camera, documentary realism, slight shake",
+    "use_when": [
+      "suspicion",
+      "intimacy"
+    ],
+    "move_type": "设备质感"
+  },
+  "steadicam": {
+    "en": "Steadicam",
+    "zh": "斯坦尼康",
+    "min_sec": 2.5,
+    "preferred_sec": 4.0,
+    "prompt_hint": "smooth steadicam shot gliding through the hotel corridors",
+    "use_when": [],
+    "move_type": "设备质感"
+  },
+  "gimbal_shot": {
+    "en": "Gimbal Shot",
+    "zh": "稳定器运镜",
+    "min_sec": 2.5,
+    "preferred_sec": 4.0,
+    "prompt_hint": "gimbal tracking shot, ultra smooth modern cinematic",
+    "use_when": [],
+    "move_type": "设备质感"
+  },
+  "shoulder_rig": {
+    "en": "Shoulder Rig",
+    "zh": "肩扛",
+    "min_sec": 2.5,
+    "preferred_sec": 4.0,
+    "prompt_hint": "shoulder rig follow, news-crew aesthetic",
+    "use_when": [],
+    "move_type": "设备质感"
+  },
+  "slider_shot": {
+    "en": "Slider Shot",
+    "zh": "滑轨运镜",
+    "min_sec": 2.5,
+    "preferred_sec": 4.0,
+    "prompt_hint": "slow slider move left to right on product hero shot",
+    "use_when": [],
+    "move_type": "设备质感"
+  },
+  "dolly_on_rails": {
+    "en": "Dolly on Rails",
+    "zh": "轨道车运镜",
+    "min_sec": 2.5,
+    "preferred_sec": 4.0,
+    "prompt_hint": "classic dolly on rails push in, film set precision",
+    "use_when": [],
+    "move_type": "设备质感"
+  },
+  "jib_shot": {
+    "en": "Jib Shot",
+    "zh": "小摇臂",
+    "min_sec": 2.5,
+    "preferred_sec": 4.0,
+    "prompt_hint": "jib up from cake to the dancing crowd",
+    "use_when": [],
+    "move_type": "设备质感"
+  },
+  "crane_shot": {
+    "en": "Crane Shot",
+    "zh": "大摇臂/吊臂",
+    "min_sec": 2.5,
+    "preferred_sec": 4.0,
+    "prompt_hint": "sweeping crane shot rising over the battlefield",
+    "use_when": [],
+    "move_type": "设备质感"
+  },
+  "techno_crane": {
+    "en": "Techno Crane",
+    "zh": "伸缩摇臂",
+    "min_sec": 2.5,
+    "preferred_sec": 4.0,
+    "prompt_hint": "techno crane telescoping in through the window",
+    "use_when": [],
+    "move_type": "设备质感"
+  },
+  "aerial_shot": {
+    "en": "Aerial Shot",
+    "zh": "航拍",
+    "min_sec": 2.5,
+    "preferred_sec": 4.0,
+    "prompt_hint": "aerial shot of mountains at sunrise, cinematic wide",
+    "use_when": [],
+    "move_type": "设备质感"
+  },
+  "drone_shot": {
+    "en": "Drone Shot",
+    "zh": "无人机运镜",
+    "min_sec": 2.5,
+    "preferred_sec": 4.0,
+    "prompt_hint": "drone flying forward over ocean cliffs, golden hour",
+    "use_when": [],
+    "move_type": "设备质感"
+  },
+  "fpv_drone": {
+    "en": "FPV Drone",
+    "zh": "FPV穿越机",
+    "min_sec": 2.5,
+    "preferred_sec": 4.0,
+    "prompt_hint": "fpv drone racing through forest trees, high speed",
+    "use_when": [],
+    "move_type": "设备质感"
+  },
+  "cable_cam": {
+    "en": "Cable Cam",
+    "zh": "索道/钢丝机位",
+    "min_sec": 2.5,
+    "preferred_sec": 4.0,
+    "prompt_hint": "cable cam racing above the stadium crowd",
+    "use_when": [],
+    "move_type": "设备质感"
+  },
+  "car_mount": {
+    "en": "Car Mount",
+    "zh": "车载固定",
+    "min_sec": 2.5,
+    "preferred_sec": 4.0,
+    "prompt_hint": "car mount shot of drivers talking, highway night lights",
+    "use_when": [],
+    "move_type": "设备质感"
+  },
+  "process_trailer": {
+    "en": "Process Trailer",
+    "zh": "过程拖车跟拍",
+    "min_sec": 2.5,
+    "preferred_sec": 4.0,
+    "prompt_hint": "process trailer tracking two actors in a moving car",
+    "use_when": [],
+    "move_type": "设备质感"
+  },
+  "snorricam": {
+    "en": "Snorricam",
+    "zh": "绑身镜头",
+    "min_sec": 2.5,
+    "preferred_sec": 4.0,
+    "prompt_hint": "snorricam bodycam on character walking through chaos",
+    "use_when": [],
+    "move_type": "设备质感"
+  },
+  "helmet_cam": {
+    "en": "Helmet Cam",
+    "zh": "头盔视角",
+    "min_sec": 2.5,
+    "preferred_sec": 4.0,
+    "prompt_hint": "helmet cam skiing downhill, immersive pov",
+    "use_when": [],
+    "move_type": "设备质感"
+  },
+  "bullet_time": {
+    "en": "Bullet Time",
+    "zh": "子弹时间",
+    "min_sec": 2.5,
+    "preferred_sec": 4.0,
+    "prompt_hint": "bullet time orbit around frozen mid-air kick, matrix style",
+    "use_when": [],
+    "move_type": "特殊效果"
+  },
+  "time_slice_dolly": {
+    "en": "Time-Slice Dolly",
+    "zh": "时间切片推轨",
+    "min_sec": 2.5,
+    "preferred_sec": 4.0,
+    "prompt_hint": "time-slice push in on athlete frozen mid-jump",
+    "use_when": [],
+    "move_type": "特殊效果"
+  },
+  "motion_control": {
+    "en": "Motion Control",
+    "zh": "运动控制重复运镜",
+    "min_sec": 2.5,
+    "preferred_sec": 4.0,
+    "prompt_hint": "motion control camera move repeated for vfx plate",
+    "use_when": [],
+    "move_type": "特殊效果"
+  },
+  "robot_arm_shot": {
+    "en": "Robot Arm Shot",
+    "zh": "机器臂运镜",
+    "min_sec": 2.5,
+    "preferred_sec": 4.0,
+    "prompt_hint": "robot arm whip-around product reveal, ultra precise",
+    "use_when": [],
+    "move_type": "特殊效果"
+  },
+  "speed_ramp_tracking": {
+    "en": "Speed Ramp Tracking",
+    "zh": "变速跟拍",
+    "min_sec": 2.5,
+    "preferred_sec": 4.0,
+    "prompt_hint": "tracking shot with speed ramp from slow-mo to real-time",
+    "use_when": [],
+    "move_type": "特殊效果"
+  },
+  "slow_motion_orbit": {
+    "en": "Slow Motion Orbit",
+    "zh": "慢动作环绕",
+    "min_sec": 2.5,
+    "preferred_sec": 4.0,
+    "prompt_hint": "slow motion 360 orbit around couple kissing, romantic",
+    "use_when": [],
+    "move_type": "特殊效果"
+  },
+  "hyperlapse_move": {
+    "en": "Hyperlapse Move",
+    "zh": "超时移运动",
+    "min_sec": 2.5,
+    "preferred_sec": 4.0,
+    "prompt_hint": "hyperlapse moving through city streets day to night",
+    "use_when": [],
+    "move_type": "特殊效果"
+  },
+  "long_take": {
+    "en": "Long Take",
+    "zh": "长镜头/一镜到底",
+    "min_sec": 2.5,
+    "preferred_sec": 4.0,
+    "prompt_hint": "continuous long take through multiple rooms, no cuts",
+    "use_when": [],
+    "move_type": "功能运镜"
+  },
+  "invisible_cut_oner": {
+    "en": "Invisible Cut Oner",
+    "zh": "隐形剪辑长镜头",
+    "min_sec": 2.5,
+    "preferred_sec": 4.0,
+    "prompt_hint": "seemingly one-shot sequence with invisible cuts",
+    "use_when": [],
+    "move_type": "特殊效果"
+  },
+  "reveal_shot": {
+    "en": "Reveal Shot",
+    "zh": "揭示镜头",
+    "min_sec": 2.5,
+    "preferred_sec": 4.0,
+    "prompt_hint": "pan reveal of the surprise waiting behind the door",
+    "use_when": [
+      "revelation"
+    ],
+    "move_type": "功能运镜"
+  },
+  "establishing_move": {
+    "en": "Establishing Move",
+    "zh": "建立镜头运动",
+    "min_sec": 2.5,
+    "preferred_sec": 4.0,
+    "prompt_hint": "establishing crane shot over the coastal town at dusk",
+    "use_when": [
+      "calm"
+    ],
+    "move_type": "功能运镜"
+  },
+  "pov_move": {
+    "en": "POV Move",
+    "zh": "主观视角运动",
+    "min_sec": 2.5,
+    "preferred_sec": 4.0,
+    "prompt_hint": "pov walking down dark corridor, breathing handheld",
+    "use_when": [],
+    "move_type": "功能运镜"
+  },
+  "semi_pov": {
+    "en": "Semi-POV",
+    "zh": "半主观跟随",
+    "min_sec": 2.5,
+    "preferred_sec": 4.0,
+    "prompt_hint": "semi-pov over shoulder following suspect through market",
+    "use_when": [],
+    "move_type": "功能运镜"
+  },
+  "ots_tracking": {
+    "en": "OTS Tracking",
+    "zh": "过肩跟移",
+    "min_sec": 2.5,
+    "preferred_sec": 4.0,
+    "prompt_hint": "ots tracking behind detective approaching the witness",
+    "use_when": [],
+    "move_type": "功能运镜"
+  },
+  "entrance_follow": {
+    "en": "Entrance Follow",
+    "zh": "入场跟拍",
+    "min_sec": 2.5,
+    "preferred_sec": 4.0,
+    "prompt_hint": "follow the star entering the ballroom as heads turn",
+    "use_when": [],
+    "move_type": "功能运镜"
+  },
+  "exit_pull_out": {
+    "en": "Exit Pull Out",
+    "zh": "离场拉出",
+    "min_sec": 2.5,
+    "preferred_sec": 4.0,
+    "prompt_hint": "pull out as character exits frame into the night",
+    "use_when": [],
+    "move_type": "功能运镜"
+  },
+  "match_pan": {
+    "en": "Match Pan",
+    "zh": "匹配摇镜",
+    "min_sec": 2.5,
+    "preferred_sec": 4.0,
+    "prompt_hint": "whip pan match cut from classroom to battlefield",
+    "use_when": [],
+    "move_type": "功能运镜"
+  },
+  "god_s_eye_dive": {
+    "en": "God's Eye Dive",
+    "zh": "神视角俯冲",
+    "min_sec": 2.5,
+    "preferred_sec": 4.0,
+    "prompt_hint": "god's eye view slowly descending onto the crime scene",
+    "use_when": [],
+    "move_type": "功能运镜"
+  },
+  "bird_s_eye_move": {
+    "en": "Bird's Eye Move",
+    "zh": "鸟瞰移动",
+    "min_sec": 2.5,
+    "preferred_sec": 4.0,
+    "prompt_hint": "bird's eye tracking over maze-like city blocks",
+    "use_when": [],
+    "move_type": "功能运镜"
+  },
+  "worm_s_eye_rise": {
+    "en": "Worm's Eye Rise",
+    "zh": "虫视角爬升",
+    "min_sec": 2.5,
+    "preferred_sec": 4.0,
+    "prompt_hint": "worm's eye view pedestal up the towering robot",
+    "use_when": [
+      "oppression"
+    ],
+    "move_type": "功能运镜"
+  },
+  "window_through_move": {
+    "en": "Window Through Move",
+    "zh": "穿窗/穿越运镜",
+    "min_sec": 2.5,
+    "preferred_sec": 4.0,
+    "prompt_hint": "camera flies through window into the apartment interior",
+    "use_when": [],
+    "move_type": "特殊效果"
+  },
+  "crash_in": {
+    "en": "Crash In",
+    "zh": "急推撞击感",
+    "min_sec": 3.5,
+    "preferred_sec": 5.5,
+    "prompt_hint": "crash push-in as the punch lands, impactful",
+    "use_when": [],
+    "move_type": "复合运镜"
+  },
+  "creep_in": {
+    "en": "Creep In",
+    "zh": "缓推/潜行推",
+    "min_sec": 2.0,
+    "preferred_sec": 3.5,
+    "prompt_hint": "creepy slow push in on sleeping figure, horror",
+    "use_when": [
+      "oppression",
+      "suspicion",
+      "dread"
+    ],
+    "move_type": "基础运镜"
+  },
+  "creep_out": {
+    "en": "Creep Out",
+    "zh": "缓拉",
+    "min_sec": 2.0,
+    "preferred_sec": 3.5,
+    "prompt_hint": "slow creep out leaving the argument in wide shot",
+    "use_when": [
+      "revelation"
+    ],
+    "move_type": "基础运镜"
+  },
+  "circle_reveal": {
+    "en": "Circle Reveal",
+    "zh": "环绕揭示",
+    "min_sec": 2.5,
+    "preferred_sec": 4.0,
+    "prompt_hint": "orbit reveal around pillar to show hidden figure",
+    "use_when": [
+      "revelation"
+    ],
+    "move_type": "功能运镜"
+  },
+  "foreground_wipe_move": {
+    "en": "Foreground Wipe Move",
+    "zh": "前景擦除式横移",
+    "min_sec": 2.5,
+    "preferred_sec": 4.0,
+    "prompt_hint": "truck past foreground pillar wiping to new scene",
+    "use_when": [],
+    "move_type": "功能运镜"
+  },
+  "pedestal_reveal": {
+    "en": "Pedestal Reveal",
+    "zh": "升降揭示",
+    "min_sec": 2.5,
+    "preferred_sec": 4.0,
+    "prompt_hint": "pedestal up reveal of the illuminated bridge at night",
+    "use_when": [],
+    "move_type": "功能运镜"
+  },
+  "tilt_reveal": {
+    "en": "Tilt Reveal",
+    "zh": "俯仰揭示",
+    "min_sec": 2.5,
+    "preferred_sec": 4.0,
+    "prompt_hint": "tilt up reveal from boots to the masked superhero",
+    "use_when": [],
+    "move_type": "功能运镜"
+  },
+  "pull_focus_dolly": {
+    "en": "Pull Focus Dolly",
+    "zh": "推拉中移焦",
+    "min_sec": 3.5,
+    "preferred_sec": 5.5,
+    "prompt_hint": "dolly past crowd racking focus to the spy",
+    "use_when": [
+      "revelation"
+    ],
+    "move_type": "复合运镜"
+  },
+  "counter_move": {
+    "en": "Counter Move",
+    "zh": "反向对位运镜",
+    "min_sec": 3.5,
+    "preferred_sec": 5.5,
+    "prompt_hint": "camera moves left while subject runs right, dynamic",
+    "use_when": [],
+    "move_type": "复合运镜"
+  },
+  "static_locked_off": {
+    "en": "Static Locked-Off",
+    "zh": "锁定固定",
+    "min_sec": 2.0,
+    "preferred_sec": 3.5,
+    "prompt_hint": "locked-off static wide shot, characters move in frame",
+    "use_when": [
+      "calm"
+    ],
+    "move_type": "基础运镜"
+  },
+  "subtle_drift": {
+    "en": "Subtle Drift",
+    "zh": "微漂移",
+    "min_sec": 2.5,
+    "preferred_sec": 4.0,
+    "prompt_hint": "subtle gimbal drift, almost static but alive",
+    "use_when": [],
+    "move_type": "设备质感"
+  },
+  "handheld_zoom": {
+    "en": "Handheld Zoom",
+    "zh": "手持变焦",
+    "min_sec": 3.5,
+    "preferred_sec": 5.5,
+    "prompt_hint": "handheld crash zoom like found-footage documentary",
+    "use_when": [],
+    "move_type": "复合运镜"
+  },
+  "steadicam_float": {
+    "en": "Steadicam Float",
+    "zh": "斯坦尼康漂浮",
+    "min_sec": 2.5,
+    "preferred_sec": 4.0,
+    "prompt_hint": "floating steadicam through empty hospital, eerie calm",
+    "use_when": [],
+    "move_type": "设备质感"
+  },
+  "drone_orbit": {
+    "en": "Drone Orbit",
+    "zh": "无人机环绕",
+    "min_sec": 2.5,
+    "preferred_sec": 4.0,
+    "prompt_hint": "drone orbit around lighthouse on cliff, epic",
+    "use_when": [],
+    "move_type": "设备质感"
+  },
+  "drone_dive": {
+    "en": "Drone Dive",
+    "zh": "无人机俯冲",
+    "min_sec": 2.5,
+    "preferred_sec": 4.0,
+    "prompt_hint": "drone dive from clouds down to street level",
+    "use_when": [
+      "calm"
+    ],
+    "move_type": "设备质感"
+  },
+  "drone_flyover": {
+    "en": "Drone Flyover",
+    "zh": "无人机飞越",
+    "min_sec": 2.5,
+    "preferred_sec": 4.0,
+    "prompt_hint": "drone flyover of misty forest canopy at dawn",
+    "use_when": [],
+    "move_type": "设备质感"
+  },
+  "drone_reveal": {
+    "en": "Drone Reveal",
+    "zh": "无人机揭示",
+    "min_sec": 2.5,
+    "preferred_sec": 4.0,
+    "prompt_hint": "drone rising reveal of island resort in turquoise sea",
+    "use_when": [],
+    "move_type": "功能运镜"
+  },
+  "gimbal_orbit_low": {
+    "en": "Gimbal Orbit Low",
+    "zh": "低机位稳定环绕",
+    "min_sec": 2.5,
+    "preferred_sec": 4.0,
+    "prompt_hint": "low gimbal orbit around sports car, reflective paint",
+    "use_when": [],
+    "move_type": "设备质感"
+  },
+  "gimbal_chase": {
+    "en": "Gimbal Chase",
+    "zh": "稳定器追逐",
+    "min_sec": 2.5,
+    "preferred_sec": 4.0,
+    "prompt_hint": "gimbal chase through night market, fluid and fast",
+    "use_when": [],
+    "move_type": "设备质感"
+  },
+  "slider_push_in": {
+    "en": "Slider Push In",
+    "zh": "滑轨轻推",
+    "min_sec": 2.5,
+    "preferred_sec": 4.0,
+    "prompt_hint": "slider push in on steaming bowl of ramen",
+    "use_when": [],
+    "move_type": "设备质感"
+  },
+  "tabletop_orbit": {
+    "en": "Tabletop Orbit",
+    "zh": "桌面环绕",
+    "min_sec": 2.5,
+    "preferred_sec": 4.0,
+    "prompt_hint": "tabletop orbit around luxury watch on black glass",
+    "use_when": [],
+    "move_type": "特殊效果"
+  },
+  "underwater_tracking": {
+    "en": "Underwater Tracking",
+    "zh": "水下跟拍",
+    "min_sec": 2.5,
+    "preferred_sec": 4.0,
+    "prompt_hint": "underwater tracking beside swimmer, caustic light rays",
+    "use_when": [],
+    "move_type": "设备质感"
+  },
+  "overhead_slider": {
+    "en": "Overhead Slider",
+    "zh": "顶视滑移",
+    "min_sec": 2.5,
+    "preferred_sec": 4.0,
+    "prompt_hint": "overhead slider across ingredients being arranged",
+    "use_when": [],
+    "move_type": "设备质感"
+  },
+  "vertigo_walk": {
+    "en": "Vertigo Walk",
+    "zh": "眩晕行走推拉变焦",
+    "min_sec": 3.5,
+    "preferred_sec": 5.5,
+    "prompt_hint": "walking dolly zoom down hallway as anxiety peaks",
+    "use_when": [],
+    "move_type": "复合运镜"
+  },
+  "crash_zoom_whip": {
+    "en": "Crash Zoom Whip",
+    "zh": "急变焦+甩",
+    "min_sec": 3.5,
+    "preferred_sec": 5.5,
+    "prompt_hint": "crash zoom then whip pan to next fighter",
+    "use_when": [],
+    "move_type": "复合运镜"
+  },
+  "push_through_crowd": {
+    "en": "Push Through Crowd",
+    "zh": "穿人群推进",
+    "min_sec": 2.5,
+    "preferred_sec": 4.0,
+    "prompt_hint": "push through dancing crowd to find the protagonist",
+    "use_when": [],
+    "move_type": "功能运镜"
+  },
+  "pull_to_wide_ending": {
+    "en": "Pull to Wide Ending",
+    "zh": "拉至大远景收束",
+    "min_sec": 2.5,
+    "preferred_sec": 4.0,
+    "prompt_hint": "slow pull out to extreme wide of figure on empty beach",
+    "use_when": [],
+    "move_type": "功能运镜"
+  },
+  "sidewinder_move": {
+    "en": "Sidewinder Move",
+    "zh": "侧向蛇形",
+    "min_sec": 3.5,
+    "preferred_sec": 5.5,
+    "prompt_hint": "s-curve gimbal move weaving through models backstage",
+    "use_when": [],
+    "move_type": "复合运镜"
+  },
+  "boom_over_obstacle": {
+    "en": "Boom Over Obstacle",
+    "zh": "越障升降",
+    "min_sec": 3.5,
+    "preferred_sec": 5.5,
+    "prompt_hint": "crane over police barricade into the riot",
+    "use_when": [
+      "revelation"
+    ],
+    "move_type": "复合运镜"
+  },
+  "rotate_around_axis": {
+    "en": "Rotate Around Axis",
+    "zh": "绕轴自旋跟",
+    "min_sec": 3.5,
+    "preferred_sec": 5.5,
+    "prompt_hint": "camera rotates around kissing couple, world spins",
+    "use_when": [],
+    "move_type": "复合运镜"
+  },
+  "fpv_through_object": {
+    "en": "FPV Through Object",
+    "zh": "FPV穿物",
+    "min_sec": 2.5,
+    "preferred_sec": 4.0,
+    "prompt_hint": "fpv flies through car window and out the rear",
+    "use_when": [],
+    "move_type": "特殊效果"
+  },
+  "matrix_orbit": {
+    "en": "Matrix Orbit",
+    "zh": "矩阵式环绕",
+    "min_sec": 2.5,
+    "preferred_sec": 4.0,
+    "prompt_hint": "multi-camera matrix orbit around frozen punch",
+    "use_when": [],
+    "move_type": "特殊效果"
+  },
+  "ken_burns_move": {
+    "en": "Ken Burns Move",
+    "zh": "肯·伯恩斯运镜",
+    "min_sec": 2.5,
+    "preferred_sec": 4.0,
+    "prompt_hint": "ken burns slow zoom into archival photo faces",
+    "use_when": [],
+    "move_type": "特殊效果"
+  },
+  "digital_push_in": {
+    "en": "Digital Push-In",
+    "zh": "数字裁切推近",
+    "min_sec": 2.5,
+    "preferred_sec": 4.0,
+    "prompt_hint": "subtle digital push-in on interview subject",
+    "use_when": [],
+    "move_type": "特殊效果"
+  },
+  "stabilized_handheld": {
+    "en": "Stabilized Handheld",
+    "zh": "稳化手持感",
+    "min_sec": 2.5,
+    "preferred_sec": 4.0,
+    "prompt_hint": "stabilized handheld, natural micro-movement only",
+    "use_when": [],
+    "move_type": "设备质感"
+  },
+  "one_take_steadicam": {
+    "en": "One-Take Steadicam",
+    "zh": "一镜斯坦尼康",
+    "min_sec": 2.5,
+    "preferred_sec": 4.0,
+    "prompt_hint": "one-take steadicam from street into elevator into apartment",
+    "use_when": [],
+    "move_type": "功能运镜"
+  },
+  "battle_tracking": {
+    "en": "Battle Tracking",
+    "zh": "战场跟拍",
+    "min_sec": 2.5,
+    "preferred_sec": 4.0,
+    "prompt_hint": "chaotic tracking through trenches, dirt hits lens",
+    "use_when": [],
+    "move_type": "功能运镜"
+  },
+  "romantic_orbit": {
+    "en": "Romantic Orbit",
+    "zh": "浪漫环绕",
+    "min_sec": 2.5,
+    "preferred_sec": 4.0,
+    "prompt_hint": "gentle orbit around couple under string lights",
+    "use_when": [],
+    "move_type": "功能运镜"
+  },
+  "horror_creep": {
+    "en": "Horror Creep",
+    "zh": "恐怖潜行运镜",
+    "min_sec": 2.5,
+    "preferred_sec": 4.0,
+    "prompt_hint": "slow horror creep down basement stairs, dim light",
+    "use_when": [
+      "oppression"
+    ],
+    "move_type": "功能运镜"
+  },
+  "comedy_whip": {
+    "en": "Comedy Whip",
+    "zh": "喜剧甩接",
+    "min_sec": 2.5,
+    "preferred_sec": 4.0,
+    "prompt_hint": "whip pan to character's deadpan reaction for comedy",
+    "use_when": [],
+    "move_type": "功能运镜"
+  },
+  "product_hero_push": {
+    "en": "Product Hero Push",
+    "zh": "产品英雄推",
+    "min_sec": 2.5,
+    "preferred_sec": 4.0,
+    "prompt_hint": "slow hero push-in on smartphone with rim light",
+    "use_when": [],
+    "move_type": "功能运镜"
+  },
+  "fashion_tracking": {
+    "en": "Fashion Tracking",
+    "zh": "时装跟拍",
+    "min_sec": 2.5,
+    "preferred_sec": 4.0,
+    "prompt_hint": "side tracking fashion model in slow motion, wind",
+    "use_when": [],
+    "move_type": "功能运镜"
+  },
+  "interview_slider": {
+    "en": "Interview Slider",
+    "zh": "访谈滑轨",
+    "min_sec": 2.5,
+    "preferred_sec": 4.0,
+    "prompt_hint": "very slow slider on interview subject, soft bokeh",
+    "use_when": [],
+    "move_type": "功能运镜"
+  },
+  "musical_crane": {
+    "en": "Musical Crane",
+    "zh": "音乐剧摇臂",
+    "min_sec": 2.5,
+    "preferred_sec": 4.0,
+    "prompt_hint": "crane rising over chorus line as song peaks",
+    "use_when": [],
+    "move_type": "功能运镜"
+  },
+  "noir_truck": {
+    "en": "Noir Truck",
+    "zh": "黑色电影横移",
+    "min_sec": 2.5,
+    "preferred_sec": 4.0,
+    "prompt_hint": "noir truck past rainy neon alley reflections",
+    "use_when": [
+      "suspicion"
+    ],
+    "move_type": "功能运镜"
+  },
+  "western_dolly": {
+    "en": "Western Dolly",
+    "zh": "西部片推轨",
+    "min_sec": 2.5,
+    "preferred_sec": 4.0,
+    "prompt_hint": "slow dolly in on gunslinger eyes before duel",
+    "use_when": [
+      "oppression"
+    ],
+    "move_type": "功能运镜"
+  },
+  "sci_fi_tech_orbit": {
+    "en": "Sci-Fi Tech Orbit",
+    "zh": "科幻技术环绕",
+    "min_sec": 2.5,
+    "preferred_sec": 4.0,
+    "prompt_hint": "cold blue orbit around sleek spaceship interior",
+    "use_when": [],
+    "move_type": "功能运镜"
+  },
+  "documentary_observe": {
+    "en": "Documentary Observe",
+    "zh": "纪录片观察式跟拍",
+    "min_sec": 2.5,
+    "preferred_sec": 4.0,
+    "prompt_hint": "quiet observational follow of fishermen at dawn",
+    "use_when": [],
+    "move_type": "功能运镜"
+  },
+  "surveillance_pan": {
+    "en": "Surveillance Pan",
+    "zh": "监控式摇镜",
+    "min_sec": 2.5,
+    "preferred_sec": 4.0,
+    "prompt_hint": "slow mechanical surveillance pan across parking lot",
+    "use_when": [
+      "suspicion"
+    ],
+    "move_type": "功能运镜"
+  },
+  "security_static_then_snap": {
+    "en": "Security Static then Snap",
+    "zh": "监控静转急摇",
+    "min_sec": 3.5,
+    "preferred_sec": 5.5,
+    "prompt_hint": "static security cam then sudden snap pan to intruder",
+    "use_when": [],
+    "move_type": "复合运镜"
+  },
+  "mirror_move": {
+    "en": "Mirror Move",
+    "zh": "镜子运镜",
+    "min_sec": 2.5,
+    "preferred_sec": 4.0,
+    "prompt_hint": "dolly past mirror catching dual reflection of character",
+    "use_when": [
+      "revelation"
+    ],
+    "move_type": "功能运镜"
+  },
+  "shadow_track": {
+    "en": "Shadow Track",
+    "zh": "影子跟拍",
+    "min_sec": 2.5,
+    "preferred_sec": 4.0,
+    "prompt_hint": "tracking silhouette of figure in fog, side light",
+    "use_when": [],
+    "move_type": "功能运镜"
+  },
+  "rainy_handheld": {
+    "en": "Rainy Handheld",
+    "zh": "雨中手持",
+    "min_sec": 2.5,
+    "preferred_sec": 4.0,
+    "prompt_hint": "handheld in heavy rain, droplets on lens, emotional",
+    "use_when": [],
+    "move_type": "设备质感"
+  },
+  "lens_flare_push": {
+    "en": "Lens Flare Push",
+    "zh": "光斑推进",
+    "min_sec": 3.5,
+    "preferred_sec": 5.5,
+    "prompt_hint": "slow push into backlight with anamorphic lens flares",
+    "use_when": [],
+    "move_type": "复合运镜"
+  },
+  "anamorphic_drift": {
+    "en": "Anamorphic Drift",
+    "zh": "变形宽银幕漂移",
+    "min_sec": 2.5,
+    "preferred_sec": 4.0,
+    "prompt_hint": "anamorphic subtle lateral drift, cinematic bokeh",
+    "use_when": [],
+    "move_type": "设备质感"
+  },
+  "imax_tilt_up": {
+    "en": "IMAX Tilt Up",
+    "zh": "巨幕上仰",
+    "min_sec": 2.5,
+    "preferred_sec": 4.0,
+    "prompt_hint": "large format tilt up the monolith, awe-inspiring scale",
+    "use_when": [],
+    "move_type": "功能运镜"
+  },
+  "crowd_crane_rise": {
+    "en": "Crowd Crane Rise",
+    "zh": "人群中升起",
+    "min_sec": 2.5,
+    "preferred_sec": 4.0,
+    "prompt_hint": "crane rises from one face to thousands in the square",
+    "use_when": [],
+    "move_type": "功能运镜"
+  },
+  "single_tear_push": {
+    "en": "Single Tear Push",
+    "zh": "微表情缓推",
+    "min_sec": 2.5,
+    "preferred_sec": 4.0,
+    "prompt_hint": "imperceptibly slow push to tear forming in eye",
+    "use_when": [],
+    "move_type": "功能运镜"
+  },
+  "doorway_dolly": {
+    "en": "Doorway Dolly",
+    "zh": "门框推入",
+    "min_sec": 2.5,
+    "preferred_sec": 4.0,
+    "prompt_hint": "dolly through dark doorway into lit living room",
+    "use_when": [],
+    "move_type": "功能运镜"
+  },
+  "elevator_vertical": {
+    "en": "Elevator Vertical",
+    "zh": "电梯垂直运镜",
+    "min_sec": 2.5,
+    "preferred_sec": 4.0,
+    "prompt_hint": "camera rises in glass elevator overlooking city night",
+    "use_when": [],
+    "move_type": "特殊效果"
+  },
+  "train_lateral": {
+    "en": "Train Lateral",
+    "zh": "列车侧移",
+    "min_sec": 2.5,
+    "preferred_sec": 4.0,
+    "prompt_hint": "lateral view from train window, landscape streaming by",
+    "use_when": [],
+    "move_type": "设备质感"
+  },
+  "bike_pov": {
+    "en": "Bike POV",
+    "zh": "骑行主观",
+    "min_sec": 2.5,
+    "preferred_sec": 4.0,
+    "prompt_hint": "bicycle pov through tree-lined street, morning light",
+    "use_when": [],
+    "move_type": "功能运镜"
+  },
+  "drone_chase_vehicle": {
+    "en": "Drone Chase Vehicle",
+    "zh": "无人机追车",
+    "min_sec": 2.5,
+    "preferred_sec": 4.0,
+    "prompt_hint": "drone chasing sports car along coastal highway",
+    "use_when": [],
+    "move_type": "设备质感"
+  },
+  "gimbal_360_product": {
+    "en": "Gimbal 360 Product",
+    "zh": "稳定器产品360",
+    "min_sec": 2.5,
+    "preferred_sec": 4.0,
+    "prompt_hint": "smooth 360 around sneaker on pedestal, studio lights",
+    "use_when": [
+      "revelation"
+    ],
+    "move_type": "功能运镜"
+  },
+  "reaction_push": {
+    "en": "Reaction Push",
+    "zh": "反应式推进",
+    "min_sec": 2.5,
+    "preferred_sec": 4.0,
+    "prompt_hint": "push in on reaction as the secret is revealed",
+    "use_when": [
+      "revelation"
+    ],
+    "move_type": "功能运镜"
+  },
+  "isolation_pull": {
+    "en": "Isolation Pull",
+    "zh": "孤立式拉远",
+    "min_sec": 2.5,
+    "preferred_sec": 4.0,
+    "prompt_hint": "pull out isolating the character in vast desert",
+    "use_when": [],
+    "move_type": "功能运镜"
+  },
+  "power_pedestal": {
+    "en": "Power Pedestal",
+    "zh": "权力升降",
+    "min_sec": 2.5,
+    "preferred_sec": 4.0,
+    "prompt_hint": "pedestal from low hero angle up to equal eye level",
+    "use_when": [],
+    "move_type": "功能运镜"
+  },
+  "anxiety_spiral": {
+    "en": "Anxiety Spiral",
+    "zh": "焦虑螺旋",
+    "min_sec": 3.5,
+    "preferred_sec": 5.5,
+    "prompt_hint": "tight spiral orbit accelerating with character panic",
+    "use_when": [],
+    "move_type": "复合运镜"
+  },
+  "calm_slider": {
+    "en": "Calm Slider",
+    "zh": "平静滑轨",
+    "min_sec": 2.5,
+    "preferred_sec": 4.0,
+    "prompt_hint": "ultra slow slider on candle flame, peaceful",
+    "use_when": [],
+    "move_type": "功能运镜"
+  },
+  "epic_establishing_drone": {
+    "en": "Epic Establishing Drone",
+    "zh": "史诗建立航拍",
+    "min_sec": 2.5,
+    "preferred_sec": 4.0,
+    "prompt_hint": "epic drone establishing shot of fantasy capital city",
+    "use_when": [
+      "calm"
+    ],
+    "move_type": "功能运镜"
+  },
+  "intimacy_handheld_cu": {
+    "en": "Intimacy Handheld CU",
+    "zh": "亲密手持特写运动",
+    "min_sec": 2.5,
+    "preferred_sec": 4.0,
+    "prompt_hint": "intimate handheld close-up, soft movement, warm light",
+    "use_when": [
+      "intimacy"
+    ],
+    "move_type": "功能运镜"
+  },
+  "war_reportage": {
+    "en": "War Reportage",
+    "zh": "战地手持报道感",
+    "min_sec": 2.5,
+    "preferred_sec": 4.0,
+    "prompt_hint": "war reportage handheld, dust, sudden pans to explosions",
+    "use_when": [],
+    "move_type": "设备质感"
+  },
+  "vlog_gimbal_walk": {
+    "en": "Vlog Gimbal Walk",
+    "zh": "Vlog稳定器行走",
+    "min_sec": 2.5,
+    "preferred_sec": 4.0,
+    "prompt_hint": "gimbal vlog walk and talk facing camera in city",
+    "use_when": [],
+    "move_type": "功能运镜"
+  },
+  "asmr_macro_slide": {
+    "en": "ASMR Macro Slide",
+    "zh": "ASMR微距滑移",
+    "min_sec": 2.5,
+    "preferred_sec": 4.0,
+    "prompt_hint": "macro slider across fabric texture, satisfying detail",
+    "use_when": [],
+    "move_type": "功能运镜"
+  },
+  "sports_cable_follow": {
+    "en": "Sports Cable Follow",
+    "zh": "体育索道跟拍",
+    "min_sec": 2.5,
+    "preferred_sec": 4.0,
+    "prompt_hint": "cable cam following striker toward goal, stadium roar",
+    "use_when": [],
+    "move_type": "设备质感"
+  },
+  "stage_jib_sweep": {
+    "en": "Stage Jib Sweep",
+    "zh": "舞台摇臂横扫",
+    "min_sec": 2.5,
+    "preferred_sec": 4.0,
+    "prompt_hint": "jib sweep across stage lights and cheering fans",
+    "use_when": [],
+    "move_type": "设备质感"
+  },
+  "horror_dutch_roll": {
+    "en": "Horror Dutch Roll",
+    "zh": "恐怖荷兰滚转",
+    "min_sec": 3.5,
+    "preferred_sec": 5.5,
+    "prompt_hint": "slow rolling dutch angle in haunted hallway",
+    "use_when": [
+      "suspicion",
+      "dread"
+    ],
+    "move_type": "复合运镜"
+  },
+  "hero_low_orbit": {
+    "en": "Hero Low Orbit",
+    "zh": "英雄低环绕",
+    "min_sec": 2.5,
+    "preferred_sec": 4.0,
+    "prompt_hint": "low orbit around hero in windblown coat, epic score feel",
+    "use_when": [],
+    "move_type": "功能运镜"
+  },
+  "villain_push_in": {
+    "en": "Villain Push In",
+    "zh": "反派逼近推",
+    "min_sec": 2.5,
+    "preferred_sec": 4.0,
+    "prompt_hint": "slow menacing push in on villain smiling in shadow",
+    "use_when": [
+      "oppression",
+      "dread"
+    ],
+    "move_type": "功能运镜"
+  },
+  "memory_soft_drift": {
+    "en": "Memory Soft Drift",
+    "zh": "回忆柔焦漂移",
+    "min_sec": 2.5,
+    "preferred_sec": 4.0,
+    "prompt_hint": "soft focus gentle drift, dreamlike memory sequence",
+    "use_when": [],
+    "move_type": "功能运镜"
+  },
+  "flashback_whip": {
+    "en": "Flashback Whip",
+    "zh": "闪回甩镜",
+    "min_sec": 2.5,
+    "preferred_sec": 4.0,
+    "prompt_hint": "whip pan into warm-graded flashback classroom",
+    "use_when": [],
+    "move_type": "功能运镜"
+  },
+  "match_dolly_cut": {
+    "en": "Match Dolly Cut",
+    "zh": "匹配推镜剪辑",
+    "min_sec": 2.5,
+    "preferred_sec": 4.0,
+    "prompt_hint": "dolly in on eye match cut to dolly in on planet",
+    "use_when": [],
+    "move_type": "功能运镜"
+  },
+  "end_credit_pull": {
+    "en": "End Credit Pull",
+    "zh": "字幕拉远",
+    "min_sec": 2.5,
+    "preferred_sec": 4.0,
+    "prompt_hint": "final pull out to city skyline as credits begin",
+    "use_when": [],
+    "move_type": "功能运镜"
+  },
+  "_legacy_aliases": {
+    "static": "static_hold",
+    "static_hold": "security_static_then_snap",
+    "slow_push_in": "dolly_in",
+    "very_slow_push_in": "very_slow_push_in",
+    "micro_drift": "micro_drift",
+    "slow_lateral": "slow_lateral",
+    "creep_in": "creep_in",
+    "rack_focus_support": "rack_focus_support"
+  },
+  "default": {
+    "min_sec": 2.0,
+    "preferred_sec": 3.5,
+    "prompt_hint": "controlled camera move"
+  }
+}

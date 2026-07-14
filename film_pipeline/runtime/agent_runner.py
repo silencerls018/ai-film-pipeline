@@ -28,7 +28,10 @@ def _merge_dialogue(bible: dict[str, Any], out: dict[str, Any]) -> dict[str, Any
 
 def _merge_director(bible: dict[str, Any], out: dict[str, Any]) -> dict[str, Any]:
     bible["shots"] = out["shots"]
-    return bible
+    # Director owns performance intent package on each shot
+    from film_pipeline.runtime.performance import enrich_shots_with_performance
+
+    return enrich_shots_with_performance(bible)
 
 
 def _merge_look(bible: dict[str, Any], out: dict[str, Any]) -> dict[str, Any]:
@@ -51,7 +54,24 @@ def _merge_cinematography(bible: dict[str, Any], out: dict[str, Any]) -> dict[st
         shot["look"] = p["look"]
         if "duration_sec" in p:
             shot["duration_sec"] = p["duration_sec"]
-    return bible
+        # Align light execution with director performance.lighting_plan when present
+        perf = shot.get("performance") or {}
+        plan = (perf.get("lighting_plan") or {}) if isinstance(perf, dict) else {}
+        if plan and isinstance(shot.get("look"), dict):
+            if plan.get("key") and not shot["look"].get("key_light"):
+                shot["look"]["key_light"] = plan["key"]
+            if plan.get("color") and not shot["look"].get("color_temp"):
+                shot["look"]["color_temp"] = plan["color"]
+            if plan.get("motivation"):
+                base_m = shot["look"].get("motivation") or ""
+                if plan["motivation"] not in base_m:
+                    shot["look"]["motivation"] = (
+                        f"{base_m} | light: {plan['motivation']}"
+                    ).strip(" |")
+    # Refresh performance after camera locked (move may inform director note)
+    from film_pipeline.runtime.performance import enrich_shots_with_performance
+
+    return enrich_shots_with_performance(bible)
 
 
 def _merge_timing(bible: dict[str, Any], out: dict[str, Any]) -> dict[str, Any]:
@@ -87,6 +107,17 @@ def _merge_critic(bible: dict[str, Any], out: dict[str, Any]) -> dict[str, Any]:
     return bible
 
 
+def _merge_asset(bible: dict[str, Any], out: dict[str, Any]) -> dict[str, Any]:
+    bible["asset_bible"] = out["asset_bible"]
+    # flat list for convenience / legacy
+    flat = []
+    ab = out["asset_bible"]
+    for key in ("characters", "props", "sets"):
+        flat.extend(ab.get(key) or [])
+    bible["assets"] = flat
+    return bible
+
+
 MERGERS = {
     "dramaturg": _merge_dramaturg,
     "dialogue": _merge_dialogue,
@@ -96,7 +127,11 @@ MERGERS = {
     "timing": _merge_timing,
     "generator": _merge_generator,
     "critic": _merge_critic,
+    "asset": _merge_asset,
 }
+
+# All stages the runner knows (main + assets)
+ALL_STAGES = list(MERGERS.keys())
 
 
 class AgentRunner:
@@ -155,10 +190,17 @@ class AgentRunner:
         try:
             if self.llm.dry_run or not self.llm.api_key:
                 raise RuntimeError("dry-run")
+            # Include full schema so LLM knows exact types + enum values
+            schema_str = json.dumps(schema, ensure_ascii=False, indent=2)
             system = (
                 skill_text
-                + "\n\n你必须只输出合法 JSON 对象，不要 markdown。"
-                + "\n严格符合该岗位 schema 字段。"
+                + "\n\n你必须只输出合法 JSON 对象，不要 markdown 代码块，不要包裹```json```。"
+                + "\n严格符合以下 JSON Schema：\n\n" + schema_str
+                + "\n\n特别注意："
+                + "\n- 所有 ID 字段（scene_id, shot_id, character id 等）必须用字符串，不要用数字"
+                + "\n- enum 类型字段的值必须严格取枚举列表中之一，不能自创"
+                + "\n- numeric 类型字段（如 emotion.peak）必须用数字，不是文字"
+                + "\n- character.id 字段（如 dramaturg output 中的）是必需的"
             )
             user = json.dumps(
                 {"film_bible_slice": payload, "knowledge": kb},
@@ -179,10 +221,16 @@ class AgentRunner:
 
     def _slice_bible(self, stage: str, bible: dict[str, Any]) -> dict[str, Any]:
         meta = bible.get("meta") or {}
+        brief = bible.get("production_brief") or {}
         if stage == "dramaturg":
-            return {"meta": meta, "source_script": bible.get("source_script", "")}
+            return {
+                "production_brief": brief,
+                "meta": meta,
+                "source_script": bible.get("source_script", ""),
+            }
         if stage == "dialogue":
             return {
+                "production_brief": brief,
                 "meta": meta,
                 "story": bible.get("story"),
                 "characters": bible.get("characters"),
@@ -191,11 +239,22 @@ class AgentRunner:
             }
         if stage == "director":
             return {
+                "production_brief": brief,
                 "meta": meta,
                 "story": bible.get("story"),
                 "characters": bible.get("characters"),
                 "scenes": bible.get("scenes"),
                 "dialogue": bible.get("dialogue"),
+            }
+        if stage == "asset":
+            return {
+                "production_brief": brief,
+                "meta": meta,
+                "story": bible.get("story"),
+                "characters": bible.get("characters"),
+                "scenes": bible.get("scenes"),
+                "look_bible": bible.get("look_bible"),
+                "source_script": bible.get("source_script", ""),
             }
         if stage == "look":
             return {
@@ -228,6 +287,7 @@ class AgentRunner:
             }
         if stage == "generator":
             return {
+                "production_brief": brief,
                 "meta": meta,
                 "story": bible.get("story"),
                 "shots": bible.get("shots"),
@@ -235,6 +295,7 @@ class AgentRunner:
                 "dialogue": bible.get("dialogue"),
                 "characters": bible.get("characters"),
                 "timing_plan": bible.get("timing_plan"),
+                "asset_bible": bible.get("asset_bible"),
             }
         if stage == "critic":
             return {

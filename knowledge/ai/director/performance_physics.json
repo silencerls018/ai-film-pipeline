@@ -1,0 +1,124 @@
+{
+  "version": "1.1",
+  "source": "Adapted from 情绪导演 Skill V2.x + film acting practice",
+  "human_doc": "human/03_director.md",
+  "principles": [
+    "No literary metaphor — only shootable physical description",
+    "Emotion becomes face muscles, breath, hands, spine, gaze",
+    "Micro-actions always present; freeze-face is forbidden",
+    "Director unifies: beat + performance + shot size + camera move + light",
+    "Actor-free version only names emotion intensity; director-guided writes the body"
+  ],
+  "by_emotion": {
+    "calm": {
+      "label_zh": "平静/建立",
+      "actor_free_tags": ["calm", "composed", "neutral breath", "soft presence"],
+      "physiology_zh": "呼吸平稳，肩线放松，眨眼节奏自然，视线缓慢扫过环境，嘴角无用力",
+      "physiology_en": "steady breath, relaxed shoulders, natural blink rhythm, gaze slowly scans the space, mouth soft without tension",
+      "micro_actions": ["偶尔轻触物件", "重心均匀落在双脚", "衣料随呼吸微动"],
+      "micro_actions_en": ["occasional light touch of a prop", "weight even on both feet", "fabric shifts slightly with breath"],
+      "gaze": "环境扫描或与对方自然对视",
+      "gaze_en": "scans environment or holds natural eye contact",
+      "voice_hint": "正常音量，语速平稳",
+      "voice_hint_en": "normal volume, even pace",
+      "intensity_scale": {"low": "松弛", "mid": "专注平静", "high": "刻意压住情绪的静"},
+      "intensity_scale_en": {"low": "relaxed", "mid": "focused calm", "high": "forced stillness holding emotion down"}
+    },
+    "suspicion": {
+      "label_zh": "怀疑/紧绷",
+      "actor_free_tags": ["suspicious", "tense", "wary", "alert"],
+      "physiology_zh": "眉心微聚，眨眼间隔变长，下颌轻咬，肩膀略抬，手指无意识摩挲",
+      "physiology_en": "brows slightly drawn, longer blink gaps, jaw lightly clenched, shoulders a bit raised, fingers unconsciously rub",
+      "micro_actions": ["视线在对方眼睛与嘴之间快速切换", "喉结轻吞咽", "身体略后撤半步"],
+      "micro_actions_en": ["eyes dart between the other person's eyes and mouth", "small swallow", "body eases half a step back"],
+      "gaze": "试探性对视，间歇躲闪再回看",
+      "gaze_en": "probing eye contact, brief breaks then return",
+      "voice_hint": "低声，语速略慢，句尾压住",
+      "voice_hint_en": "low voice, slightly slow, endings pressed down",
+      "intensity_scale": {"low": "隐隐不对劲", "mid": "明显戒备", "high": "几乎确认被骗仍在压"},
+      "intensity_scale_en": {"low": "subtle unease", "mid": "clear wariness", "high": "almost sure of betrayal, still controlled"}
+    },
+    "oppression": {
+      "label_zh": "压迫",
+      "actor_free_tags": ["oppressed", "cornered", "heavy pressure", "no exit"],
+      "physiology_zh": "胸腔起伏变浅或变沉，肩向内收，颈部僵硬，嘴唇抿紧，指节发白",
+      "physiology_en": "chest rises shallow or heavy, shoulders pull inward, neck stiff, lips pressed tight, knuckles pale",
+      "micro_actions": ["后退碰到障碍仍无处可退", "握拳又松开", "呼吸从鼻孔加重"],
+      "micro_actions_en": ["steps back into a barrier with nowhere left", "fist clenches then releases", "heavier breath through the nose"],
+      "gaze": "被压者视线偏低或被迫仰视；施压者稳定直视",
+      "gaze_en": "pressed character looks lower or forced to look up; presser holds steady stare",
+      "voice_hint": "压低、短句、停顿加长",
+      "voice_hint_en": "lowered voice, short lines, longer pauses",
+      "intensity_scale": {"low": "气场被压", "mid": "明显局促", "high": "几乎窒息感"},
+      "intensity_scale_en": {"low": "presence weighed down", "mid": "clearly cramped", "high": "almost breathless"}
+    },
+    "revelation": {
+      "label_zh": "揭示/震惊落地",
+      "actor_free_tags": ["shock", "realization", "stunned", "truth lands"],
+      "physiology_zh": "瞳孔明显放大，上眼睑抬起眼白增多，嘴巴微张，身体瞬间僵直，短时间几乎不眨眼",
+      "physiology_en": "pupils clearly widen, upper lids lift with more eye white, mouth slightly open, body freezes for a beat, almost no blink",
+      "micro_actions": ["先僵住再极小幅度后仰", "手指停在半空", "呼吸停半拍后恢复"],
+      "micro_actions_en": ["freeze then tiny lean back", "fingers hang mid-air", "breath stops half a beat then returns"],
+      "gaze": "死盯信息源（人眼/物件）再缓慢失焦或回神",
+      "gaze_en": "locks on the source of truth then slowly softens or returns",
+      "voice_hint": "先气音或失声，再低声确认",
+      "voice_hint_en": "first breathy or nearly silent, then low confirmation",
+      "intensity_scale": {"low": "隐约明白", "mid": "确认打击", "high": "生理休克式僵直"},
+      "intensity_scale_en": {"low": "dim realization", "mid": "confirming blow", "high": "physiological freeze shock"}
+    },
+    "intimacy": {
+      "label_zh": "亲密",
+      "actor_free_tags": ["intimate", "tender", "close", "vulnerable soft"],
+      "physiology_zh": "眼睑略低垂，视线缓慢扫过对方面部，嘴角轻微上扬，身体不自觉倾向对方",
+      "physiology_en": "lids slightly lowered, gaze slowly traces the other's face, soft smile at mouth corners, body leans in without thinking",
+      "micro_actions": ["手指轻触对方衣角或桌面缩短距离", "呼吸同步变慢", "肩线打开"],
+      "micro_actions_en": ["fingers brush cloth or table to close distance", "breath slows in sync", "shoulders open"],
+      "gaze": "柔和对视，偶尔垂眼",
+      "gaze_en": "soft mutual gaze, occasional drop of eyes",
+      "voice_hint": "低声、气音可掺、语速慢",
+      "voice_hint_en": "low voice, optional breathiness, slow pace",
+      "intensity_scale": {"low": "亲近", "mid": "坦白", "high": "几乎贴面的脆弱"},
+      "intensity_scale_en": {"low": "closeness", "mid": "open confession", "high": "near-face vulnerability"}
+    },
+    "grief": {
+      "label_zh": "悲伤",
+      "actor_free_tags": ["grief", "sorrow", "heartbroken", "heavy loss"],
+      "physiology_zh": "眼睑缓慢下垂，下眼睑湿润反光，嘴角明显下拉，肩膀向内收，头部低垂",
+      "physiology_en": "lids slowly sink, lower lids wet with catchlight, mouth corners pull down, shoulders cave in, head drops",
+      "micro_actions": ["肩膀细小抽动", "手指抓紧织物", "深吸气被压住"],
+      "micro_actions_en": ["tiny shoulder quivers", "fingers grip fabric", "deep breath gets crushed"],
+      "gaze": "下落、失焦、避免对视",
+      "gaze_en": "drops, goes soft, avoids eye contact",
+      "voice_hint": "哽咽、断续、气声",
+      "voice_hint_en": "choked, broken, breathy",
+      "intensity_scale": {"low": "沉", "mid": "压抑抽泣边缘", "high": "跪地级崩溃预备"},
+      "intensity_scale_en": {"low": "heavy", "mid": "edge of suppressed sob", "high": "near collapse"}
+    },
+    "dread": {
+      "label_zh": "恐惧/惊悚",
+      "actor_free_tags": ["dread", "fear", "terror", "freeze"],
+      "physiology_zh": "瞳孔扩大，眼白暴露增多，胸口快速起伏，手指轻微颤抖，身体向后缩紧",
+      "physiology_en": "pupils enlarge, more eye white, chest rises fast, fingers tremble lightly, body tightens backward",
+      "micro_actions": ["重心后移", "吞咽", "头微缩进肩"],
+      "micro_actions_en": ["weight shifts back", "swallow", "head tucks into shoulders"],
+      "gaze": "盯威胁源或不敢看",
+      "gaze_en": "fixed on threat or cannot look",
+      "voice_hint": "气音、发颤、音量不稳",
+      "voice_hint_en": "breathy, shaky, unstable volume",
+      "intensity_scale": {"low": "发毛", "mid": "明显害怕", "high": "僵住想逃"},
+      "intensity_scale_en": {"low": "creeped out", "mid": "clearly afraid", "high": "frozen wanting to flee"}
+    }
+  },
+  "compound_notes": {
+    "shame_anger": "面部泛红同时下颌咬紧，视线躲闪又突然顶回去",
+    "bittersweet": "嘴角上扬同时眼眶湿润",
+    "inertia": "情绪切换后 3-5 秒保留前一情绪的呼吸/颤抖残留，禁止瞬间清零"
+  },
+  "action_layers": ["micro", "habitual", "nervous_reflex", "loss_of_control"],
+  "forbid": [
+    "metaphor_simile",
+    "exact_mm_cm_degrees",
+    "blank_face_long_hold",
+    "mechanical_loop_gesture"
+  ]
+}

@@ -1,0 +1,99 @@
+{
+  "version": "1.0",
+  "description": "Canonical emotion keys for ALL agents. Human doc: human/00_shared_emotions_and_handoffs.md",
+  "keys": [
+    {
+      "id": "calm",
+      "label_zh": "平静/建立",
+      "use_when": ["establish", "breather", "daily", "spatial_intro"],
+      "av_tendency": {
+        "look": ["mid_key", "soft_contrast"],
+        "camera": ["static", "slow_lateral", "wide_to_mid"]
+      }
+    },
+    {
+      "id": "suspicion",
+      "label_zh": "怀疑/紧绷",
+      "use_when": ["probe", "unease", "lie_detection", "withhold"],
+      "av_tendency": {
+        "look": ["mid_low", "cool_fill"],
+        "camera": ["static", "slow_push", "insert"]
+      }
+    },
+    {
+      "id": "oppression",
+      "label_zh": "压迫",
+      "use_when": ["power", "no_exit", "intimidation", "cornered"],
+      "av_tendency": {
+        "look": ["low_key", "high_contrast"],
+        "camera": ["slight_low", "slow_push_in"]
+      }
+    },
+    {
+      "id": "revelation",
+      "label_zh": "揭示",
+      "use_when": ["truth_lands", "discovery", "betrayal_confirm", "info_payload"],
+      "av_tendency": {
+        "look": ["contrast_up", "protect_face"],
+        "camera": ["push_in", "insert", "rack_focus", "reveal_move"]
+      }
+    },
+    {
+      "id": "intimacy",
+      "label_zh": "亲密",
+      "use_when": ["confession", "closeness", "trust", "private"],
+      "av_tendency": {
+        "look": ["soft", "warm_practical"],
+        "camera": ["eye_level", "static_or_micro_drift", "MCU_CU"]
+      }
+    },
+    {
+      "id": "grief",
+      "label_zh": "悲伤",
+      "use_when": ["loss", "aftermath", "mourning"],
+      "av_tendency": {
+        "look": ["desaturated", "soft_low"],
+        "camera": ["static_hold", "slow_push", "negative_space"]
+      }
+    },
+    {
+      "id": "dread",
+      "label_zh": "恐惧/惊悚",
+      "use_when": ["threat", "horror", "disorientation"],
+      "av_tendency": {
+        "look": ["low_key", "cold"],
+        "camera": ["creep_in", "dutch_rare", "wide_distortion_optional"]
+      }
+    }
+  ],
+  "aliases": {
+    "pressure": "oppression",
+    "tense": "suspicion",
+    "anxiety": "suspicion",
+    "unease": "suspicion",
+    "shock": "revelation",
+    "betrayal": "revelation",
+    "discovery": "revelation",
+    "fear": "dread",
+    "horror": "dread",
+    "sad": "grief",
+    "sadness": "grief",
+    "love": "intimacy",
+    "tender": "intimacy",
+    "peaceful": "calm",
+    "quiet": "calm",
+    "establish": "calm",
+    "压抑": "oppression",
+    "怀疑": "suspicion",
+    "揭示": "revelation",
+    "亲密": "intimacy",
+    "悲伤": "grief",
+    "恐惧": "dread",
+    "平静": "calm"
+  },
+  "rules": [
+    "shots[].emotion.primary MUST be one of keys[].id",
+    "Never invent a new emotion key without updating this file AND human/00 doc",
+    "If beat is mixed, pick the peak emotion of the shot not the whole scene"
+  ]
+}
