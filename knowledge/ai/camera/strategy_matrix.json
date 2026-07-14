@@ -1,0 +1,167 @@
+{
+  "version": "1.1",
+  "title": "Emotion × shot size × subject → preferred move strategy",
+  "human_doc": "human/05_cinematography.md",
+  "how_to_use": "For the cinematography agent (not auto-code): filter catalog by preferred_move_families then pick prompt_en that matches subject (person vs object). Order in each list = preference (first better).",
+  "house_style": {
+    "prefer_motion": true,
+    "static_hold_last_resort": true,
+    "static_hold_when": [
+      "director explicit locked-off",
+      "legal/security plate",
+      "macro insert where any move kills readability",
+      "style_pack forces still"
+    ],
+    "prefer_angled_camera": true,
+    "avoid_pure_eye_level": true
+  },
+  "subject_classes": ["person", "object_insert", "environment", "two_shot"],
+  "matrix": {
+    "calm": {
+      "WS": {
+        "person": ["slow_lateral", "slow_pan", "micro_drift", "establishing_move"],
+        "environment": ["slow_pan", "establishing_move", "slow_lateral", "micro_drift"],
+        "object_insert": ["slow_push_gentle", "micro_drift", "slow_pan"],
+        "two_shot": ["slow_lateral", "micro_drift", "slow_pan"]
+      },
+      "MS": {
+        "person": ["micro_drift", "slow_lateral", "slow_push_gentle"],
+        "two_shot": ["micro_drift", "slow_lateral"]
+      },
+      "MCU": {
+        "person": ["micro_drift", "slow_push_gentle"]
+      },
+      "CU": {
+        "person": ["micro_drift", "slow_push_gentle"]
+      },
+      "INSERT": {
+        "object_insert": ["slow_push_gentle", "micro_drift", "slow_pan"]
+      }
+    },
+    "suspicion": {
+      "WS": {
+        "environment": ["slow_pan", "creep_in", "slow_lateral"],
+        "person": ["creep_in", "slow_pan", "slow_lateral"]
+      },
+      "MS": {
+        "person": ["slow_push_in", "creep_in", "micro_drift"],
+        "two_shot": ["slow_lateral", "slow_push_in", "micro_drift"]
+      },
+      "MCU": {
+        "person": ["slow_push_in", "creep_in", "micro_drift"]
+      },
+      "CU": {
+        "person": ["slow_push_in", "creep_in", "micro_drift"]
+      },
+      "INSERT": {
+        "object_insert": ["slow_push_in", "rack_focus", "micro_drift"]
+      }
+    },
+    "oppression": {
+      "MS": {
+        "person": ["slow_push_in", "creep_in", "slight_low_static"]
+      },
+      "MCU": {
+        "person": ["slow_push_in", "creep_in"]
+      },
+      "CU": {
+        "person": ["slow_push_in", "creep_in"]
+      },
+      "INSERT": {
+        "object_insert": ["creep_in", "slow_push_in", "rack_focus"]
+      },
+      "WS": {
+        "person": ["creep_in", "slow_lateral"],
+        "environment": ["creep_in", "slow_pan"]
+      }
+    },
+    "revelation": {
+      "MS": {
+        "person": ["slow_push_in", "dolly_out", "rack_focus"],
+        "two_shot": ["slow_push_in", "slow_lateral", "dolly_out"]
+      },
+      "MCU": {
+        "person": ["slow_push_in", "rack_focus", "dolly_out"]
+      },
+      "CU": {
+        "person": ["slow_push_in", "dolly_out", "rack_focus"]
+      },
+      "INSERT": {
+        "object_insert": ["slow_push_in", "rack_focus", "micro_drift"]
+      },
+      "WS": {
+        "environment": ["reveal_pan", "dolly_out", "slow_lateral"],
+        "person": ["reveal_pan", "slow_push_in", "dolly_out"]
+      }
+    },
+    "intimacy": {
+      "MCU": {
+        "person": ["micro_drift", "slow_push_gentle", "very_slow_push_in"],
+        "two_shot": ["micro_drift", "slow_lateral", "slow_push_gentle"]
+      },
+      "CU": {
+        "person": ["micro_drift", "very_slow_push_in", "slow_push_gentle"]
+      },
+      "MS": {
+        "person": ["micro_drift", "slow_lateral", "slow_push_gentle"]
+      },
+      "WS": {
+        "two_shot": ["slow_lateral", "micro_drift"]
+      }
+    },
+    "grief": {
+      "MCU": {
+        "person": ["very_slow_push_in", "micro_drift", "dolly_out"]
+      },
+      "CU": {
+        "person": ["very_slow_push_in", "micro_drift", "dolly_out"]
+      },
+      "WS": {
+        "person": ["slow_lateral", "dolly_out", "micro_drift"],
+        "environment": ["slow_lateral", "slow_pan", "dolly_out"]
+      },
+      "MS": {
+        "person": ["very_slow_push_in", "micro_drift", "dolly_out"]
+      }
+    },
+    "dread": {
+      "WS": {
+        "environment": ["creep_in", "slow_pan", "slow_lateral"],
+        "person": ["creep_in", "slow_lateral"]
+      },
+      "MS": {
+        "person": ["creep_in", "slow_push_in", "micro_drift"]
+      },
+      "MCU": {
+        "person": ["creep_in", "slow_push_in"]
+      },
+      "CU": {
+        "person": ["creep_in", "slow_push_in", "micro_drift"]
+      },
+      "INSERT": {
+        "object_insert": ["creep_in", "slow_push_in", "rack_focus"]
+      }
+    }
+  },
+  "family_to_catalog_keywords": {
+    "static_hold": ["static", "locked", "hold", "tripod"],
+    "slow_pan": ["pan"],
+    "slow_lateral": ["track", "truck", "lateral", "dolly side"],
+    "micro_drift": ["drift", "float", "subtle handheld", "breathing"],
+    "slow_push_in": ["push", "dolly in", "creep", "slow push"],
+    "slow_push_gentle": ["push", "dolly in", "slow"],
+    "very_slow_push_in": ["very slow", "push", "dolly in"],
+    "creep_in": ["creep", "slow push", "push in"],
+    "dolly_out": ["dolly out", "pull back", "track out"],
+    "reveal_pan": ["reveal", "pan"],
+    "rack_focus": ["rack", "focus pull", "shift focus"],
+    "slight_low_static": ["low angle", "locked", "static"],
+    "establishing_move": ["establishing", "drone", "wide", "pan"]
+  },
+  "subject_infer_rules": [
+    "If shot_size is INSERT → subject_class object_insert",
+    "If subject mentions two people / OTS / two-shot → two_shot",
+    "If subject is room/street/landscape without face → environment",
+    "Else person"
+  ]
+}

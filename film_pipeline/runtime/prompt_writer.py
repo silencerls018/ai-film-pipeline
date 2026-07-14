@@ -221,6 +221,20 @@ _ATMOSPHERE_ZH = {
 }
 
 
+def _emotion_lighting_recipe(emotion: str) -> dict[str, Any]:
+    """Load character lighting recipe for emotion from knowledge (cached lightly)."""
+    try:
+        from film_pipeline.runtime.knowledge import KnowledgeStore
+
+        store = KnowledgeStore()
+        table = store.try_load_ai_json("look/lighting_for_emotion.json") or {}
+        by = table.get("by_emotion") or {}
+        emo = (emotion or "suspicion").strip().lower()
+        return dict(by.get(emo) or by.get("suspicion") or {})
+    except Exception:
+        return {}
+
+
 def _compose_look_blocks(
     bible: dict[str, Any],
     shot: dict[str, Any],
@@ -228,32 +242,38 @@ def _compose_look_blocks(
     *,
     object_shot: bool = False,
 ) -> dict[str, str]:
-    """Visible light/color language only — never cite pipeline sources."""
+    """
+    Visible light/color language only — never cite pipeline sources.
+    Lead with emotion atmosphere + face modeling for people plates.
+    """
     look = shot.get("look") or {}
     film = _film_look(bible)
     scene = _scene_look(bible, shot.get("scene_id"))
+    emo = str((shot.get("emotion") or {}).get("primary") or "")
+    recipe = _emotion_lighting_recipe(emo) if not object_shot else {}
 
     tone = _en_phrase(
         look.get("tone") or scene.get("base_tone") or film.get("key"),
         "low-key",
     ).replace("_", " ")
     contrast = _en_phrase(
-        look.get("contrast") or scene.get("contrast") or film.get("contrast"),
+        look.get("contrast") or scene.get("contrast") or film.get("contrast") or recipe.get("contrast"),
         "high",
     )
     color = _en_phrase(
-        look.get("color_temp") or scene.get("color"),
+        look.get("color_temp") or scene.get("color") or recipe.get("color_temp"),
         "motivated practical light",
     )
     key = _en_phrase(look.get("key_light"), "")
+    if not key and recipe.get("prompt_en"):
+        key = str(recipe.get("prompt_en") or "")
     fill_ratio = look.get("fill_ratio") or ""
     grade = _en_phrase(
         look.get("grade_intent"),
         "controlled deep blacks, readable material detail"
         if object_shot
-        else "controlled deep blacks, readable detail",
+        else "controlled deep blacks, readable facial detail",
     )
-    # strip face-protect language on env plates
     if object_shot and grade and "facial" in grade.lower():
         grade = "controlled deep blacks, readable material detail"
     palette = _palette_en(film.get("palette"))
@@ -261,43 +281,74 @@ def _compose_look_blocks(
     portrait = ""
     rim = ""
     if not object_shot:
-        portrait = _en_phrase(light_plan.get("key") or light_plan.get("key_en"), "")
+        portrait = _en_phrase(
+            light_plan.get("key")
+            or light_plan.get("key_en")
+            or recipe.get("face")
+            or recipe.get("prompt_en"),
+            "",
+        )
         rim = _en_phrase(light_plan.get("rim") or light_plan.get("fill"), "")
 
-    # English: pure image description
-    en_bits = [f"{tone} lighting", f"{contrast} contrast"]
+    atmos_en = str(recipe.get("atmosphere_en") or "").strip()
+    atmos_zh = str(recipe.get("atmosphere_zh") or "").strip()
+    prompt_zh = str(recipe.get("prompt_zh") or "").strip()
+    face_zh = str(recipe.get("face") or "").strip()
+
+    # English: mood first, then face light, then technical grade
+    en_bits: list[str] = []
+    if not object_shot and atmos_en:
+        en_bits.append(f"mood atmosphere: {atmos_en}")
+    en_bits.append(f"{tone} lighting")
+    en_bits.append(f"{contrast} contrast")
+    if not object_shot and portrait:
+        en_bits.append(f"face modeling: {portrait}")
+    elif not object_shot and recipe.get("prompt_en"):
+        en_bits.append(f"face lighting: {recipe.get('prompt_en')}")
+    if key and key != portrait:
+        en_bits.append(f"motivated key: {key}")
+    if rim:
+        en_bits.append(f"edge/rim: {rim}")
+    if fill_ratio:
+        en_bits.append(f"fill about {fill_ratio}")
     if palette:
         en_bits.append("colors: " + ", ".join(palette))
     if sat:
         en_bits.append(sat + " saturation" if "saturation" not in sat else sat)
     en_bits.append(f"color temperature feel: {color}")
-    if key:
-        en_bits.append(f"key light: {key}")
-    if fill_ratio:
-        en_bits.append(f"fill ratio about {fill_ratio}")
-    if portrait:
-        en_bits.append(f"on face/body: {portrait}")
-    if rim:
-        en_bits.append(f"rim or fill: {rim}")
     if grade:
         en_bits.append(grade)
-    en = "Light and grade: " + "; ".join(en_bits) + "."
+    if object_shot:
+        en_bits.insert(
+            0,
+            "object plate: material-readable key, texture micro-shadows, no portrait face recipe",
+        )
+    en = "LIGHTING & MOOD — " + "; ".join(en_bits) + "."
 
-    # Chinese reading aid — visible language, no "来自 Look"
-    zh_bits = [f"{tone} 低调光感" if "low" in tone else f"影调 {tone}", f"反差 {contrast}"]
-    if palette:
-        zh_bits.append("色彩倾向：" + "、".join(palette))
-    zh_bits.append(f"色温/色彩：{color}")
+    # Chinese: 情绪氛围优先，再脸光
+    zh_bits: list[str] = []
+    if not object_shot and atmos_zh:
+        zh_bits.append(f"情绪氛围：{atmos_zh}")
+    zh_bits.append(f"{'低调' if 'low' in tone.lower() else '影调'}{tone}")
+    zh_bits.append(f"反差{contrast}")
+    if not object_shot and (prompt_zh or face_zh):
+        zh_bits.append(f"人物打光：{prompt_zh or face_zh}")
     if key:
-        zh_bits.append(f"主光：{key}")
-    if fill_ratio:
-        zh_bits.append(f"补光比约 {fill_ratio}")
+        zh_bits.append(f"动机主光：{key}")
     if look.get("key_light") and has_cjk(str(look.get("key_light"))):
-        # prefer original Chinese key if mapped EN already used
-        pass
+        kl = str(look.get("key_light"))
+        if kl not in "；".join(zh_bits):
+            zh_bits.append(f"光源：{kl}")
+    if fill_ratio:
+        zh_bits.append(f"补光约 {fill_ratio}")
+    if palette:
+        zh_bits.append("色彩：" + "、".join(palette))
+    zh_bits.append(f"色温：{color}")
     if grade:
-        zh_bits.append(f"调色：{grade}")
-    zh = "光影：" + "；".join(zh_bits) + "。"
+        zh_bits.append(f"暗部/质感：{grade}")
+    if object_shot:
+        zh_bits.insert(0, "物镜：材质可读主光，纹理微阴影，不用人像脸谱")
+    zh = "【光影与氛围】" + "；".join(zh_bits) + "。"
 
     return {
         "look_tone": tone,
@@ -308,7 +359,9 @@ def _compose_look_blocks(
         "look_block_zh": zh,
         "portrait_light_en": portrait,
         "fill_or_rim": rim,
-        "portrait_light_motivation": "",
+        "portrait_light_motivation": atmos_en or atmos_zh,
+        "atmosphere_en": atmos_en,
+        "atmosphere_zh": atmos_zh,
     }
 
 
@@ -797,20 +850,20 @@ def _continuity_en(
     s = (stitch or "single").lower()
     anchors = []
     if subject_en:
-        anchors.append(f"keep the same subject identity: {subject_en}")
+        # Keep phrase compact so soft-wrap rarely splits the keyword sequence
+        anchors.append(f"same subject identity: {subject_en}")
     if look_en:
-        # shorten light line if huge
-        anchors.append("same lighting and color palette throughout the take")
+        anchors.append("stable lighting palette for the whole take")
     anchor_s = "; ".join(anchors) + ". " if anchors else ""
     if s in {"single", "", "full"}:
         return (
-            f"{anchor_s}One continuous take, about {duration_sec:.1f} seconds, "
+            f"{anchor_s}One continuous take, about {int(round(float(duration_sec or 0)))} seconds, "
             f"smooth motion, no jump cut mid-action."
         )
     # multi-clip: still fully restate — no "previous clip"
     return (
-        f"{anchor_s}Continuous take energy for about {duration_sec:.1f} seconds; "
-        f"stable framing logic, stable wardrobe, stable light, photoreal continuity."
+        f"{anchor_s}Continuous take energy for about {int(round(float(duration_sec or 0)))} seconds; "
+        f"stable framing, wardrobe, light; photoreal continuity."
     )
 
 
@@ -822,10 +875,11 @@ def _continuity_zh(
 ) -> str:
     s = (stitch or "single").lower()
     who = f"主体保持为：{subject_zh}。" if subject_zh else ""
+    d = int(round(float(duration_sec or 0)))
     if s in {"single", "", "full"}:
-        return f"{who}连续拍摄约 {duration_sec:.1f} 秒，动作中途不跳切，光影稳定。"
+        return f"{who}连续拍摄约 {d} 秒，动作中途不跳切，光影稳定。"
     return (
-        f"{who}本段约 {duration_sec:.1f} 秒，连续镜头感；"
+        f"{who}本段约 {d} 秒，连续镜头感；"
         f"服装、身份、舱体材质、灯光与色调在本段内写全，不依赖其他提示词。"
     )
 

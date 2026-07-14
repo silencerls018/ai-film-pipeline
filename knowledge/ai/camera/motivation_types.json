@@ -1,0 +1,91 @@
+{
+  "version": "1.1",
+  "title": "Camera movement motivation (film-school / ASC practice)",
+  "human_doc": "human/05_cinematography.md",
+  "sources_note": "Distilled from M. David Mullen ASC notes (when/why to move), film-school motivated vs unmotivated movement, StudioBinder camera-movement storytelling guides.",
+  "core_principle": "When and why the camera moves matters more than the hardware used to move it.",
+  "mullen_three_reasons": {
+    "note": "ASC teaching summary: three legitimate reasons to move (can combine).",
+    "dramatic": {
+      "zh": "戏剧/情绪正当理由",
+      "desc": "Heighten tension, tighten to emotional expression, isolate, or release after a beat."
+    },
+    "logical_action": {
+      "zh": "逻辑/动作跟随",
+      "desc": "Follow important action so the audience stays oriented; keep subject readable in frame."
+    },
+    "dimensional": {
+      "zh": "立体感/技术美学",
+      "desc": "Parallax and perspective shift sell real depth/distance on a 2D screen (e.g. slight move looking down a drop)."
+    }
+  },
+  "motivation_classes": [
+    {
+      "id": "action_follow",
+      "zh": "跟随动作",
+      "maps_to_mullen": "logical_action",
+      "desc": "Pan/tilt/track follows subject motion so the audience stays oriented.",
+      "examples": ["pan with walking character", "tilt up as hero rises"]
+    },
+    {
+      "id": "reveal_information",
+      "zh": "揭示信息",
+      "maps_to_mullen": "dramatic",
+      "desc": "Move discloses off-screen person, object, or space that changes meaning.",
+      "examples": ["pan to doorway reveal", "dolly past foreground to new subject"]
+    },
+    {
+      "id": "emotional_emphasis",
+      "zh": "情绪强调",
+      "maps_to_mullen": "dramatic",
+      "desc": "Push-in/out or creep heightens inner state without literal follow action.",
+      "examples": ["slow push on realization", "dolly out on isolation"]
+    },
+    {
+      "id": "spatial_orientation",
+      "zh": "空间定位",
+      "maps_to_mullen": "logical_action",
+      "desc": "Move teaches geography of the set or relationship of bodies in space.",
+      "examples": ["lateral track through room", "orbit establishing two characters"]
+    },
+    {
+      "id": "subjective_immersion",
+      "zh": "主观沉浸",
+      "maps_to_mullen": "dramatic",
+      "desc": "Handheld/POV approximates character nervous system or POV.",
+      "examples": ["handheld anxiety", "POV through doorway"]
+    },
+    {
+      "id": "dimensional_enhancement",
+      "zh": "立体感/纵深",
+      "maps_to_mullen": "dimensional",
+      "desc": "Parallax from lateral/dolly move sells 3D depth on a 2D screen (technical-aesthetic).",
+      "examples": ["slow lateral past foreground props", "slight crane while looking down"]
+    },
+    {
+      "id": "energy_rhythm",
+      "zh": "能量与节奏",
+      "maps_to_mullen": "dramatic",
+      "desc": "Whip pan, crash zoom, rapid track inject pace; use sparingly and intentionally.",
+      "examples": ["whip pan cut", "crash zoom punchline"]
+    }
+  ],
+  "rules": [
+    "Every non-static move must declare one primary motivation_class in motivation text",
+    "Unmotivated flashy moves are allowed only as deliberate style with clear narrative payoff",
+    "House style: prefer micro_drift / slow_push / pan / lateral over static_hold",
+    "Static hold only if necessary (macro insert readability, explicit locked plate, brief force) — and still use angled camera, not pure eye_level",
+    "Do not move only because the catalog has many options",
+    "Prefer story-visible motivation language over pipeline jargon"
+  ],
+  "forbidden_without_motivation": [
+    "orbit_360",
+    "crash_zoom",
+    "whip_pan",
+    "drone_orbit_beauty"
+  ],
+  "angled_static_ok": {
+    "note": "If locked-off is required, still choose slight_high/slight_low/low/high/dutch — not pure eye_level",
+    "prefer": ["slight_low", "slight_high", "low_angle", "high_angle", "dutch_mild"]
+  }
+}

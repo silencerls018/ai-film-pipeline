@@ -402,9 +402,25 @@ def stub_cinematography(bible: dict[str, Any], kb: dict[str, Any]) -> dict[str, 
         env_plate = is_environment_or_object_shot(shot)
         size = str(shot.get("shot_size") or "MS").upper()
 
-        # Prefer Excel catalog for people plates only — never Dutch/villain on establish/env
-        catalog_move = store.pick_move_for_emotion(str(emo))
+        # Strategy matrix + catalog: subject-aware pick (INSERT/env never get face-acting moves)
+        subject_class = store.infer_subject_class(
+            size,
+            str(shot.get("subject") or shot.get("subject_en") or ""),
+            env_or_object=env_plate,
+        )
+        catalog_move = store.pick_move_for_emotion(
+            str(emo),
+            shot_size=size,
+            subject_class=subject_class,
+            env_or_object=env_plate,
+        )
         if catalog_move and not env_plate and size not in {"EWS", "WS", "INSERT"}:
+            move = catalog_move.get("en") or catalog_move.get("id") or "static hold"
+            move_prompt = catalog_move.get("prompt_en") or move
+            move_id = catalog_move.get("id")
+            move_zh = catalog_move.get("zh")
+        elif catalog_move and (env_plate or size in {"EWS", "WS", "INSERT"}):
+            # Still use strategy-filtered catalog when safe (static/creep/push)
             move = catalog_move.get("en") or catalog_move.get("id") or "static hold"
             move_prompt = catalog_move.get("prompt_en") or move
             move_id = catalog_move.get("id")
@@ -417,38 +433,85 @@ def stub_cinematography(bible: dict[str, Any], kb: dict[str, Any]) -> dict[str, 
 
         avoid = set(habits.get("avoid_moves") or [])
         if move in avoid and habits.get("prefer_moves"):
-            move = habits["prefer_moves"][0]
-            move_prompt = move
+            # Prefer first non-static habit move
+            for pm in habits.get("prefer_moves") or []:
+                if not any(t in str(pm).lower() for t in ("static", "locked")):
+                    move = pm
+                    move_prompt = str(pm)
+                    break
+            else:
+                move = habits["prefer_moves"][0]
+                move_prompt = move
 
-        angle = (cam_rules.get("preferred_angles") or ["eye_level"])[0]
-        if env_plate or size in {"EWS", "WS", "INSERT"}:
-            angle = "eye_level"
-            ml = f"{move} {move_prompt}".lower()
-            bad = any(k in ml for k in ("dutch", "villain", "horror", "sleeping", "crash", "whip"))
-            beat_blob = f"{shot.get('dramatic_beat_en') or ''} {shot.get('dramatic_beat') or ''}"
-            wants_push = "push" in beat_blob.lower() or "推" in beat_blob
-            if bad or env_plate:
-                if size == "INSERT":
-                    move, move_zh, move_prompt = (
-                        "Static Locked-Off",
-                        "锁定固定",
-                        "static locked-off hold",
-                    )
-                elif wants_push:
-                    move, move_zh, move_prompt = (
-                        "Creep In",
-                        "缓推",
-                        "very slow motivated push-in",
-                    )
-                else:
-                    move, move_zh, move_prompt = (
-                        "Static Locked-Off",
-                        "锁定固定",
-                        "static locked-off hold",
-                    )
-                move_id = None
-        elif "dutch" in str(angle).lower() and size in {"EWS", "WS", "FS"}:
-            angle = "eye_level"
+        # House style: angled camera (no pure eye_level default)
+        habit_angles = habits.get("prefer_angles") or []
+        angle, height = store.pick_angle_for_emotion(
+            str(emo),
+            shot_size=size,
+            subject_class=subject_class,
+            env_or_object=env_plate,
+        )
+        if habit_angles and habits.get("avoid_pure_eye_level", True):
+            angle = str(habit_angles[0])
+            if "low" in angle:
+                height = "hip_to_chest" if "slight" in angle else "knee_to_hip"
+            elif "high" in angle:
+                height = "above_eye"
+            elif "dutch" in angle:
+                height = "eye_to_chest_canted"
+
+        ml = f"{move} {move_prompt}".lower()
+        bad = any(k in ml for k in ("villain", "horror", "sleeping", "crash", "whip"))
+        # Dutch is allowed with motivation (suspicion/oppression/dread)
+        if "dutch" in ml and emo not in {"dread", "suspicion", "oppression"}:
+            bad = True
+        beat_blob = f"{shot.get('dramatic_beat_en') or ''} {shot.get('dramatic_beat') or ''}"
+        wants_push = "push" in beat_blob.lower() or "推" in beat_blob
+        if bad:
+            if size == "INSERT" or env_plate:
+                move, move_zh, move_prompt = (
+                    "Slow Push In",
+                    "缓推",
+                    "very slow push-in on subject detail",
+                )
+            elif wants_push:
+                move, move_zh, move_prompt = (
+                    "Creep In",
+                    "缓推",
+                    "very slow motivated push-in",
+                )
+            else:
+                move, move_zh, move_prompt = (
+                    "Micro Drift",
+                    "微漂",
+                    "subtle floating micro drift, living camera",
+                )
+            move_id = None
+
+        # Replace pure static with gentle motion unless brief forces locked
+        ml2 = f"{move} {move_prompt}".lower()
+        if any(k in ml2 for k in ("static", "locked-off", "locked off")) and not any(
+            k in beat_blob.lower() for k in ("locked", "static", "固定", "锁")
+        ):
+            if size == "INSERT":
+                move, move_zh, move_prompt = (
+                    "Slow Push In",
+                    "缓推",
+                    "very slow push-in on the object detail",
+                )
+            elif env_plate or size in {"EWS", "WS"}:
+                move, move_zh, move_prompt = (
+                    "Slow Pan",
+                    "慢摇",
+                    "slow pan across the environment, cinematic",
+                )
+            else:
+                move, move_zh, move_prompt = (
+                    "Micro Drift",
+                    "微漂",
+                    "subtle floating micro drift, living camera",
+                )
+            move_id = None
 
         lenses = cam_rules.get("lens_mm") or prefer_lenses
         lens = lenses[0] if lenses else 40
@@ -502,11 +565,11 @@ def stub_cinematography(bible: dict[str, Any], kb: dict[str, Any]) -> dict[str, 
             else "rule_of_thirds, protect eyeline"
         )
         motivation = (
-            f"环境/建立镜：稳、慢、服务 beat，不炫技；情绪 {emo}"
+            f"环境/建立镜：带角度机位({angle})，慢速运动服务 beat，不炫技；情绪 {emo}"
             if env_plate
             else (
                 f"服务 beat「{shot.get('dramatic_beat', '')}」与情绪 {emo}："
-                f"运镜「{move_zh or move}」/ {angle}，配合表演与灯光"
+                f"运镜「{move_zh or move}」+ 角度「{angle}」(非纯平视默认)，配合表演与灯光"
             )
         )
         patches.append(
@@ -519,7 +582,13 @@ def stub_cinematography(bible: dict[str, Any], kb: dict[str, Any]) -> dict[str, 
                     "t_stop": "T2.0",
                     "shot_size": shot.get("shot_size", "MS"),
                     "angle": angle,
-                    "height": "chest" if shot.get("shot_size") in {"MCU", "CU"} and not env_plate else "eye",
+                    "height": height
+                    if height
+                    else (
+                        "chest"
+                        if shot.get("shot_size") in {"MCU", "CU"} and not env_plate
+                        else "above_eye"
+                    ),
                     "movement": {
                         "type": move,
                         "catalog_id": move_id,

@@ -141,7 +141,7 @@ Image 1 is Gao Yan. Image 2 is the speaker. Image 3 is the sub cabin.
 | `story` / `scenes` | 压缩成场景锚点（地点、氛围），每条都带 |
 | `subject` / `dramatic_beat` | 主体与动作（去音乐曲名） |
 | `camera` | 第 2 段 + 第 3 段运镜 |
-| `look_bible` + `shots.look` | **只输出可见光色结果**，不提字段名 |
+| `look_bible` + `shots.look` + 情绪光表 | **先情绪氛围，再人物打光可见结果**（半脸/动机源/冷暖）；禁空泛 cinematic lighting；物镜只打材质 |
 | `performance` | 仅人物镜；环境镜忽略人脸模板 |
 | `dialogue` + **`shots[].linked_dialogue`** | **只写本镜 linked 的台词**（最多 3 句）。禁止把整场对白塞进一镜。环境/空镜 linked 为空 → 不写台词 |
 | `generation_clips` / duration | 写进时长与 continuous take |

@@ -1,0 +1,55 @@
+{
+  "version": "1.0",
+  "title": "Three-point lighting + motivated light (film lighting 101 → set practice)",
+  "human_doc": "human/05_cinematography.md",
+  "sources_note": "Distilled from StudioBinder three-point guides, film-school Lighting 101, and set practice: practicals motivate key/fill/edge.",
+  "core_principle": "Three-point is a teaching scaffold; on set, lights should feel motivated by the world of the scene.",
+  "roles": {
+    "key": {
+      "zh": "主光",
+      "job": "Primary direction and modeling on face/subject; strongest readable source",
+      "placement_hint": "Typically 30–45° off camera axis, slightly above eye line",
+      "story_motivate": ["window", "practical lamp", "neon sign", "overhead practical", "fire"]
+    },
+    "fill": {
+      "zh": "辅光",
+      "job": "Controls shadow depth from key; softer and weaker than key",
+      "ratio_notes": "Lower fill → higher drama/contrast; higher fill → openness/safety",
+      "story_motivate": ["bounce from wall", "ambient room", "secondary window", "soft bounce card"]
+    },
+    "back_or_edge": {
+      "zh": "轮廓/逆光",
+      "job": "Separates subject from background; optional hair/edge rim",
+      "story_motivate": ["practical behind", "doorway spill", "street neon edge", "window backlight"]
+    },
+    "background": {
+      "zh": "环境/背景光",
+      "job": "Shape space depth without competing with face",
+      "story_motivate": ["practicals in depth", "pool of light on wall", "city spill"]
+    }
+  },
+  "ratios_emotion": {
+    "calm": {"contrast": "soft_mid", "fill_hint": "generous fill", "notes": "Readable, open"},
+    "suspicion": {"contrast": "mid", "fill_hint": "cool underfill", "notes": "Keep eyes; let shadows hide truth"},
+    "oppression": {"contrast": "high", "fill_hint": "minimal fill", "notes": "Harder key; protect eyes unless hiding"},
+    "revelation": {"contrast": "high_controlled", "fill_hint": "face still readable", "notes": "Truth lands on face; object inserts sharp"},
+    "intimacy": {"contrast": "soft", "fill_hint": "warm practical key", "notes": "Soft modeling, close key"},
+    "grief": {"contrast": "soft_low", "fill_hint": "gentle under", "notes": "Desat-friendly soft falloff"},
+    "dread": {"contrast": "high", "fill_hint": "sparse fill", "notes": "Pools of dark; motivated cold edge"}
+  },
+  "hard_rules": [
+    "Prefer motivated sources that could exist in the story world",
+    "Protect eyes in low key unless story deliberately hides them",
+    "Do not invent cinematic lighting jargon without a visible source description for prompts",
+    "INSERT/object: light the material (paper grain, metal edge), not a portrait setup"
+  ],
+  "prompt_language": {
+    "prefer": [
+      "soft window key from camera left",
+      "warm practical lamp as key, cool ambient fill",
+      "thin edge light from hallway",
+      "low-key pool of light on desk, deep shadows"
+    ],
+    "avoid_alone": ["cinematic lighting", "beautiful lighting", "perfect three-point"]
+  }
+}

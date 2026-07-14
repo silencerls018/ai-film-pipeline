@@ -1,0 +1,131 @@
+{
+  "version": "1.2",
+  "title": "Angles, lenses, lighting basics (cinematography 101 → pro practice)",
+  "human_doc": "human/05_cinematography.md",
+  "see_also": [
+    "composition_framing.json",
+    "three_point_and_motivated_light.json",
+    "motivation_types.json",
+    "strategy_matrix.json"
+  ],
+  "house_style": {
+    "zh": "默认带角度：少纯平视；固定机位仅在极必要时",
+    "prefer_angled": true,
+    "avoid_pure_eye_level": true,
+    "eye_level_only_when": [
+      "documentary honesty beat explicit",
+      "legal/security flat plate",
+      "brief forces neutral eyeline match"
+    ],
+    "angle_vocabulary": [
+      "slight_low",
+      "low_angle",
+      "slight_high",
+      "high_angle",
+      "dutch_mild",
+      "dutch_angle",
+      "ots_high",
+      "ots_low"
+    ]
+  },
+  "angles": {
+    "eye_level": {
+      "zh": "平视",
+      "use": "Rare default in this project — only when neutrality is the story point",
+      "prefer_rank": 99
+    },
+    "slight_low": {
+      "zh": "微仰",
+      "use": "Default body/portrait lift; quiet power without comic hero low",
+      "prefer_rank": 1
+    },
+    "low_angle": {
+      "zh": "仰拍",
+      "use": "Power, threat, monumentality; subject dominates",
+      "prefer_rank": 2
+    },
+    "slight_high": {
+      "zh": "微俯",
+      "use": "Default for vulnerability, observation, table/desk inserts",
+      "prefer_rank": 1
+    },
+    "high_angle": {
+      "zh": "俯拍",
+      "use": "Vulnerability, surveillance, smallness, god's-eye pressure",
+      "prefer_rank": 2
+    },
+    "dutch_mild": {
+      "zh": "轻荷兰角",
+      "use": "Unease without full canted chaos; good for suspicion/dread",
+      "prefer_rank": 3
+    },
+    "dutch_angle": {
+      "zh": "荷兰角",
+      "use": "Psychological imbalance; motivated by dread/disorientation/oppression peaks",
+      "avoid_default": false,
+      "prefer_rank": 4
+    },
+    "ots": {
+      "zh": "过肩",
+      "use": "Conversation, relational pressure — combine with slight high/low"
+    },
+    "ots_high": {
+      "zh": "过肩微俯",
+      "use": "Listener advantage / subject under pressure"
+    },
+    "ots_low": {
+      "zh": "过肩微仰",
+      "use": "Speaker power / subject elevated"
+    },
+    "pov": {
+      "zh": "主观视角",
+      "use": "Align audience with character perception"
+    }
+  },
+  "angle_by_emotion": {
+    "calm": ["slight_high", "slight_low", "high_angle"],
+    "suspicion": ["slight_high", "dutch_mild", "slight_low", "high_angle"],
+    "oppression": ["low_angle", "slight_low", "dutch_mild", "high_angle"],
+    "revelation": ["slight_low", "slight_high", "low_angle"],
+    "intimacy": ["slight_low", "slight_high"],
+    "grief": ["slight_high", "high_angle", "slight_low"],
+    "dread": ["dutch_mild", "dutch_angle", "high_angle", "low_angle", "slight_high"]
+  },
+  "angle_by_subject": {
+    "person": "use emotion table; never default pure eye_level",
+    "two_shot": ["slight_high", "slight_low", "ots_high", "ots_low"],
+    "environment": ["slight_high", "high_angle", "slight_low", "low_angle"],
+    "object_insert": ["slight_high", "high_angle", "slight_low"]
+  },
+  "height_hints": {
+    "slight_low": "hip_to_chest",
+    "low_angle": "knee_to_hip",
+    "slight_high": "above_eye",
+    "high_angle": "overhead_or_standing_over",
+    "dutch_mild": "eye_to_chest_canted",
+    "dutch_angle": "canted_frame",
+    "eye_level": "eye"
+  },
+  "focal_length_mm": {
+    "18_24": "Ultra wide: space distortion, environment dominance, unease if overused on faces",
+    "28_35": "Wide-standard: body in space, documentary-cinematic walk-and-talk",
+    "40_50": "Naturalistic dialogue coverage, mild compression",
+    "65_85": "Portrait isolation, romantic or intense singles, shallow depth",
+    "100_plus": "Spy/tele compression, compressed backgrounds, surveillance feel"
+  },
+  "lighting_ratios": {
+    "motivated_light": "Prefer sources that could exist in story world (window, practical lamp, neon)",
+    "key_fill_back": "Key shapes face; fill controls contrast; optional edge separates subject",
+    "high_key": "Bright, low contrast — comedy, openness, safety",
+    "low_key": "Dark, high contrast — drama, noir, secrecy, dread",
+    "contrast_as_emotion": "Raise contrast on pressure/reveal; soften on intimacy/grief soft",
+    "protect_eyes": "Even in low key, keep eyes readable unless story hides them"
+  },
+  "composition_basics": [
+    "Rule of thirds and intentional center-punch for power",
+    "Headroom and lead room for gaze/motion direction",
+    "Foreground frames add depth (doorways, shoulders)",
+    "Negative space can express loneliness or dread",
+    "Angle + height together: do not write eye-level + chest height as a fake angle"
+  ]
+}

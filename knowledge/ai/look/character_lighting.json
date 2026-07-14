@@ -1,0 +1,147 @@
+{
+  "version": "1.0",
+  "title": "Character / portrait lighting (professional film practice)",
+  "human_doc": "human/04_look.md",
+  "sources_note": "Distilled from StudioBinder three-point & cinematic lighting primers, No Film School lighting techniques, film-school face-pattern teaching (Rembrandt/loop/butterfly/split), and industry motivated-practical practice. Not a paid course dump.",
+  "core_principles": [
+    "Motivated light first: every key should feel like it could come from the world (window, practical, neon, monitor, searchlight).",
+    "Three-point is a teaching scaffold (key / fill / edge); on set, shape faces for story, not textbook symmetry.",
+    "Face patterns sell character psychology: which half of the face we see is a story choice.",
+    "Protect eyes unless the beat deliberately hides them (spectacles of dread, lost soul).",
+    "Contrast and color temperature are emotional instruments, not decoration."
+  ],
+  "face_patterns": {
+    "rembrandt": {
+      "zh": "伦勃朗光",
+      "look": "Key ~45° up and to the side; cheek triangle of light under the eye on the shadow side",
+      "use": ["drama", "authority", "classical portrait intensity", "suspicion mid-pressure"]
+    },
+    "loop": {
+      "zh": "环形光/鼻影环",
+      "look": "Slightly off-axis key; small loop shadow from nose toward cheek",
+      "use": ["dialogue default", "naturalistic interview-cinematic", "calm to mild tension"]
+    },
+    "butterfly_paramount": {
+      "zh": "蝴蝶光/派拉蒙光",
+      "look": "Key high and centered; butterfly shadow under nose; glamour or controlled beauty",
+      "use": ["intimacy soft beauty", "glamour", "rare in neo-noir unless intentional"]
+    },
+    "split": {
+      "zh": "阴阳脸/分割光",
+      "look": "Half face lit, half in deep shadow",
+      "use": ["duality", "lie/truth", "moral split", "oppression", "suspicion peak"]
+    },
+    "broad": {
+      "zh": "宽面光",
+      "look": "Lit side of face toward camera; face reads larger, more open",
+      "use": ["openness", "calm", "vulnerability soft"]
+    },
+    "short": {
+      "zh": "窄面光",
+      "look": "Shadow side of face toward camera; slimming, secretive, cinematic",
+      "use": ["noir", "withhold", "power", "dread"]
+    },
+    "under": {
+      "zh": "底光/脚光",
+      "look": "Key from below; uncanny, threat, horror-adjacent",
+      "use": ["dread rare", "monstrous reveal", "needs motivation (screen glow, fire below)"]
+    },
+    "top_skull": {
+      "zh": "顶光/颅骨光",
+      "look": "Overhead key; hollow eyes, exhaustion, interrogation",
+      "use": ["oppression", "fatigue", "institutional cold"]
+    },
+    "rim_edge": {
+      "zh": "轮廓/边缘光",
+      "look": "Back/edge separates subject from dark background; hair light optional",
+      "use": ["silhouette against deep sea dark", "hero isolation", "beauty rim with soft key"]
+    },
+    "practical_key": {
+      "zh": "实用光作主光",
+      "look": "Lamp, monitor, holo, neon, window as the visible key motivation",
+      "use": ["all emotions when story world has sources"]
+    }
+  },
+  "three_point_roles": {
+    "key": "Primary modeling light; direction sells power and mood",
+    "fill": "Controls shadow depth; lower fill = more drama",
+    "edge_or_back": "Separates face from background; optional hair rim",
+    "kicker": "Harder edge accent for grit or neon"
+  },
+  "emotion_portrait_recipes": {
+    "calm": {
+      "pattern": ["loop", "broad", "practical_key"],
+      "key": "soft window or warm practical as key, slightly off camera",
+      "fill": "generous soft fill or bounce; gentle falloff",
+      "edge": "optional thin warm edge",
+      "face": "both eyes readable; soft cheek modeling",
+      "atmosphere_en": "soft open face light, calm mid-key air, gentle practical warmth",
+      "atmosphere_zh": "面部柔和打开，中调平静，实用光微暖，阴影边缘软"
+    },
+    "suspicion": {
+      "pattern": ["short", "rembrandt", "split"],
+      "key": "harder side key from practical; cool ambient fill",
+      "fill": "under-fill; let one cheek hide information",
+      "edge": "thin cool rim from screen or corridor",
+      "face": "half-lit, eyes still catch a specular",
+      "atmosphere_en": "half-shadow face, cool fill, secretive short lighting, tense mid-low key",
+      "atmosphere_zh": "半明半暗的窄面光，冷辅光，眼神有一星高光，紧绷的中低调"
+    },
+    "oppression": {
+      "pattern": ["short", "top_skull", "split"],
+      "key": "hard side or top-side key; minimal fill",
+      "fill": "near zero; negative fill if needed",
+      "edge": "cold edge optional to pin subject in dark",
+      "face": "large shadow mass; protect eye readability",
+      "atmosphere_en": "oppressive hard key, crushed blacks, half-swallowed face, still-readable eyes",
+      "atmosphere_zh": "硬主光压迫，暗部深沉，半张脸吞进阴影，眼睛仍可读"
+    },
+    "revelation": {
+      "pattern": ["rembrandt", "short", "practical_key"],
+      "key": "tighter key on eyes or truth object then face",
+      "fill": "controlled; raise contrast at the beat peak",
+      "edge": "background sinks darker",
+      "face": "eyes sharp, micro sweat optional, world darkens around",
+      "atmosphere_en": "truth-spot key on eyes, surrounding falloff, contrast lifts on the reveal",
+      "atmosphere_zh": "真相落在眼上的收紧主光，周围下沉，反差在揭示点抬起"
+    },
+    "intimacy": {
+      "pattern": ["butterfly_paramount", "loop", "practical_key"],
+      "key": "close warm practical; soft diffusion",
+      "fill": "soft wrap, low contrast",
+      "edge": "warm hair rim optional",
+      "face": "gentle wrap, soft catchlights, skin texture alive",
+      "atmosphere_en": "warm close practical wraps the face, soft intimate glow, low contrast",
+      "atmosphere_zh": "近处暖实用光包裹面部，柔和高光，低反差亲密感"
+    },
+    "grief": {
+      "pattern": ["broad", "loop", "practical_key"],
+      "key": "dim soft window or weak practical",
+      "fill": "soft under; desaturated air",
+      "edge": "minimal; let figure merge slightly with space",
+      "face": "soft low-key, optional wet eye specular",
+      "atmosphere_en": "soft dim key, desaturated grief air, quiet eye light, soft shadow edges",
+      "atmosphere_zh": "偏暗柔主光，低饱和悲伤空气，安静眼神高光，阴影边缘软"
+    },
+    "dread": {
+      "pattern": ["under", "split", "top_skull", "short"],
+      "key": "single hard motivated source; strong negative fill",
+      "fill": "almost none",
+      "edge": "cold thin rim or none",
+      "face": "hollow sockets optional; eyes still intentional",
+      "atmosphere_en": "single hard source, deep negative fill, cold dread air, uncanny face modeling",
+      "atmosphere_zh": "单一硬源，强负补光，冷恐惧空气，面部造型不安"
+    }
+  },
+  "prompt_priority": [
+    "Lead with mood + face light pattern before gear lists",
+    "Name motivated source (window, holo ice-blue, warm lamp, xenon)",
+    "Describe shadow mass on face and eye readability",
+    "Describe air/atmosphere (haze, pool of dark, soft falloff)",
+    "Never only write 'cinematic lighting'"
+  ],
+  "object_insert_override": {
+    "note": "No portrait face recipes on pure object plates",
+    "light": "Material-readable key on paper grain / metal edge / glass / flesh sample; micro shadows for texture"
+  }
+}

@@ -1,0 +1,70 @@
+{
+  "version": "1.1",
+  "title": "Coverage patterns and default camera energy (project house style)",
+  "human_doc": "human/05_cinematography.md",
+  "house_style": "Prefer slow motivated motion + angled camera; static + pure eye_level only if necessary.",
+  "coverage_roles": [
+    {
+      "id": "master_establisher",
+      "shot_sizes": ["EWS", "WS", "FS"],
+      "default_energy": "slow_pan_or_lateral",
+      "default_angles": ["slight_high", "high_angle", "slight_low"],
+      "purpose": "Geography and relationship of bodies to space"
+    },
+    {
+      "id": "medium_relationship",
+      "shot_sizes": ["MS", "MWS"],
+      "default_energy": "micro_drift_or_lateral",
+      "default_angles": ["slight_low", "slight_high", "ots_high", "ots_low"],
+      "purpose": "Body language and blocking between characters"
+    },
+    {
+      "id": "single_performance",
+      "shot_sizes": ["MCU", "CU"],
+      "default_energy": "slow_push_or_micro_drift",
+      "default_angles": ["slight_low", "slight_high", "low_angle"],
+      "purpose": "Face and reaction; protect performance with gentle motion"
+    },
+    {
+      "id": "insert_detail",
+      "shot_sizes": ["INSERT", "ECU"],
+      "default_energy": "micro_push_or_drift",
+      "default_angles": ["slight_high", "high_angle", "slight_low"],
+      "purpose": "Object/information; avoid unrelated human micro-acting"
+    },
+    {
+      "id": "ots_dialogue",
+      "shot_sizes": ["MS", "MCU"],
+      "default_energy": "micro_drift_or_slow_push",
+      "default_angles": ["ots_high", "ots_low", "slight_high", "slight_low"],
+      "purpose": "Eyeline and conversational axis; keep 180-degree line; still angled"
+    }
+  ],
+  "scene_templates": {
+    "dialogue_interior": [
+      "master WS slow pan or lateral, slight high",
+      "OTS A micro drift, ots_high or slight_high",
+      "OTS B micro drift, ots_low or slight_low",
+      "single A MCU slow push on pressure, slight_low",
+      "single B reaction micro drift, slight_high",
+      "insert prop micro push, slight_high"
+    ],
+    "revelation_beat": [
+      "insert object micro push or rack, slight_high",
+      "CU reaction slow push, slight_low",
+      "optional dolly out aftermath, slight_high"
+    ],
+    "oppression_beat": [
+      "MS to MCU progression",
+      "slow push or creep in",
+      "low_angle or slight_low",
+      "avoid wide escape shots mid-pressure"
+    ]
+  },
+  "axis_rules": [
+    "Maintain 180-degree line for reverse coverage unless intentional break for disorientation",
+    "Match eyelines between singles",
+    "Screen direction consistency for entrances/exits",
+    "Angled camera does not excuse crossing the line"
+  ]
+}

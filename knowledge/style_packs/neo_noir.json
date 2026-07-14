@@ -9,9 +9,11 @@
     "references": ["se7en_corridor", "zodiac_interior", "blade_runner_adjacent_not_copy"]
   },
   "camera_habits": {
-    "prefer_moves": ["static_hold", "slow_push_in"],
+    "prefer_moves": ["slow_push_in", "creep_in", "micro_drift", "slow_lateral"],
+    "prefer_angles": ["slight_low", "slight_high", "dutch_mild", "low_angle"],
+    "avoid_pure_eye_level": true,
     "prefer_lenses_mm": [35, 40, 50],
     "avoid_moves": ["orbit", "whip_pan", "fpv_drone"]
   },
-  "forbidden": ["high_key_comedy_bright", "rainbow_neon_party", "unmotivated_dutch_everywhere"]
+  "forbidden": ["high_key_comedy_bright", "rainbow_neon_party", "unmotivated_crash_zoom"]
 }

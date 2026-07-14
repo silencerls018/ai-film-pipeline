@@ -1,32 +1,67 @@
 {
-  "version": "1.0",
+  "version": "1.3",
   "human_doc": "human/05_cinematography.md",
+  "house_style": {
+    "prefer_motion_over_static": true,
+    "static_hold_only_if_necessary": true,
+    "prefer_angled_camera": true,
+    "avoid_pure_eye_level": true,
+    "note_zh": "除非非常必要，少用固定机位；就算固定也尽量不要纯平视，要俯/仰/荷兰角等带角度机位。"
+  },
   "decision_order": [
-    "read emotion.primary + dramatic_beat + shot_size",
-    "load emotion_to_camera candidates (catalog)",
-    "filter by style_pack avoid lists",
-    "pick move + lens + angle",
-    "write movement.motivation and look.motivation",
-    "obey look_bible or set break_look_reason"
+    "read emotion.primary + dramatic_beat + shot_size + subject",
+    "infer subject_class (person | object_insert | environment | two_shot)",
+    "lookup strategy_matrix for preferred_move_families (motion first; static last resort)",
+    "map families to catalog keywords; pick prompt_en that fits subject",
+    "assign primary motivation_class from motivation_types.json",
+    "pick NON-eye-level angle from angles_lenses angle_by_emotion (+ subject bias)",
+    "pick camera height matching angle (height_hints)",
+    "apply composition_framing emotion_bias (visible frame facts for prompts)",
+    "apply style_pack avoid lists",
+    "write short movement.motivation (story reason, not pipeline jargon)",
+    "write look from three_point_and_motivated_light + lighting_for_emotion + look_bible"
   ],
   "hard_rules": [
-    "movement.motivation required",
+    "movement.motivation required and must be narrative (not 'because catalog said so')",
     "look.motivation required",
-    "no unmotivated dutch / orbit / crash zoom",
+    "prefer moving camera (push/pan/lateral/drift/creep/rack) over static_hold unless necessary",
+    "static_hold only when necessary (macro insert readability, explicit locked plate, brief force)",
+    "even if static: use slight_high / slight_low / low_angle / high_angle / dutch_* — avoid pure eye_level",
+    "do not default camera.angle to eye_level",
+    "dutch_angle / dutch_mild allowed when emotion is suspicion/oppression/dread or beat is disorientation — still write motivation",
+    "unmotivated orbit 360 / crash zoom / whip pan still avoided",
     "do not rewrite dialogue or story",
-    "prefer movement.prompt_en from catalog when available"
+    "prefer movement.prompt_en from catalog when available",
+    "INSERT/object shots: do not invent human facial micro-acting",
+    "never use a catalog example sentence that contradicts subject (e.g. sleeping figure on envelope insert)",
+    "prefer motivated practical light language over empty 'cinematic lighting'"
   ],
+  "knowledge_files": {
+    "motivation_types": "ai/camera/motivation_types.json",
+    "strategy_matrix": "ai/camera/strategy_matrix.json",
+    "coverage_moves": "ai/camera/coverage_moves.json",
+    "angles_lenses": "ai/camera/angles_lenses_lighting_basics.json",
+    "composition_framing": "ai/camera/composition_framing.json",
+    "three_point_light": "ai/camera/three_point_and_motivated_light.json",
+    "moves_catalog": "camera/moves_catalog.json",
+    "emotion_to_camera": "camera/emotion_to_camera.json",
+    "shot_sizes": "camera/shot_sizes.json",
+    "lens_language": "camera/lens_language.json",
+    "lighting_emotion": "ai/look/lighting_for_emotion.json"
+  },
   "lens_guidance_mm": {
     "24_28": "space pressure, environment dominance",
     "35_40": "versatile dialogue and body-in-space",
     "50": "human neutral to mild isolation",
     "65_85": "intimacy, portrait isolation"
   },
-  "catalog_paths": {
-    "moves_catalog": "camera/moves_catalog.json",
-    "emotion_to_camera": "camera/emotion_to_camera.json",
-    "shot_sizes": "camera/shot_sizes.json",
-    "lens_language": "camera/lens_language.json"
-  },
-  "note": "Full 158-move library lives under knowledge/camera via Excel import"
+  "teaching_sources_internal": [
+    "Motivated camera movement (film school language of movement)",
+    "M. David Mullen ASC — when/why to move the camera (dramatic / action / dimensional)",
+    "StudioBinder — camera movement types and storytelling use",
+    "StudioBinder / Adobe — shot size, angle, composition primers",
+    "Classical coverage (master, OTS, singles, inserts)",
+    "Three-point + motivated practical lighting (film lighting 101)",
+    "Project house style: motion + angled camera (not flat TV eye-level locks)"
+  ]
 }

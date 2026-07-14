@@ -8,7 +8,7 @@
       "use_when": ["establish", "breather", "daily", "spatial_intro"],
       "av_tendency": {
         "look": ["mid_key", "soft_contrast"],
-        "camera": ["static", "slow_lateral", "wide_to_mid"]
+        "camera": ["slow_lateral", "slow_pan", "micro_drift", "slight_high"]
       }
     },
     {
@@ -17,7 +17,7 @@
       "use_when": ["probe", "unease", "lie_detection", "withhold"],
       "av_tendency": {
         "look": ["mid_low", "cool_fill"],
-        "camera": ["static", "slow_push", "insert"]
+        "camera": ["slow_push", "creep_in", "dutch_mild", "slight_high"]
       }
     },
     {
@@ -44,7 +44,7 @@
       "use_when": ["confession", "closeness", "trust", "private"],
       "av_tendency": {
         "look": ["soft", "warm_practical"],
-        "camera": ["eye_level", "static_or_micro_drift", "MCU_CU"]
+        "camera": ["slight_low", "micro_drift", "slow_push_gentle", "MCU_CU"]
       }
     },
     {
@@ -53,7 +53,7 @@
       "use_when": ["loss", "aftermath", "mourning"],
       "av_tendency": {
         "look": ["desaturated", "soft_low"],
-        "camera": ["static_hold", "slow_push", "negative_space"]
+        "camera": ["very_slow_push", "micro_drift", "slight_high", "negative_space"]
       }
     },
     {

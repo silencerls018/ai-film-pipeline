@@ -79,30 +79,65 @@ def estimate_line_sec(text: str, delivery: str | None = None, speech: dict | Non
     return max(float(cfg.get("min_line_sec", 0.8)), words / max(rate, 0.5))
 
 
+def _linked_body(raw: str) -> str:
+    """Strip '角色：' prefix from linked_dialogue entries."""
+    t = (raw or "").strip()
+    m = re.match(
+        r"^(技术员A|技术员B|Ananke|Anake|高岩|[A-Za-z\u4e00-\u9fff]{1,12})\s*[：:]\s*(.+)$",
+        t,
+        re.S,
+    )
+    if m:
+        return (m.group(2) or "").strip()
+    return t
+
+
 def dialogue_lines_for_shot(bible: dict[str, Any], shot: dict[str, Any]) -> list[dict[str, Any]]:
     linked = shot.get("linked_dialogue") or []
+    if not linked:
+        return []
+    bodies = [_linked_body(str(t)) for t in linked if str(t).strip()]
     scene_id = shot.get("scene_id")
     matched: list[dict[str, Any]] = []
-    for block in bible.get("dialogue") or []:
-        if scene_id and block.get("scene_id") != scene_id:
-            continue
+
+    def _match_line(text: str) -> bool:
+        for t in linked:
+            ts = str(t)
+            if t in text or text in ts or text in _linked_body(ts) or _linked_body(ts) in text:
+                return True
+            b = _linked_body(ts)
+            if b and (b[:16] in text or text[:16] in b):
+                return True
+        for b in bodies:
+            if b and (b in text or text in b or b[:16] in text):
+                return True
+        return False
+
+    blocks = list(bible.get("dialogue") or [])
+    # Prefer scene match, then all (passthrough may use sc_all)
+    ordered = [bl for bl in blocks if not scene_id or bl.get("scene_id") == scene_id]
+    ordered += [bl for bl in blocks if bl not in ordered]
+    for block in ordered:
         silence = block.get("silence_beats_ms") or []
         for i, line in enumerate(block.get("lines") or []):
             text = line.get("text") or ""
-            if linked:
-                if any(t in text or text in t for t in linked):
-                    item = dict(line)
-                    if i < len(silence):
-                        item["_silence_after_ms"] = silence[i]
-                    matched.append(item)
-            # If shot has no linked dialogue, only attach for reaction/coverage
-            # when shot size is dialogue-friendly and whose_pov matches speaker — skip auto dump
-    if not matched and linked:
-        for block in bible.get("dialogue") or []:
-            for line in block.get("lines") or []:
-                if line.get("text") in linked:
-                    matched.append(dict(line))
-    return matched
+            if not text:
+                continue
+            if _match_line(text):
+                item = dict(line)
+                if i < len(silence):
+                    item["_silence_after_ms"] = silence[i]
+                matched.append(item)
+    # dedupe
+    seen: set[tuple[str, str]] = set()
+    uniq: list[dict[str, Any]] = []
+    for m in matched:
+        k = (str(m.get("character") or ""), str(m.get("text") or ""))
+        if k in seen:
+            continue
+        seen.add(k)
+        uniq.append(m)
+    return uniq
 
 
 def estimate_dialogue_bundle_sec(
@@ -174,14 +209,60 @@ def hold_budget_sec(shot: dict[str, Any], holds: dict[str, Any], has_dialogue: b
     post = float(holds.get("default_tail_hold_sec", 0.5))
     size = shot.get("shot_size") or ""
     if size == "INSERT":
-        pre = 0.2
-        post = 0.2
+        pre = float(holds.get("insert_pre_roll_sec", 0.35))
+        post = float(holds.get("insert_post_hold_sec", 0.35))
     if has_dialogue:
         post = max(post, float(holds.get("post_line_reaction_sec", 0.6)))
     emo = (shot.get("emotion") or {}).get("primary") or ""
     if emo in {"grief", "oppression", "revelation", "dread"}:
         post += 0.4
     return pre, post
+
+
+def floor_sec_for_shot(
+    shot: dict[str, Any],
+    *,
+    has_dialogue: bool,
+    dialogue_sec: float,
+) -> float:
+    """
+    Industrial minimum duration — never below this when packing/writing timelines.
+    Info inserts and dialogue must be readable/speakable.
+    """
+    size = str(shot.get("shot_size") or "").upper()
+    subj = f"{shot.get('subject') or ''} {shot.get('subject_en') or ''} {shot.get('dramatic_beat') or ''}"
+    # Readable text / photo / label inserts
+    info_insert = size in {"INSERT", "ECU"} and any(
+        k in subj
+        for k in (
+            "照片",
+            "合影",
+            "字",
+            "标签",
+            "屏",
+            "UI",
+            "日志",
+            "photo",
+            "label",
+            "screen",
+            "text",
+            "1986",
+            "样本",
+            "罐",
+        )
+    )
+    if has_dialogue:
+        # speech + breath; never under 4s for a spoken line plate
+        return max(4.0, dialogue_sec + 1.0)
+    if info_insert:
+        return 5.0
+    if size == "INSERT":
+        return 3.5
+    if size in {"EWS", "WS"}:
+        return 3.5
+    if size in {"CU", "MCU", "ECU"}:
+        return 2.5
+    return 3.0
 
 
 def estimate_shot_timing(
@@ -198,21 +279,18 @@ def estimate_shot_timing(
 
     size = shot.get("shot_size") or ""
     if size == "INSERT" and not lines:
-        # inserts are short; motion still applies lightly
-        total = max(
-            float(holds.get("insert_preferred_sec", 2.0)),
-            min(move_sec, float(holds.get("insert_preferred_sec", 2.0)) + 0.5),
-        )
+        # Info/object inserts: enough time to read material, not 2s flash
+        insert_pref = float(holds.get("insert_preferred_sec", 4.0))
+        total = max(insert_pref, min(max(move_sec, insert_pref), insert_pref + 1.5))
         components = {
-            "pre_roll_sec": 0.15,
+            "pre_roll_sec": round(pre, 2),
             "dialogue_sec": 0.0,
             "move_sec": round(min(move_sec, total), 2),
-            "post_hold_sec": 0.15,
-            "method": "insert_short",
+            "post_hold_sec": round(post, 2),
+            "method": "insert_readable",
         }
     elif lines:
         # For dialogue coverage: duration must cover speech; move runs in parallel
-        # but slow moves need at least their min window overlapping the line.
         parallel = max(dialogue_sec, move_sec)
         total = pre + parallel + post
         components = {
@@ -233,11 +311,18 @@ def estimate_shot_timing(
             "method": "move + holds",
         }
 
+    floor = floor_sec_for_shot(shot, has_dialogue=bool(lines), dialogue_sec=dialogue_sec)
+    if total < floor:
+        total = floor
+        components["floor_sec"] = floor
+        components["method"] = str(components.get("method") or "") + "+floor"
+
     return {
         "needed_sec": round(total, 2),
         "components": components,
         "dialogue_lines": line_break,
         "linked_line_count": len(lines),
+        "floor_sec": floor,
     }
 
 
@@ -454,15 +539,30 @@ def apply_timing_plan(
     return bible
 
 
+def _shot_is_heavy(shot: dict[str, Any]) -> bool:
+    """Dialogue or info-heavy plates should prefer one package each."""
+    if shot.get("linked_dialogue"):
+        return True
+    size = str(shot.get("shot_size") or "").upper()
+    if size in {"INSERT", "ECU"}:
+        return True
+    emo = ((shot.get("emotion") or {}).get("primary") or "")
+    if emo in {"revelation", "oppression", "dread"}:
+        return True
+    return False
+
+
 def pack_shots_into_generation_packages(
     shots: list[dict[str, Any]],
     max_clip_sec: float,
+    *,
+    prefer_one_shot_per_package: bool = True,
 ) -> list[dict[str, Any]]:
     """
-    Greedy pack shots into packages of duration ≤ max_clip_sec.
+    Pack shots into packages of duration ≤ max_clip_sec.
 
-    Within a package, beats get relative timeline (0–2s, 2–7s, …).
-    A single shot longer than max_clip uses its generation_clips as separate packages.
+    Industrial default: one shot → one package (clearest for video models).
+    Light consecutive visuals may still merge if under cap and neither is heavy.
     """
     packages: list[dict[str, Any]] = []
     cur_shots: list[dict[str, Any]] = []
@@ -497,6 +597,30 @@ def pack_shots_into_generation_packages(
             continue
 
         dur = min(needed, max_clip_sec)
+        heavy = _shot_is_heavy(shot)
+
+        if prefer_one_shot_per_package:
+            # Always flush before a heavy shot; never merge heavy with others
+            if heavy or (cur_shots and any(_shot_is_heavy(s) for s in cur_shots)):
+                _flush()
+                cur_shots.append(shot)
+                cur_dur = dur
+                _flush()
+                continue
+            # Light-only merge: same scene, under cap, max 2 shots
+            if cur_shots:
+                same_scene = (cur_shots[-1].get("scene_id") == shot.get("scene_id"))
+                if (
+                    not same_scene
+                    or len(cur_shots) >= 2
+                    or cur_dur + dur > max_clip_sec + 1e-6
+                ):
+                    _flush()
+            cur_shots.append(shot)
+            cur_dur += dur
+            continue
+
+        # Legacy greedy multi-pack
         if cur_shots and cur_dur + dur > max_clip_sec + 1e-6:
             _flush()
         cur_shots.append(shot)
@@ -586,7 +710,11 @@ def _build_package(
         "shot_ids": shot_ids,
         "beats": beats,
         "internal_cut": True,
-        "note": "段内时间轴分镜；模型在上限内自行切镜",
+        "note": (
+            "单镜单包时写连续时长；多镜包内为时间轴。"
+            "每格只表达该镜一件可见事。"
+        ),
+        "one_shot": len(shot_ids) == 1,
     }
 
 

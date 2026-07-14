@@ -9,7 +9,9 @@
     "references": ["marriage_story_interior", "manchester_by_the_sea_mood"]
   },
   "camera_habits": {
-    "prefer_moves": ["static", "micro_drift", "slow_lateral"],
+    "prefer_moves": ["micro_drift", "slow_lateral", "slow_push_gentle"],
+    "prefer_angles": ["slight_low", "slight_high"],
+    "avoid_pure_eye_level": true,
     "prefer_lenses_mm": [35, 40, 50, 65],
     "avoid_moves": ["crash_zoom", "orbit"]
   },

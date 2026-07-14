@@ -1,54 +1,93 @@
 {
-  "version": "1.1",
+  "version": "1.2",
   "human_doc": "human/04_look.md",
-  "note": "动机光：用可见结果描述，不用勒克斯数值",
+  "see_also": ["character_lighting.json", "emotion_to_look.json"],
+  "note": "动机光：用可见结果描述。人物脸型光详见 character_lighting.json",
   "by_emotion": {
     "calm": {
       "sources": ["柔和窗光", "暖色实用台灯"],
-      "face": "面部基本可读，阴影边缘柔和",
+      "face": "loop/宽面：面部打开，阴影边缘柔和，双眼可读",
+      "portrait_pattern": "loop",
       "contrast": "柔到中等",
-      "color_temp": "中性偏暖"
+      "color_temp": "中性偏暖",
+      "atmosphere_zh": "平静中调空气，暖实用光，软阴影",
+      "atmosphere_en": "calm mid-key air, soft practical warmth, gentle shadow edges",
+      "prompt_zh": "柔和侧前方主光，轻补光，面部建模轻柔，空气安静",
+      "prompt_en": "soft front-side key, light fill, gentle facial modeling, quiet air"
     },
     "suspicion": {
-      "sources": ["侧向实用光", "冷色环境补光"],
-      "face": "半明半暗，一侧略藏秘密",
+      "sources": ["侧向实用光", "冷色环境补光", "屏幕/全息 marginal edge"],
+      "face": "窄面/伦勃朗：半明半暗，一侧藏秘密，眼神有一星高光",
+      "portrait_pattern": "short_or_rembrandt",
       "contrast": "中高",
-      "color_temp": "冷补暖主"
+      "color_temp": "冷补暖主或冰蓝侧主",
+      "atmosphere_zh": "紧绷中低调，冷辅光，半脸阴影",
+      "atmosphere_en": "tense mid-low key, cool underfill, half-shadow face",
+      "prompt_zh": "硬一点的侧主光，弱冷辅，半张脸进阴影，眼睛仍有高光",
+      "prompt_en": "harder side key, weak cool fill, half face in shadow, eye specular remains"
     },
     "oppression": {
-      "sources": ["偏硬侧光", "极少补光"],
-      "face": "大面积阴影，眼睛仍需可读",
+      "sources": ["偏硬侧光", "顶侧光", "极少补光", "负补光"],
+      "face": "窄面/顶光：大面积阴影吞脸，眼睛仍可读",
+      "portrait_pattern": "short_or_top",
       "contrast": "高",
-      "color_temp": "冷色主导"
+      "color_temp": "冷色主导",
+      "atmosphere_zh": "压迫低调，硬光切开，暗部深沉",
+      "atmosphere_en": "oppressive low-key, hard cut light, deep crushed blacks",
+      "prompt_zh": "硬侧或顶侧主光，近零补光，半脸被阴影吞没，眼仍清楚",
+      "prompt_en": "hard side or top-side key, near-zero fill, face half swallowed by shadow, eyes still clear"
     },
     "revelation": {
-      "sources": ["主光收紧在脸或关键物件", "背景下沉"],
-      "face": "眼睛清晰，周边略压暗",
+      "sources": ["收紧主光打在眼或关键物件", "背景下沉"],
+      "face": "伦勃朗/收紧：真相落在眼睛，周边压暗",
+      "portrait_pattern": "rembrandt_tight",
       "contrast": "节拍点抬高反差",
-      "color_temp": "冷暖分离"
+      "color_temp": "冷暖分离",
+      "atmosphere_zh": "揭示瞬间反差抬起，周边下沉",
+      "atmosphere_en": "contrast lifts on the reveal, world falls off around the eyes",
+      "prompt_zh": "主光收紧打在双眼，周边迅速变暗，反差在真相落地时抬高",
+      "prompt_en": "tight key on the eyes, surroundings fall dark, contrast spikes as truth lands"
     },
     "intimacy": {
-      "sources": ["近处暖实用光", "柔和反弹"],
-      "face": "轻柔包裹，眼神柔和",
+      "sources": ["近处暖实用光", "柔和反弹", "可选暖轮廓"],
+      "face": "蝴蝶/环形软光：柔包裹，低反差，眼神柔和",
+      "portrait_pattern": "butterfly_or_loop_soft",
       "contrast": "柔",
-      "color_temp": "暖"
+      "color_temp": "暖",
+      "atmosphere_zh": "亲密暖空气，软光贴肤",
+      "atmosphere_en": "intimate warm air, soft light on skin",
+      "prompt_zh": "近处暖实用光作主光，柔扩散，轻补，面部轻柔高光",
+      "prompt_en": "close warm practical as key, soft diffusion, gentle fill, soft facial highlights"
     },
     "grief": {
       "sources": ["偏暗柔窗光", "弱实用光"],
-      "face": "柔低调，可选湿润眼神高光",
+      "face": "宽面柔低调：可选湿润眼神高光，阴影软",
+      "portrait_pattern": "broad_soft_low",
       "contrast": "柔高或中等",
-      "color_temp": "去饱和偏冷"
+      "color_temp": "去饱和偏冷",
+      "atmosphere_zh": "悲伤低饱和空气，暗柔",
+      "atmosphere_en": "desaturated grief air, soft dim key",
+      "prompt_zh": "偏暗柔主光，低饱和，安静眼神高光，阴影边缘软",
+      "prompt_en": "dim soft key, desaturated, quiet eye specular, soft shadow edges"
     },
     "dread": {
-      "sources": ["单一硬光源", "强负补光"],
-      "face": "可有深眼窝感，意图仍可读",
+      "sources": ["单一硬光源", "强负补光", "可选底光/冷轮廓"],
+      "face": "分割/底光慎用：深眼窝感，意图仍可读",
+      "portrait_pattern": "split_or_under_motivated",
       "contrast": "高",
-      "color_temp": "冷"
+      "color_temp": "冷",
+      "atmosphere_zh": "恐惧冷空气，单一硬源，深暗池",
+      "atmosphere_en": "cold dread air, single hard source, pools of dark",
+      "prompt_zh": "单一硬动机光，强负补，冷调，面部造型不安，眼仍有意图",
+      "prompt_en": "single hard motivated source, strong negative fill, cold grade, uncanny face, intentional eyes"
     }
   },
   "rules": [
     "优先故事内实用光动机",
-    "用视觉结果描述，不写精确光比数字作表演",
-    "look_bible.forbidden 优先于装饰性布光"
+    "人物镜必须写出脸光造型（半脸/伦勃朗/顶光等可见结果）",
+    "用视觉结果描述，不写勒克斯或空泛 cinematic lighting",
+    "INSERT/物镜：打材质纹理，不用人像脸谱",
+    "look_bible.forbidden 优先于装饰性布光",
+    "提示词中光影与情绪氛围优先于设备罗列"
   ]
 }

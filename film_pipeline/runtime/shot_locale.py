@@ -84,18 +84,40 @@ def strip_music_mentions(text: str | None, *, lang: str = "en") -> str:
     s = _clean(text)
     if not s:
         return s
+    # Whole-clause music plants (ZH) before token scrub
+    s = re.sub(
+        r"[，,]?\s*萨克斯版\s*[^，,。；;]*?(画外)?(响起|传来|起)?",
+        "",
+        s,
+        flags=re.I,
+    )
+    s = re.sub(r"[，,]?\s*爵士乐[夹和与]?", "，", s)
+    s = re.sub(
+        r"[，,]?\s*(a\s+)?sax(ophone)?\s*(cover|version)?\s+of\s+[^.;,]+",
+        "",
+        s,
+        flags=re.I,
+    )
     s = _MUSIC_RE.sub("", s)
     s = re.sub(r"\s{2,}", " ", s)
     s = re.sub(r"\s*[,，、；;:：]\s*[,，、；;:：]+", ", ", s)
     s = s.strip(" ,，、；;:：")
     if not s:
         return "Scene continues in silence aside from diegetic SFX" if lang == "en" else "无配乐，仅环境与动作"
-    # Clean leftover “画外响起” after music title removed
-    s = re.sub(r"(画外)?(响起|传来)[，,]?", "", s)
+    # Clean leftover VO/score glue after music title removed
+    s = re.sub(r"(画外)?(响起|传来|起)[，,]?", "", s)
+    s = re.sub(r"画外\s*", "", s)
     s = re.sub(r"(rises|plays|sounds)\s+off-?screen[.,]?", "", s, flags=re.I)
+    s = re.sub(r"\b(a\s+)?sax(ophone)?\s*(cover|version)?\b", "", s, flags=re.I)
+    s = re.sub(r"\b(cover|version)\s+of\b", "", s, flags=re.I)
+    s = re.sub(r"\boff-?screen\b", "", s, flags=re.I)
+    # orphan leftovers like 「版 镜头」 / 「乐夹金属」
+    s = re.sub(r"(^|[，,\s])版(?=[，,\s]|$)", r"\1", s)
+    s = re.sub(r"乐夹", "", s)
     s = re.sub(r"\s{2,}", " ", s).strip(" ,，.;；")
     s = re.sub(r"^[,，.;；\s]+", "", s)
-    s = re.sub(r"\s{2,}", " ", s).strip()
+    s = re.sub(r"[，,]{2,}", "，", s)
+    s = re.sub(r"\s{2,}", " ", s).strip(" ，,")
     return s or ("atmospheric establish" if lang == "en" else "建立镜头")
 
 

@@ -56,10 +56,75 @@ def _all_prompt_text(bible: dict[str, Any]) -> str:
     return "\n".join(_prompt_fields(j) for j in (bible.get("generation_jobs") or []))
 
 
+def _parse_linked_entry(raw: str) -> tuple[str, str]:
+    t = (raw or "").strip()
+    m = re.match(
+        r"^(技术员A|技术员B|Ananke|Anake|高岩|[A-Za-z\u4e00-\u9fff]{1,12})\s*[：:]\s*(.+)$",
+        t,
+        re.S,
+    )
+    if m:
+        sp = m.group(1).strip()
+        if sp == "Anake":
+            sp = "Ananke"
+        return sp, (m.group(2) or "").strip()
+    return "", t
+
+
 def _expected_rows(bible: dict[str, Any]) -> list[dict[str, str]]:
-    polish = (bible.get("meta") or {}).get("dialogue_polish")
+    """
+    Lines that must appear in prompts.
+
+    Prefer director-linked dialogue on shots (industrial contract).
+    Fall back to dialogue[] / script extract when no links exist.
+    """
     expected_rows: list[dict[str, str]] = []
-    if polish == "skipped" and bible.get("source_script"):
+    # 1) Shot-linked lines (authoritative for what must be on screen)
+    for shot in bible.get("shots") or []:
+        for raw in shot.get("linked_dialogue") or []:
+            sp, body = _parse_linked_entry(str(raw))
+            if not body:
+                continue
+            # resolve to full catalog line when possible
+            full = body
+            char = sp
+            for block in bible.get("dialogue") or []:
+                for ln in block.get("lines") or []:
+                    lt = (ln.get("text") or "").strip()
+                    lc = (ln.get("character") or "").strip()
+                    if not lt:
+                        continue
+                    if body in lt or lt in body or body[:14] in lt or lt[:14] in body:
+                        full = lt
+                        char = lc or char
+                        break
+            if not char or char in {"NARRATION", "Speaker"}:
+                continue
+            expected_rows.append(
+                {
+                    "character": char,
+                    "text": full,
+                    "scene_id": str(shot.get("scene_id") or ""),
+                    "delivery": "",
+                    "shot_id": str(shot.get("shot_id") or ""),
+                }
+            )
+
+    if expected_rows:
+        # dedupe
+        seen: set[tuple[str, str]] = set()
+        uniq: list[dict[str, str]] = []
+        for r in expected_rows:
+            k = (r["character"], r["text"])
+            if k in seen:
+                continue
+            seen.add(k)
+            uniq.append(r)
+        return uniq
+
+    # 2) Fall back: dialogue[] then script extract
+    expected_rows = list_spoken_lines(bible)
+    if not expected_rows and bible.get("source_script"):
         extracted = extract_raw_dialogue(bible)
         for blk in extracted.get("dialogue") or []:
             for ln in blk.get("lines") or []:
@@ -74,23 +139,6 @@ def _expected_rows(bible: dict[str, Any]) -> list[dict[str, str]]:
                             "delivery": str(ln.get("delivery") or ""),
                         }
                     )
-    else:
-        expected_rows = list_spoken_lines(bible)
-        if not expected_rows and bible.get("source_script"):
-            extracted = extract_raw_dialogue(bible)
-            for blk in extracted.get("dialogue") or []:
-                for ln in blk.get("lines") or []:
-                    text = (ln.get("text") or "").strip()
-                    char = (ln.get("character") or "").strip()
-                    if text and char and char != "NARRATION":
-                        expected_rows.append(
-                            {
-                                "character": char,
-                                "text": text,
-                                "scene_id": str(blk.get("scene_id") or ""),
-                                "delivery": str(ln.get("delivery") or ""),
-                            }
-                        )
     return expected_rows
 
 
@@ -253,27 +301,31 @@ def check_dialogue_coverage(bible: dict[str, Any]) -> list[dict[str, Any]]:
         )
         return failures
 
-    have_dialogue = _norm(
-        "".join(f"{r['character']}{r['text']}" for r in list_spoken_lines(bible))
-    )
-    missing_in_dialogue: list[str] = []
-    for r in expected_rows:
-        key = _norm(r["text"])
-        if len(key) < 2:
-            continue
-        if key not in have_dialogue and _norm(r["text"][:12]) not in have_dialogue:
-            missing_in_dialogue.append(f"{r['character']}：{r['text']}")
-
-    if missing_in_dialogue:
-        sample = "；".join(missing_in_dialogue[:5])
-        failures.append(
-            {
-                "type": "dialogue_not_in_bible",
-                "reason": f"剧本台词未进入 dialogue[]（{len(missing_in_dialogue)} 条），例：{sample}",
-                "reroute_to": "dialogue",
-                "severity": "error",
-            }
+    # When expected comes from shot.linked_dialogue, do not fail bible membership
+    # (director may shorten; prompts must still carry full speakable Chinese).
+    from_shot_links = any(r.get("shot_id") for r in expected_rows)
+    if not from_shot_links:
+        have_dialogue = _norm(
+            "".join(f"{r['character']}{r['text']}" for r in list_spoken_lines(bible))
         )
+        missing_in_dialogue: list[str] = []
+        for r in expected_rows:
+            key = _norm(r["text"])
+            if len(key) < 2:
+                continue
+            if key not in have_dialogue and _norm(r["text"][:12]) not in have_dialogue:
+                missing_in_dialogue.append(f"{r['character']}：{r['text']}")
+
+        if missing_in_dialogue:
+            sample = "；".join(missing_in_dialogue[:5])
+            failures.append(
+                {
+                    "type": "dialogue_not_in_bible",
+                    "reason": f"剧本台词未进入 dialogue[]（{len(missing_in_dialogue)} 条），例：{sample}",
+                    "reroute_to": "dialogue",
+                    "severity": "error",
+                }
+            )
 
     jobs = bible.get("generation_jobs") or []
     if not jobs:

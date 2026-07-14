@@ -15,7 +15,53 @@ _SKIP_LINE_PREFIXES = (
     "人物：",
     "人物:",
     "---",
+    "镜头组",
 )
+
+# Pseudo-speakers that are really shot lists / VO labels, not cast
+_STAGE_SPEAKERS = {
+    "画外",
+    "特写",
+    "镜头",
+    "镜头一",
+    "镜头二",
+    "镜头三",
+    "镜头四",
+    "镜头五",
+    "镜头组",
+    "字幕",
+    "旁白",
+    "画面",
+}
+
+
+def _is_stage_speaker(name: str) -> bool:
+    n = (name or "").strip()
+    if not n:
+        return True
+    if n in _STAGE_SPEAKERS:
+        return True
+    if n.startswith("镜头") or n.startswith("特写"):
+        return True
+    if n.endswith("画外") and n not in {"Ananke", "高岩"}:
+        # e.g. "Ananke画外" sometimes parsed as one token without paren form
+        if n.replace("画外", "") in {"Ananke", "Anake", "高岩"}:
+            return False
+        return True
+    return False
+
+
+def _normalize_speaker(name: str) -> str:
+    n = (name or "").strip()
+    if n == "Anake":
+        return "Ananke"
+    if n in {"Ananke画外", "Anake画外"}:
+        return "Ananke"
+    if n.endswith("画外") and len(n) > 2:
+        base = n[: -2]
+        if base in {"Ananke", "Anake", "高岩", "技术员A", "技术员B"}:
+            return "Ananke" if base == "Anake" else base
+    return n
 
 
 def _is_scene_header(s: str) -> bool:
@@ -99,6 +145,25 @@ def _clean_dialogue_text(text: str) -> str:
     t = (text or "").strip()
     # drop accidental stage-direction tails glued by bad parsers
     t = re.split(r"[△【]", t, maxsplit=1)[0].strip()
+    # cut after first full quote close when stage prose was glued
+    for closer in ("”", '"', "」"):
+        if closer in t:
+            # keep content through first closer if quote opened, else cut stage after closer
+            idx = t.find(closer)
+            head = t[: idx + 1]
+            tail = t[idx + 1 :].lstrip()
+            if tail and re.match(
+                r"^(镜头|特写|高岩|Ananke|Anake|技术员|突然|整片|潜水器|强光|画外|音箱|主控|对讲|屏幕)",
+                tail,
+            ):
+                t = head
+                break
+    # also cut mid-line stage glue without relying on quote
+    t = re.split(
+        r"(?<=[。！？!?…])\s*(?=镜头|特写|突然|整片|潜水器|强光柱|音箱显示器|主控制台|对讲机|屏幕正中央)",
+        t,
+        maxsplit=1,
+    )[0].strip()
     for a, b in (('"', '"'), ("“", "”"), ("「", "」"), ("『", "』")):
         if t.startswith(a) and t.endswith(b) and len(t) >= 2:
             t = t[len(a) : -len(b)].strip()
@@ -194,6 +259,11 @@ def extract_raw_dialogue(bible: dict[str, Any]) -> dict[str, Any]:
         sp = _speaker_start(s)
         if sp:
             name, delivery, rest = sp
+            name = _normalize_speaker(name)
+            if _is_stage_speaker(name):
+                flush()
+                current_speaker = None
+                continue
             # Name alone opens speaker without flushing into empty
             if current_speaker and current_speaker != name:
                 flush()
@@ -203,7 +273,14 @@ def extract_raw_dialogue(bible: dict[str, Any]) -> dict[str, Any]:
             if delivery:
                 current_delivery = delivery
             if rest:
-                buf.append(rest)
+                # strip glued stage directions after closing quote
+                rest = re.split(
+                    r"[”\"]\s*(?=镜头|特写|高岩|Ananke|Anake|技术员|突然|整片|潜水器|强光|画外)",
+                    rest,
+                    maxsplit=1,
+                )[0].strip()
+                if rest:
+                    buf.append(rest)
             continue
 
         # continuation / dialogue body under open speaker

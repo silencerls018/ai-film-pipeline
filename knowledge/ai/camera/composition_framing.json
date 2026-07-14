@@ -1,0 +1,70 @@
+{
+  "version": "1.0",
+  "title": "Composition & framing (cinematography course essentials)",
+  "human_doc": "human/05_cinematography.md",
+  "sources_note": "Distilled from StudioBinder composition guides, film-school framing 101, and DP masterclass language (e.g. intentional center vs thirds).",
+  "principles": [
+    {
+      "id": "rule_of_thirds",
+      "zh": "三分法",
+      "use": "Default balanced placement; eyes near upper third for CU/MCU",
+      "break_when": "Power, ritual, or graphic design wants center punch"
+    },
+    {
+      "id": "center_punch",
+      "zh": "居中强压",
+      "use": "Authority, confrontation, symmetry, Wes-Anderson-style formalism, isolation",
+      "break_when": "Naturalistic dialogue needs casual offset"
+    },
+    {
+      "id": "headroom",
+      "zh": "头顶空间",
+      "use": "Keep intentional: too much headroom can feel small/lost; too little feels cramped",
+      "break_when": "Extreme ECU crops intentionally"
+    },
+    {
+      "id": "lead_room",
+      "zh": "视线/运动前方空间",
+      "use": "Leave space in gaze or travel direction; reverse for trapped/blocked feeling",
+      "break_when": "Character is cornered or rejected by frame edge"
+    },
+    {
+      "id": "foreground_frame",
+      "zh": "前景框景",
+      "use": "Doorways, shoulders, glass, foliage add depth and voyeurism",
+      "break_when": "Clean graphic look or product-clarity INSERT"
+    },
+    {
+      "id": "negative_space",
+      "zh": "负空间",
+      "use": "Loneliness, dread, scale, off-screen threat",
+      "break_when": "Intimate two-shot needs shared mass"
+    },
+    {
+      "id": "depth_layers",
+      "zh": "前景-中景-背景分层",
+      "use": "Sell cinematic space; combine with slow lateral for parallax",
+      "break_when": "Flat graphic poster look is intentional"
+    },
+    {
+      "id": "leading_lines",
+      "zh": "引导线",
+      "use": "Architecture and roads pull eye to subject or reveal",
+      "break_when": "Chaos / disorientation is the goal"
+    }
+  ],
+  "emotion_bias": {
+    "calm": ["rule_of_thirds", "depth_layers", "lead_room"],
+    "suspicion": ["foreground_frame", "negative_space", "rule_of_thirds"],
+    "oppression": ["center_punch", "low_headroom_feel", "slight_low_mass"],
+    "revelation": ["center_or_thirds_on_face", "insert_then_reaction"],
+    "intimacy": ["close_mass", "soft_thirds", "shared_negative_space_low"],
+    "grief": ["negative_space", "static_hold_frame", "soft_center_or_thirds"],
+    "dread": ["negative_space", "foreground_frame", "off_center_threat"]
+  },
+  "ai_prompt_hints": [
+    "Describe frame geography in visible facts (left third, centered, over shoulder FG), not abstract theory names alone",
+    "For people: protect eyes and readable face unless story hides them",
+    "For INSERT: fill frame with object material detail; no invented facial micro-acting"
+  ]
+}

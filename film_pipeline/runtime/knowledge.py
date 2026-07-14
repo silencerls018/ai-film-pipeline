@@ -103,43 +103,305 @@ class KnowledgeStore:
                 return m
         return None
 
-    def pick_move_for_emotion(self, emotion: str) -> dict[str, Any] | None:
-        rules = self.emotion_camera(emotion)
-        samples = list(rules.get("catalog_samples") or [])
-        # Prefer story-meaningful moves over generic pan/tilt for certain emotions
-        prefer_substrings = {
-            "revelation": ("reveal", "push", "dolly", "rack", "creep", "focus"),
-            "oppression": ("push", "creep", "low", "dolly", "track"),
-            "intimacy": ("static", "locked", "drift", "hold"),
-            "grief": ("static", "hold", "slow", "push"),
-            "dread": ("creep", "hold", "static", "dutch"),
-            "suspicion": ("static", "push", "creep", "hold"),
-            "calm": ("static", "pan", "establish", "locked", "lateral"),
+    def infer_subject_class(
+        self,
+        shot_size: str | None = None,
+        subject: str | None = None,
+        *,
+        env_or_object: bool = False,
+    ) -> str:
+        """Map shot fields → strategy_matrix subject_class."""
+        size = (shot_size or "").upper()
+        blob = f"{subject or ''}".lower()
+        if size in {"INSERT", "ECU"} or env_or_object and size == "INSERT":
+            return "object_insert"
+        if env_or_object or size in {"EWS", "WS"} and any(
+            k in blob for k in ("room", "street", "city", "landscape", "exterior", "环境", "街道", "房间")
+        ):
+            if size in {"EWS", "WS"} or any(
+                k in blob for k in ("room", "street", "city", "landscape", "环境", "街道")
+            ):
+                if not any(k in blob for k in ("face", "man", "woman", "person", "人", "脸")):
+                    return "environment"
+        if any(
+            k in blob
+            for k in (
+                "two",
+                "both",
+                "ots",
+                "over-the-shoulder",
+                "over the shoulder",
+                "双人",
+                "两人",
+                "过肩",
+            )
+        ):
+            return "two_shot"
+        if env_or_object and size in {"EWS", "WS"}:
+            return "environment"
+        if env_or_object:
+            return "object_insert"
+        return "person"
+
+    def strategy_move_keywords(
+        self,
+        emotion: str,
+        shot_size: str | None = None,
+        subject_class: str | None = None,
+    ) -> list[str]:
+        """Expand strategy_matrix families → catalog keyword list."""
+        matrix = self.try_load_ai_json("camera/strategy_matrix.json") or {}
+        emo = self.normalize_emotion(emotion)
+        size = (shot_size or "MS").upper()
+        # Normalize size families used in matrix
+        size_aliases = {
+            "EWS": "WS",
+            "VWS": "WS",
+            "FS": "MS",
+            "MWS": "MS",
+            "MCU": "MCU",
+            "CU": "CU",
+            "ECU": "INSERT",
+            "INSERT": "INSERT",
+            "WS": "WS",
+            "MS": "MS",
         }
-        keys = prefer_substrings.get(emotion, ())
-        if samples and keys:
-            ranked = []
-            for s in samples:
-                blob = f"{s.get('id','')} {s.get('en','')} {s.get('prompt_en','')}".lower()
-                score = sum(1 for k in keys if k in blob)
-                ranked.append((score, s))
-            ranked.sort(key=lambda x: -x[0])
-            if ranked[0][0] > 0:
-                samples = [ranked[0][1]] + [s for _, s in ranked[1:]]
-        if samples:
-            sid = samples[0].get("id")
-            full = self.catalog_move_by_id(sid) if sid else None
-            return full or samples[0]
-        moves = rules.get("preferred_moves") or []
-        if not moves:
+        size_key = size_aliases.get(size, size if size in {"WS", "MS", "MCU", "CU", "INSERT"} else "MS")
+        subj = subject_class or "person"
+        emo_block = (matrix.get("matrix") or {}).get(emo) or {}
+        size_block = emo_block.get(size_key) or {}
+        families = list(size_block.get(subj) or [])
+        if not families:
+            # Fallback: any subject under this size, then any size under emotion
+            for _s, block in size_block.items():
+                if isinstance(block, list) and block:
+                    families = list(block)
+                    break
+        if not families:
+            for _sz, block in emo_block.items():
+                if isinstance(block, dict):
+                    cand = block.get(subj) or block.get("person")
+                    if cand:
+                        families = list(cand)
+                        break
+        kw_map = matrix.get("family_to_catalog_keywords") or {}
+        keywords: list[str] = []
+        for fam in families:
+            for k in kw_map.get(fam) or [fam.replace("_", " ")]:
+                if k not in keywords:
+                    keywords.append(k)
+        return keywords
+
+    def pick_move_for_emotion(
+        self,
+        emotion: str,
+        shot_size: str | None = None,
+        subject_class: str | None = None,
+        *,
+        env_or_object: bool = False,
+    ) -> dict[str, Any] | None:
+        """
+        Prefer strategy_matrix keywords + emotion catalog samples;
+        fall back to emotion preferred_moves.
+        """
+        emo = self.normalize_emotion(emotion)
+        rules = self.emotion_camera(emo)
+        samples = list(rules.get("catalog_samples") or [])
+        subj = subject_class or self.infer_subject_class(
+            shot_size, None, env_or_object=env_or_object
+        )
+        strategy_keys = self.strategy_move_keywords(emo, shot_size, subj)
+        # Legacy emotion bias (still useful when matrix sparse)
+        # Motion-first house style (static only as last resort)
+        prefer_substrings = {
+            "revelation": ("reveal", "push", "dolly", "rack", "creep", "focus", "pan", "tilt"),
+            "oppression": ("push", "creep", "low", "dolly", "track"),
+            "intimacy": ("drift", "float", "push", "slow"),
+            "grief": ("push", "drift", "dolly out", "slow", "lateral"),
+            "dread": ("creep", "push", "dutch", "drift"),
+            "suspicion": ("push", "creep", "pan", "drift", "rack"),
+            "calm": ("pan", "establish", "lateral", "drift", "track", "drone"),
+        }
+        legacy_keys = prefer_substrings.get(emo, ())
+        # Object/env: ban human-performance catalog phrases
+        ban_if_object = (
+            "sleeping",
+            "villain",
+            "face",
+            "eyes",
+            "smile",
+            "tears",
+            "portrait",
+            "actor",
+            "character",
+            "person",
+            "figure",
+            "woman",
+            "man ",
+            "girl",
+            "boy",
+            "alone in",
+            "her face",
+            "his face",
+        )
+        static_tokens = ("static", "locked-off", "locked off", "tripod hold", "hold still")
+
+        def score_move(s: dict[str, Any]) -> int:
+            blob = f"{s.get('id','')} {s.get('en','')} {s.get('prompt_en','')}".lower()
+            if subj in {"object_insert", "environment"} and any(b in blob for b in ban_if_object):
+                return -100
+            # Horror-only catalog lines should not win for non-dread drama
+            if emo not in {"dread"} and any(
+                b in blob
+                for b in ("sleeping figure", "creepy", "horror", "jump scare", "ghost")
+            ):
+                return -50
+            score = 0
+            for k in strategy_keys:
+                kl = k.lower()
+                if kl in blob:
+                    score += 3
+            for k in legacy_keys:
+                if k in blob:
+                    score += 1
+            # House style: penalize pure static unless matrix explicitly wants it
+            if any(t in blob for t in static_tokens) and "static" not in " ".join(
+                strategy_keys
+            ):
+                score -= 4
+            # Prefer gentle motion language for inserts
+            if subj == "object_insert" and any(
+                t in blob for t in ("push", "drift", "rack", "pan", "tilt", "macro")
+            ):
+                score += 2
+            return score
+
+        def pick_best(candidates: list[dict[str, Any]]) -> dict[str, Any] | None:
+            if not candidates:
+                return None
+            ranked = sorted(((score_move(s), s) for s in candidates), key=lambda x: -x[0])
+            for sc, s in ranked:
+                if sc < 0:
+                    continue
+                if sc == 0 and strategy_keys:
+                    continue  # require strategy hit when matrix available
+                sid = s.get("id")
+                full = self.catalog_move_by_id(sid) if sid else None
+                return full or s
+            # Fallback: non-banned only
+            for sc, s in ranked:
+                if sc >= 0:
+                    sid = s.get("id")
+                    full = self.catalog_move_by_id(sid) if sid else None
+                    return full or s
             return None
-        name = moves[0]
+
+        picked = pick_best(samples)
+        if picked:
+            return picked
+
+        # Search full catalog by strategy keywords when samples empty/weak
+        if strategy_keys:
+            cat = self.moves_catalog()
+            if cat:
+                picked = pick_best(list(cat.get("moves") or []))
+                if picked:
+                    return picked
+
+        # Safe motion defaults (house style: avoid pure static)
+        if subj == "object_insert":
+            return {
+                "en": "Slow Push In",
+                "zh": "缓推",
+                "prompt_en": "very slow push-in on the object detail",
+            }
+        if subj == "environment":
+            return {
+                "en": "Slow Pan",
+                "zh": "慢摇",
+                "prompt_en": "slow pan across the environment, cinematic",
+            }
+
+        moves = rules.get("preferred_moves") or []
+        # Skip static-named first preference when possible
+        ordered = list(moves)
+        non_static = [
+            m
+            for m in ordered
+            if not any(t in str(m).lower() for t in ("static", "locked", "hold"))
+        ]
+        if non_static:
+            ordered = non_static + [m for m in ordered if m not in non_static]
+        if not ordered:
+            return {
+                "en": "Micro Drift",
+                "zh": "微漂",
+                "prompt_en": "subtle floating micro drift, living camera",
+            }
+        name = ordered[0]
         cat = self.moves_catalog()
         if cat:
             for m in cat.get("moves") or []:
                 if m.get("en", "").lower() == str(name).lower() or m.get("id") == name:
                     return m
         return {"en": name, "prompt_en": str(name)}
+
+    def pick_angle_for_emotion(
+        self,
+        emotion: str,
+        shot_size: str | None = None,
+        subject_class: str | None = None,
+        *,
+        env_or_object: bool = False,
+    ) -> tuple[str, str]:
+        """
+        House style: prefer angled camera; avoid pure eye_level.
+        Returns (angle, height_hint).
+        """
+        emo = self.normalize_emotion(emotion)
+        subj = subject_class or self.infer_subject_class(
+            shot_size, None, env_or_object=env_or_object
+        )
+        basics = self.try_load_ai_json("camera/angles_lenses_lighting_basics.json") or {}
+        by_emo = (basics.get("angle_by_emotion") or {}).get(emo) or []
+        by_subj = basics.get("angle_by_subject") or {}
+        subj_list = by_subj.get(subj)
+        candidates: list[str] = []
+        if isinstance(subj_list, list):
+            candidates.extend(subj_list)
+        candidates.extend(list(by_emo))
+        # emotion_to_camera preferred_angles (already angled in KB)
+        cam_rules = self.emotion_camera(emo)
+        for a in cam_rules.get("preferred_angles") or []:
+            if a not in candidates:
+                candidates.append(str(a))
+        # Filter pure eye_level
+        angled = [
+            a
+            for a in candidates
+            if str(a).lower() not in {"eye_level", "eye-level", "eye level"}
+        ]
+        if not angled:
+            # Emotion-safe fallbacks
+            fallback = {
+                "oppression": "low_angle",
+                "dread": "dutch_mild",
+                "grief": "slight_high",
+                "suspicion": "slight_high",
+                "intimacy": "slight_low",
+                "revelation": "slight_low",
+                "calm": "slight_high",
+            }
+            angled = [fallback.get(emo, "slight_low")]
+        angle = angled[0]
+        heights = basics.get("height_hints") or {}
+        height = str(heights.get(angle) or "chest")
+        if env_or_object or (shot_size or "").upper() in {"EWS", "WS", "INSERT"}:
+            # Still angled; prefer high/slight_high for plates & inserts
+            if angle in {"eye_level"} or not angle:
+                angle = "slight_high"
+                height = str(heights.get(angle) or "above_eye")
+        return angle, height
 
     def retrieve_for_stage(self, stage: str, bible: dict[str, Any]) -> dict[str, Any]:
         """Compact KB bundle for a pipeline stage (AI JSON + big catalogs)."""
@@ -169,11 +431,19 @@ class KnowledgeStore:
                 "look/tone_types.json",
                 "look/emotion_to_look.json",
                 "look/lighting_for_emotion.json",
+                "look/character_lighting.json",
             ],
             "cinematography": [
                 "camera/decision_rules.json",
+                "camera/motivation_types.json",
+                "camera/strategy_matrix.json",
+                "camera/coverage_moves.json",
+                "camera/angles_lenses_lighting_basics.json",
+                "camera/composition_framing.json",
+                "camera/three_point_and_motivated_light.json",
                 "look/emotion_to_look.json",
                 "look/lighting_for_emotion.json",
+                "look/character_lighting.json",
                 "director/shot_performance_lighting.json",
             ],
             "timing": ["timing/rules.json"],

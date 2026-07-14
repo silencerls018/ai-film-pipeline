@@ -44,8 +44,8 @@
 | 剧作 | `human/01_dramaturg.md` | `ai/dramaturg/` |
 | 对白 | `human/02_dialogue.md` | `ai/dialogue/` |
 | 导演 | `human/03_director.md` | `ai/director/` |
-| 影调 | `human/04_look.md` | `ai/look/` |
-| 摄影 | `human/05_cinematography.md` | `ai/camera/` + `camera/` 词库 |
+| 影调 / 人物打光 | `human/04_look.md` | `ai/look/`（含 `character_lighting.json` 脸光课） |
+| 摄影 | `human/05_cinematography.md` | `ai/camera/`（策略/动机/构图/布光课）+ `camera/` 158 词库 |
 | 时长 | `human/06_timing.md` | `ai/timing/` + `timing/` |
 | 资产 | `human/07_asset.md` | `ai/asset/` |
 | 提示词编译 | `human/08_generator.md` | `ai/generator/` |

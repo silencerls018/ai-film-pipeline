@@ -51,6 +51,9 @@ ROLE_TOPICS: dict[str, list[dict[str, str]]] = {
         {"q": "Cinematography", "why": "camera craft"},
         {"q": "Camera movement", "why": "motivated moves"},
         {"q": "180-degree rule", "why": "axis continuity"},
+        {"q": "Three-point lighting", "why": "key fill back"},
+        {"q": "Shot composition film", "why": "framing rules"},
+        {"q": "Coverage filmmaking", "why": "master OTS singles"},
     ],
     "timing": [
         {"q": "Film editing", "why": "pacing & rhythm"},
