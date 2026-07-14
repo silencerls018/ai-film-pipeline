@@ -6,6 +6,8 @@
 2. **Knowledge** holds reusable film grammar (JSON rules preferred for camera/look).
 3. **FilmBible** holds per-project state only.
 4. Agents must not freely chat; the orchestrator owns sequencing.
+5. **External agents** must follow [`AGENTS.md`](AGENTS.md): ask the user Solo vs Multi; multi-agent mode loads **only** each package’s skill + knowledge from [`agents/registry.json`](agents/registry.json).
+6. This repo does **not** own video-model APIs or force a single cloud LLM key for multi-agent runs.
 
 ## Add a new style pack
 

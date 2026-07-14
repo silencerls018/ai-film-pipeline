@@ -14,7 +14,11 @@
         "properties": {
           "shot_id": { "type": "string" },
           "scene_id": { "type": "string" },
-          "dramatic_beat": { "type": "string" },
+          "dramatic_beat": { "type": "string", "description": "Chinese or primary beat for humans" },
+          "dramatic_beat_en": {
+            "type": "string",
+            "description": "English dramatic beat for generation prompts (preferred in compiler)"
+          },
           "emotion": {
             "type": "object",
             "properties": {
@@ -27,7 +31,11 @@
             "type": "string",
             "enum": ["EWS", "WS", "FS", "MS", "MCU", "CU", "ECU", "INSERT"]
           },
-          "subject": { "type": "string" },
+          "subject": { "type": "string", "description": "Chinese or primary subject for humans" },
+          "subject_en": {
+            "type": "string",
+            "description": "English subject for generation prompts (preferred in compiler)"
+          },
           "whose_pov": { "type": "string" },
           "edit_intent": { "type": "string" },
           "camera_draft": { "type": "string" },

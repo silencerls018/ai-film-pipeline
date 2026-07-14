@@ -86,17 +86,23 @@ def _merge_timing(bible: dict[str, Any], out: dict[str, Any]) -> dict[str, Any]:
 
 
 def _merge_generator(bible: dict[str, Any], out: dict[str, Any]) -> dict[str, Any]:
-    # Prefer deterministic compiler so all upstream fields are always merged.
-    from film_pipeline.runtime.prompt_compiler import compile_generation_jobs
+    """
+    Prompt Writer Agent owns generation_jobs.
+    Prefer agent output; only fall back to full compile if agent returned nothing.
+    """
+    jobs = out.get("generation_jobs") or []
+    if jobs:
+        bible["generation_jobs"] = jobs
+        bible["meta"] = dict(bible.get("meta") or {})
+        bible["meta"]["prompt_agent"] = out.get("agent") or "prompt_writer"
+        return bible
 
-    style_id = (bible.get("meta") or {}).get("style_pack", "neo_noir")
-    try:
-        style_pack = AgentRunner._style_pack_for_merge(style_id)
-    except Exception:
-        style_pack = None
-    compiled = compile_generation_jobs(bible, style_pack=style_pack)
-    # Allow LLM output to fill gaps only if compiler got nothing
-    bible["generation_jobs"] = compiled or out.get("generation_jobs") or []
+    from film_pipeline.runtime.prompt_writer_agent import run_prompt_writer_agent
+
+    agent_out = run_prompt_writer_agent(bible)
+    bible["generation_jobs"] = agent_out.get("generation_jobs") or []
+    bible["meta"] = dict(bible.get("meta") or {})
+    bible["meta"]["prompt_agent"] = agent_out.get("agent") or "prompt_writer"
     return bible
 
 
@@ -187,34 +193,95 @@ class AgentRunner:
                 )
             return bible
 
-        try:
-            if self.llm.dry_run or not self.llm.api_key:
-                raise RuntimeError("dry-run")
-            # Include full schema so LLM knows exact types + enum values
-            schema_str = json.dumps(schema, ensure_ascii=False, indent=2)
-            system = (
-                skill_text
-                + "\n\n你必须只输出合法 JSON 对象，不要 markdown 代码块，不要包裹```json```。"
-                + "\n严格符合以下 JSON Schema：\n\n" + schema_str
-                + "\n\n特别注意："
-                + "\n- 所有 ID 字段（scene_id, shot_id, character id 等）必须用字符串，不要用数字"
-                + "\n- enum 类型字段的值必须严格取枚举列表中之一，不能自创"
-                + "\n- numeric 类型字段（如 emotion.peak）必须用数字，不是文字"
-                + "\n- character.id 字段（如 dramaturg output 中的）是必需的"
+        # Dedicated Prompt Writer Agent (dispatch stage name: generator)
+        if stage == "generator":
+            from film_pipeline.runtime.prompt_writer_agent import run_prompt_writer_agent
+
+            engines = bible.setdefault("meta", {}).setdefault("stage_engines", {})
+            dry = bool(self.llm.dry_run or not self.llm.api_key)
+            raw = run_prompt_writer_agent(
+                bible,
+                llm=self.llm,
+                knowledge=self.knowledge,
+                skills_dir=self.skills_dir,
             )
-            user = json.dumps(
-                {"film_bible_slice": payload, "knowledge": kb},
-                ensure_ascii=False,
-                indent=2,
-            )
-            raw = self.llm.complete_json(system, user)
-        except Exception:
+            engines["generator"] = "prompt_writer_offline" if dry else "prompt_writer_llm"
+            if dry:
+                bible["meta"]["used_stub"] = True
+                bible["meta"]["run_mode"] = bible["meta"].get("run_mode") or "dry-run"
+            # Prefer prompt_writer schema if present
+            pw_schema_path = self.skills_dir / "prompt_writer" / "schema.json"
+            if pw_schema_path.exists():
+                schema = load_schema(pw_schema_path)
+            errors = validate_against_schema(raw, schema)
+            if errors:
+                raise ValueError(
+                    f"Schema validation failed for stage=generator/prompt_writer:\n"
+                    + "\n".join(errors)
+                )
+            merger = MERGERS[stage]
+            return merger(bible, raw)
+
+        import os
+
+        engines = bible.setdefault("meta", {}).setdefault("stage_engines", {})
+        dry = bool(self.llm.dry_run or not self.llm.api_key)
+        allow_stub_fallback = os.getenv("FILM_PIPELINE_STUB_FALLBACK", "0").lower() in {
+            "1",
+            "true",
+            "yes",
+            "on",
+        }
+
+        if dry:
+            # Intentional offline path — never pretend it was live LLM
             raw = STUBS[stage](bible, kb)
+            engines[stage] = "stub_offline"
+            bible["meta"]["used_stub"] = True
+            bible["meta"]["run_mode"] = bible["meta"].get("run_mode") or "dry-run"
+        else:
+            try:
+                schema_str = json.dumps(schema, ensure_ascii=False, indent=2)
+                system = (
+                    skill_text
+                    + "\n\n你必须只输出合法 JSON 对象，不要 markdown 代码块，不要包裹```json```。"
+                    + "\n严格符合以下 JSON Schema：\n\n"
+                    + schema_str
+                    + "\n\n特别注意："
+                    + "\n- 所有 ID 字段（scene_id, shot_id, character id 等）必须用字符串，不要用数字"
+                    + "\n- enum 类型字段的值必须严格取枚举列表中之一，不能自创"
+                    + "\n- numeric 类型字段（如 emotion.peak）必须用数字，不是文字"
+                    + "\n- character.id 字段（如 dramaturg output 中的）是必需的"
+                )
+                user = json.dumps(
+                    {"film_bible_slice": payload, "knowledge": kb},
+                    ensure_ascii=False,
+                    indent=2,
+                )
+                raw = self.llm.complete_json(system, user)
+                engines[stage] = "llm"
+            except Exception as e:
+                # Product rule: live mode must NOT silently become stub
+                if allow_stub_fallback:
+                    raw = STUBS[stage](bible, kb)
+                    engines[stage] = f"stub_fallback:{type(e).__name__}"
+                    bible["meta"]["used_stub"] = True
+                    bible.setdefault("meta", {}).setdefault("stub_fallback_errors", {})[
+                        stage
+                    ] = str(e)
+                else:
+                    raise RuntimeError(
+                        f"岗位 {stage} 在线 LLM 失败，已禁止静默降级 stub。"
+                        f" 设 FILM_PIPELINE_STUB_FALLBACK=1 可显式允许降级。"
+                        f" 原因: {e}"
+                    ) from e
 
         errors = validate_against_schema(raw, schema)
         if errors:
             # Offline stubs should pass; for LLM, surface errors clearly
-            raise ValueError(f"Schema validation failed for stage={stage}:\n" + "\n".join(errors))
+            raise ValueError(
+                f"Schema validation failed for stage={stage}:\n" + "\n".join(errors)
+            )
 
         merger = MERGERS[stage]
         return merger(bible, raw)

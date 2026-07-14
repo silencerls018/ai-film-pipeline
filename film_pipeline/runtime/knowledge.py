@@ -289,6 +289,29 @@ class KnowledgeStore:
         if stage == "critic":
             bundle["orchestrator_policy"] = self.try_load_ai_json("orchestrator/policy.json")
 
+        # Daily web digests (orchestrator knowledge upgrade)
+        web = self.try_load_ai_json(f"{stage}/web_digest/latest.json")
+        if web is None and stage == "generator":
+            # prompt_writer digests alias for generator stage
+            web = self.try_load_ai_json("prompt_writer/web_digest/latest.json")
+        if web:
+            bundle["web_digest"] = {
+                "updated_at": web.get("updated_at"),
+                "local_date": web.get("local_date"),
+                "ok_count": web.get("ok_count"),
+                # compact for prompts: only ok items' bullets
+                "notes": [
+                    {
+                        "title": it.get("title") or it.get("query"),
+                        "why": it.get("why"),
+                        "bullets": it.get("bullets") or [],
+                        "url": it.get("url"),
+                    }
+                    for it in (web.get("items") or [])
+                    if it.get("ok")
+                ],
+            }
+
         return bundle
 
     @staticmethod

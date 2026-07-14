@@ -19,9 +19,12 @@ from film_pipeline.orchestrator.task_ticket import (
     TaskTicket,
     make_ticket,
 )
-from film_pipeline.paths import ensure_project_dir
+from film_pipeline.paths import ensure_project_dir, final_prompts_dir
 from film_pipeline.runtime.agent_runner import AgentRunner
-from film_pipeline.runtime.prompt_compiler import export_prompts_markdown
+from film_pipeline.runtime.prompt_compiler import (
+    export_final_prompts_package,
+    export_prompts_markdown,
+)
 from film_pipeline.runtime.timing import format_timing_report
 
 LogFn = Callable[[str], None]
@@ -52,15 +55,22 @@ class Orchestrator:
         project_id = bible["meta"]["project_id"]
         path = self.project_path(project_id)
         path.write_text(json.dumps(bible, ensure_ascii=False, indent=2), encoding="utf-8")
-        if bible.get("generation_jobs"):
-            md = ensure_project_dir(project_id) / "prompt_board.md"
-            md.write_text(export_prompts_markdown(bible), encoding="utf-8")
         if bible.get("timing_plan"):
             tp = ensure_project_dir(project_id) / "timing_plan.md"
             tp.write_text(format_timing_report(bible), encoding="utf-8")
         if bible.get("asset_bible"):
+            from film_pipeline.runtime.prompt_compiler import export_asset_board_markdown
+
             ap = ensure_project_dir(project_id) / "asset_board.md"
-            ap.write_text(self._export_asset_board(bible), encoding="utf-8")
+            ap.write_text(export_asset_board_markdown(bible), encoding="utf-8")
+        if bible.get("generation_jobs"):
+            md = ensure_project_dir(project_id) / "prompt_board.md"
+            md.write_text(export_prompts_markdown(bible), encoding="utf-8")
+        # Delivery folder outputs/<项目名>/ ：镜头提示词 + 资产（有则必进）
+        if bible.get("generation_jobs") or bible.get("asset_bible"):
+            out_dir = export_final_prompts_package(bible)
+            bible.setdefault("meta", {})["final_prompts_dir"] = str(out_dir)
+            path.write_text(json.dumps(bible, ensure_ascii=False, indent=2), encoding="utf-8")
         if bible.get("production_brief"):
             bp = ensure_project_dir(project_id) / "production_brief.json"
             bp.write_text(
@@ -68,6 +78,10 @@ class Orchestrator:
                 encoding="utf-8",
             )
         return path
+
+    def final_prompts_path(self, project_id: str) -> Path:
+        """Folder named after the project holding final prompts only."""
+        return final_prompts_dir(project_id)
 
     def load(self, project_id: str) -> dict[str, Any]:
         with self.project_path(project_id).open(encoding="utf-8") as f:
@@ -236,6 +250,16 @@ class Orchestrator:
         self.log("[Orchestrator] ■ 资产旁路结束（三视图提示词 / asset_bible）")
         return bible
 
+    def maybe_upgrade_team_knowledge(self, force: bool = False) -> dict[str, Any]:
+        """
+        总指挥日更：为各岗位从网络收集专业技能摘要，写入 knowledge/ai/*/web_digest/。
+        - 默认：每天第一次开工只跑一次
+        - force=True：强制重跑（定时 23:00 任务用）
+        """
+        from film_pipeline.runtime.knowledge_updater import run_daily_knowledge_update
+
+        return run_daily_knowledge_update(force=force, log=self.log)
+
     def run_production(
         self,
         brief: ProductionBrief,
@@ -247,12 +271,21 @@ class Orchestrator:
         Full production under orchestrator command.
 
         Order (reasonable default):
+          0. Daily knowledge upgrade (first run of the day)
           1. Init bible from brief
           2. Main: dramaturg
           3. If assets enabled: run asset track (has names from dramaturg)
           4. Rest of main chain
         Asset track can also be run alone later via run_asset_track.
         """
+        # 0) 总指挥：每日首次开工 → 更新全员知识库
+        try:
+            from film_pipeline.runtime.knowledge_updater import maybe_daily_knowledge_update_on_run
+
+            maybe_daily_knowledge_update_on_run(log=self.log)
+        except Exception as e:  # noqa: BLE001 — never block production
+            self.log(f"[Orchestrator] 知识库日更失败（不阻断开工）: {e}")
+
         self.log(
             f"[Orchestrator] 接受 ProductionBrief: "
             f"max_clip={brief.max_clip_sec}s style={brief.style_pack} "
@@ -297,44 +330,9 @@ class Orchestrator:
 
     @staticmethod
     def _export_asset_board(bible: dict[str, Any]) -> str:
-        ab = bible.get("asset_bible") or {}
-        lines = [
-            f"# Asset Board — {(bible.get('meta') or {}).get('title', '')}",
-            "",
-            "三视图/设定提示词（可随时换 image_refs，不影响主链镜头合同）",
-            "",
-        ]
-        for section, key in [
-            ("Characters", "characters"),
-            ("Props", "props"),
-            ("Sets", "sets"),
-        ]:
-            items = ab.get(key) or []
-            if not items:
-                continue
-            lines.append(f"## {section}")
-            lines.append("")
-            for it in items:
-                lines.append(f"### {it.get('asset_id')} — {it.get('name', '')}")
-                lines.append(f"- type: {it.get('type')}")
-                lines.append(f"- anchors: {it.get('consistency_anchors')}")
-                if it.get("image_size_hint"):
-                    lines.append(f"- size hint: {it.get('image_size_hint')}")
-                lines.append("")
-                if it.get("sheet_prompt_zh_summary"):
-                    lines.append("**中文说明（辅助）**")
-                    lines.append("")
-                    lines.append(it.get("sheet_prompt_zh_summary") or "")
-                    lines.append("")
-                lines.append("**sheet_prompt（英文主稿 · 生图用）**")
-                lines.append("```")
-                lines.append(it.get("sheet_prompt") or "")
-                lines.append("```")
-                lines.append("")
-                refs = it.get("image_refs") or []
-                lines.append(f"- image_refs: {refs if refs else '（空，可稍后替换）'}")
-                lines.append("")
-        return "\n".join(lines)
+        from film_pipeline.runtime.prompt_compiler import export_asset_board_markdown
+
+        return export_asset_board_markdown(bible)
 
 
 # Back-compat alias used by older imports

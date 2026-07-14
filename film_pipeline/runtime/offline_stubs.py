@@ -6,6 +6,35 @@ from typing import Any
 from film_pipeline.runtime.knowledge import KnowledgeStore
 
 
+def _script_is_deep_dive(script: str) -> bool:
+    """User submarine / Ananke / Gao Yan script (desktop case)."""
+    s = script or ""
+    return ("Ananke" in s or "Anake" in s) and (
+        "高岩" in s or "深眸" in s or "热液" in s or "深水" in s
+    )
+
+
+def _deep_dive_shots(scene_id: str = "S01") -> list[dict[str, Any]]:
+    """Load director shots from offline case pack (same as scripts/run_deep_dive_case)."""
+    import importlib.util
+    from pathlib import Path
+
+    path = Path(__file__).resolve().parents[2] / "scripts" / "run_deep_dive_case.py"
+    spec = importlib.util.spec_from_file_location("run_deep_dive_case", path)
+    if spec is None or spec.loader is None:
+        return []
+    mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mod)
+    shots = mod._shots()
+    for sh in shots:
+        sh["scene_id"] = scene_id
+        sid = sh.get("shot_id") or ""
+        # rewrite shot_id prefix to match scene
+        if "_T" in sid:
+            sh["shot_id"] = f"{scene_id}_T{sid.split('_T', 1)[1]}"
+    return shots
+
+
 def _chars_from_script(script: str) -> list[dict[str, str]]:
     names = re.findall(r"^[\u4e00-\u9fffA-Za-z]{1,8}$", script, flags=re.M)
     # Prefer explicit 人物 lines and ALLCAPS / bare name dialogue headers
@@ -41,6 +70,70 @@ def _chars_from_script(script: str) -> list[dict[str, str]]:
 
 def stub_dramaturg(bible: dict[str, Any], kb: dict[str, Any]) -> dict[str, Any]:
     script = bible.get("source_script", "")
+    if _script_is_deep_dive(script):
+        return {
+            "story": {
+                "logline": (
+                    "漆黑深水中，AI 日志 Ananke 与高工高岩驶向第一现实闭锁断层；"
+                    "董事会的成本核算撞上人类对意义的诘问。"
+                ),
+                "theme": "绝对有序机器 vs 人类寻找意义 / 公司风险核算 vs 敬畏",
+                "acts": [
+                    {
+                        "name": "I",
+                        "summary": "深水建立 → 舱内日常 → Ananke 日志 → 高岩哲学对峙",
+                    }
+                ],
+            },
+            "characters": [
+                {
+                    "id": "A",
+                    "name": "高岩",
+                    "want": "带船员活过热液走廊",
+                    "need": "拒绝纯成本账簿道德",
+                    "arc": "从实验室冷声到公开哲学诘问",
+                    "voice": "平稳、冰冷、实验室腔",
+                },
+                {
+                    "id": "B",
+                    "name": "Ananke",
+                    "want": "07 号核心准时入账",
+                    "need": "维持系统秩序的礼貌嗓音",
+                    "arc": "平直日志 → 成本核算话术",
+                    "voice": "无起伏、机械、儒雅磁性电波音",
+                },
+                {
+                    "id": "C",
+                    "name": "技术员A",
+                    "want": "熬过 314 天倒计时",
+                    "need": "想家",
+                    "arc": "沉默忙活",
+                    "voice": "无对白",
+                },
+                {
+                    "id": "D",
+                    "name": "技术员B",
+                    "want": "校准液压应急总线",
+                    "need": "把活干完",
+                    "arc": "沉默忙活",
+                    "voice": "无对白",
+                },
+            ],
+            "scenes": [
+                {
+                    "scene_id": "S01",
+                    "setting": "绝对深度·污浊深水 → 深眸号小型勘探潜艇舱内",
+                    "summary": "下潜建立、舱内三层光、Ananke 日志、人间痕迹、高岩 vs Ananke",
+                    "dramatic_function": "建立世界观 + 主题种子（秩序 vs 意义）",
+                    "emotion": {
+                        "start": "dread",
+                        "end": "revelation",
+                        "peak": 0.85,
+                        "primary": "dread",
+                    },
+                }
+            ],
+        }
     return {
         "story": {
             "logline": "一次被拆开的信封，逼出亲密关系里被推迟的真相。",
@@ -126,14 +219,45 @@ def stub_director(bible: dict[str, Any], kb: dict[str, Any]) -> dict[str, Any]:
     scene_id = "S01"
     if bible.get("scenes"):
         scene_id = bible["scenes"][0]["scene_id"]
+    script = bible.get("source_script") or ""
+    if _script_is_deep_dive(script):
+        shots = _deep_dive_shots(scene_id)
+        if shots:
+            # Director output is dramatic layer; camera/look filled by later stages.
+            dramatic_only = []
+            for sh in shots:
+                item: dict[str, Any] = {
+                    "shot_id": sh["shot_id"],
+                    "scene_id": sh.get("scene_id") or scene_id,
+                    "dramatic_beat": sh.get("dramatic_beat") or "",
+                    "dramatic_beat_en": sh.get("dramatic_beat_en") or "",
+                    "emotion": sh.get("emotion") or {"primary": "suspicion"},
+                    "shot_size": sh.get("shot_size") or "MS",
+                    "subject": sh.get("subject") or "",
+                    "subject_en": sh.get("subject_en") or "",
+                    "edit_intent": sh.get("edit_intent") or "cover",
+                }
+                if sh.get("whose_pov"):
+                    item["whose_pov"] = sh["whose_pov"]
+                if sh.get("linked_dialogue"):
+                    item["linked_dialogue"] = list(sh["linked_dialogue"])
+                cam_type = (sh.get("camera") or {}).get("movement", {}).get("type")
+                if cam_type:
+                    item["camera_draft"] = cam_type
+                dramatic_only.append(item)
+            return {"shots": dramatic_only}
     shots = [
         {
             "shot_id": f"{scene_id}_T01",
             "scene_id": scene_id,
             "dramatic_beat": "雨夜客厅建立：信封在茶几中央",
+            "dramatic_beat_en": (
+                "Rainy-night living room establish: sealed envelope centered on the coffee table"
+            ),
             "emotion": {"primary": "calm", "intensity": 0.3},
             "shot_size": "WS",
             "subject": "客厅、台灯、茶几上的信封",
+            "subject_en": "living room, table lamp, envelope on the coffee table",
             "whose_pov": "objective",
             "edit_intent": "建立空间与不安物件",
             "camera_draft": "static wide",
@@ -142,9 +266,13 @@ def stub_director(bible: dict[str, Any], kb: dict[str, Any]) -> dict[str, Any]:
             "shot_id": f"{scene_id}_T02",
             "scene_id": scene_id,
             "dramatic_beat": "信封封口胶已翘起（信息）",
+            "dramatic_beat_en": (
+                "Insert detail: envelope seal adhesive already lifted (information plant)"
+            ),
             "emotion": {"primary": "suspicion", "intensity": 0.55},
             "shot_size": "INSERT",
             "subject": "信封封口细节",
+            "subject_en": "close detail of the envelope seal",
             "edit_intent": "用细节植入怀疑",
             "camera_draft": "macro insert",
         },
@@ -152,9 +280,13 @@ def stub_director(bible: dict[str, Any], kb: dict[str, Any]) -> dict[str, Any]:
             "shot_id": f"{scene_id}_T03",
             "scene_id": scene_id,
             "dramatic_beat": "林安不抬头说出信封被动过",
+            "dramatic_beat_en": (
+                "Lin An, without looking up, states the envelope has been tampered with"
+            ),
             "emotion": {"primary": "suspicion", "intensity": 0.65},
             "shot_size": "MCU",
             "subject": "林安上半身与茶几",
+            "subject_en": "Lin An upper body and the coffee table",
             "whose_pov": "林安",
             "edit_intent": "压住情绪，信息优先",
             "linked_dialogue": ["信封被动过了。"],
@@ -163,9 +295,11 @@ def stub_director(bible: dict[str, Any], kb: dict[str, Any]) -> dict[str, Any]:
             "shot_id": f"{scene_id}_T04",
             "scene_id": scene_id,
             "dramatic_beat": "周宁心虚地反问",
+            "dramatic_beat_en": "Zhou Ning asks back, defensive and uneasy",
             "emotion": {"primary": "suspicion", "intensity": 0.6},
             "shot_size": "MS",
             "subject": "周宁从厨房方向进入画框",
+            "subject_en": "Zhou Ning entering frame from the kitchen direction",
             "edit_intent": "正反打建立对峙",
             "linked_dialogue": ["什么信封？你不是说公司的文件吗。"],
         },
@@ -173,9 +307,11 @@ def stub_director(bible: dict[str, Any], kb: dict[str, Any]) -> dict[str, Any]:
             "shot_id": f"{scene_id}_T05",
             "scene_id": scene_id,
             "dramatic_beat": "林安抬眼确认：你早就看过了",
+            "dramatic_beat_en": "Lin An looks up and confirms: you already read it",
             "emotion": {"primary": "revelation", "intensity": 0.85},
             "shot_size": "CU",
             "subject": "林安眼睛与微表情",
+            "subject_en": "Lin An's eyes and micro-expressions",
             "edit_intent": "揭示落点，给反应空间",
             "linked_dialogue": ["你早就看过了。"],
         },
@@ -183,18 +319,22 @@ def stub_director(bible: dict[str, Any], kb: dict[str, Any]) -> dict[str, Any]:
             "shot_id": f"{scene_id}_T06",
             "scene_id": scene_id,
             "dramatic_beat": "周宁笑容塌陷",
+            "dramatic_beat_en": "Zhou Ning's smile collapses",
             "emotion": {"primary": "oppression", "intensity": 0.8},
             "shot_size": "MCU",
             "subject": "周宁半边脸落在台灯里",
+            "subject_en": "half of Zhou Ning's face caught in the lamp light",
             "edit_intent": "反应镜头承载崩溃",
         },
         {
             "shot_id": f"{scene_id}_T07",
             "scene_id": scene_id,
             "dramatic_beat": "关灯前的最后通牒感",
+            "dramatic_beat_en": "Final ultimatum beat before the lamp goes dark",
             "emotion": {"primary": "oppression", "intensity": 0.9},
             "shot_size": "MS",
             "subject": "两人与即将熄灭的台灯",
+            "subject_en": "both characters and the lamp about to go out",
             "edit_intent": "收场，导向黑暗",
             "linked_dialogue": ["先把灯关了。"],
         },
@@ -244,6 +384,8 @@ def stub_look(bible: dict[str, Any], kb: dict[str, Any]) -> dict[str, Any]:
 
 
 def stub_cinematography(bible: dict[str, Any], kb: dict[str, Any]) -> dict[str, Any]:
+    from film_pipeline.runtime.shot_locale import is_environment_or_object_shot
+
     store = KnowledgeStore()
     pack = kb.get("style_pack") or {}
     habits = pack.get("camera_habits") or {}
@@ -257,9 +399,12 @@ def stub_cinematography(bible: dict[str, Any], kb: dict[str, Any]) -> dict[str, 
         cam_rules = store.emotion_camera(str(emo))
         look_rules = store.emotion_look(str(emo))
         scene_look = scene_look_map.get(shot.get("scene_id", ""), {})
-        # Prefer Excel-imported catalog move
+        env_plate = is_environment_or_object_shot(shot)
+        size = str(shot.get("shot_size") or "MS").upper()
+
+        # Prefer Excel catalog for people plates only — never Dutch/villain on establish/env
         catalog_move = store.pick_move_for_emotion(str(emo))
-        if catalog_move:
+        if catalog_move and not env_plate and size not in {"EWS", "WS", "INSERT"}:
             move = catalog_move.get("en") or catalog_move.get("id") or "static hold"
             move_prompt = catalog_move.get("prompt_en") or move
             move_id = catalog_move.get("id")
@@ -269,15 +414,49 @@ def stub_cinematography(bible: dict[str, Any], kb: dict[str, Any]) -> dict[str, 
             move_prompt = str(move)
             move_id = None
             move_zh = None
+
         avoid = set(habits.get("avoid_moves") or [])
         if move in avoid and habits.get("prefer_moves"):
             move = habits["prefer_moves"][0]
             move_prompt = move
+
         angle = (cam_rules.get("preferred_angles") or ["eye_level"])[0]
+        if env_plate or size in {"EWS", "WS", "INSERT"}:
+            angle = "eye_level"
+            ml = f"{move} {move_prompt}".lower()
+            bad = any(k in ml for k in ("dutch", "villain", "horror", "sleeping", "crash", "whip"))
+            beat_blob = f"{shot.get('dramatic_beat_en') or ''} {shot.get('dramatic_beat') or ''}"
+            wants_push = "push" in beat_blob.lower() or "推" in beat_blob
+            if bad or env_plate:
+                if size == "INSERT":
+                    move, move_zh, move_prompt = (
+                        "Static Locked-Off",
+                        "锁定固定",
+                        "static locked-off hold",
+                    )
+                elif wants_push:
+                    move, move_zh, move_prompt = (
+                        "Creep In",
+                        "缓推",
+                        "very slow motivated push-in",
+                    )
+                else:
+                    move, move_zh, move_prompt = (
+                        "Static Locked-Off",
+                        "锁定固定",
+                        "static locked-off hold",
+                    )
+                move_id = None
+        elif "dutch" in str(angle).lower() and size in {"EWS", "WS", "FS"}:
+            angle = "eye_level"
+
         lenses = cam_rules.get("lens_mm") or prefer_lenses
         lens = lenses[0] if lenses else 40
         if prefer_lenses and lens not in prefer_lenses:
             lens = prefer_lenses[0]
+        if env_plate and size in {"EWS", "WS"}:
+            lens = 35
+
         tone = scene_look.get("base_tone") or (look_rules.get("tone") or ["low_key"])[0]
         speed = "very_slow"
         ml = str(move).lower()
@@ -307,6 +486,29 @@ def stub_cinematography(bible: dict[str, Any], kb: dict[str, Any]) -> dict[str, 
             light_plan.get("ratio", "")
         ).lower():
             fill_ratio = "1:8"
+        grade = (
+            "controlled blacks, material detail"
+            if env_plate
+            else "controlled blacks, protect facial detail"
+        )
+        focus = (
+            "subject sharp"
+            if env_plate or size not in {"MCU", "CU", "ECU"}
+            else "eyes sharp"
+        )
+        composition = (
+            "centered or rule-of-thirds on subject mass, no forced eyeline"
+            if env_plate
+            else "rule_of_thirds, protect eyeline"
+        )
+        motivation = (
+            f"环境/建立镜：稳、慢、服务 beat，不炫技；情绪 {emo}"
+            if env_plate
+            else (
+                f"服务 beat「{shot.get('dramatic_beat', '')}」与情绪 {emo}："
+                f"运镜「{move_zh or move}」/ {angle}，配合表演与灯光"
+            )
+        )
         patches.append(
             {
                 "shot_id": shot["shot_id"],
@@ -317,20 +519,17 @@ def stub_cinematography(bible: dict[str, Any], kb: dict[str, Any]) -> dict[str, 
                     "t_stop": "T2.0",
                     "shot_size": shot.get("shot_size", "MS"),
                     "angle": angle,
-                    "height": "chest" if shot.get("shot_size") in {"MCU", "CU"} else "eye",
+                    "height": "chest" if shot.get("shot_size") in {"MCU", "CU"} and not env_plate else "eye",
                     "movement": {
                         "type": move,
                         "catalog_id": move_id,
                         "zh": move_zh,
                         "prompt_en": move_prompt,
                         "speed": speed,
-                        "motivation": (
-                            f"服务 beat「{shot.get('dramatic_beat', '')}」与情绪 {emo}："
-                            f"知识库运镜「{move_zh or move}」/ {angle}，配合表演与灯光"
-                        ),
+                        "motivation": motivation,
                     },
-                    "composition": "rule_of_thirds, protect eyeline",
-                    "focus": "eyes sharp" if shot.get("shot_size") in {"MCU", "CU"} else "subject sharp",
+                    "composition": composition,
+                    "focus": focus,
                 },
                 "look": {
                     "tone": tone,
@@ -339,7 +538,7 @@ def stub_cinematography(bible: dict[str, Any], kb: dict[str, Any]) -> dict[str, 
                     "key_light": key_light,
                     "fill_ratio": fill_ratio,
                     "color_temp": color_temp,
-                    "grade_intent": "controlled blacks, protect facial detail",
+                    "grade_intent": grade,
                     "motivation": (
                         f"影调跟随情绪 {emo}；"
                         f"{light_plan.get('motivation') or light_table.get('face') or '服务情节氛围'}；"
@@ -492,24 +691,23 @@ def stub_timing(bible: dict[str, Any], kb: dict[str, Any]) -> dict[str, Any]:
 
 
 def stub_generator(bible: dict[str, Any], kb: dict[str, Any]) -> dict[str, Any]:
-    """Final stage: compile all FilmBible decisions into model-ready prompts."""
-    from film_pipeline.runtime.prompt_compiler import compile_generation_jobs
+    """Prompt Writer Agent offline path (dedicated agent, not other stages)."""
+    from film_pipeline.runtime.prompt_writer_agent import run_prompt_writer_agent
 
-    style_pack = kb.get("style_pack") if isinstance(kb, dict) else None
-    return {"generation_jobs": compile_generation_jobs(bible, style_pack=style_pack)}
+    return run_prompt_writer_agent(bible)
 
 
 def stub_critic(bible: dict[str, Any], kb: dict[str, Any]) -> dict[str, Any]:
-    failures: list[dict[str, Any]] = []
+    """
+    Deterministic critic: structure + **dialogue coverage vs source script**.
+    Must fail if spoken lines are missing from dialogue[] or generation_jobs.
+    """
+    from film_pipeline.runtime.critic_checks import run_critic_checks
+
+    review = run_critic_checks(bible)
+    failures: list[dict[str, Any]] = list(review.get("failures") or [])
     shots = bible.get("shots") or []
-    if not shots:
-        failures.append(
-            {
-                "type": "missing_shots",
-                "reason": "没有镜头，需要导演分镜",
-                "reroute_to": "director",
-            }
-        )
+
     if not bible.get("look_bible"):
         failures.append(
             {
@@ -526,75 +724,67 @@ def stub_critic(bible: dict[str, Any], kb: dict[str, Any]) -> dict[str, Any]:
                 "reroute_to": "timing",
             }
         )
-    for shot in shots:
-        cam = shot.get("camera") or {}
-        mov = cam.get("movement") or {}
-        look = shot.get("look") or {}
-        if not mov.get("motivation"):
-            failures.append(
-                {
-                    "shot_id": shot.get("shot_id"),
-                    "type": "movement_motivation",
-                    "reason": "运镜缺少 motivation",
-                    "reroute_to": "cinematography",
-                }
-            )
-        if not look.get("motivation"):
-            failures.append(
-                {
-                    "shot_id": shot.get("shot_id"),
-                    "type": "look_motivation",
-                    "reason": "影调缺少 motivation",
-                    "reroute_to": "cinematography",
-                }
-            )
-        if not shot.get("duration_sec"):
-            failures.append(
-                {
-                    "shot_id": shot.get("shot_id"),
-                    "type": "missing_duration",
-                    "reason": "缺少 duration_sec",
-                    "reroute_to": "timing",
-                }
-            )
-        max_clip = (shot.get("timing") or {}).get("max_clip_sec") or (
-            (bible.get("timing_plan") or {}).get("max_clip_sec")
-        )
-        for clip in shot.get("generation_clips") or []:
-            if max_clip and float(clip.get("duration_sec") or 0) > float(max_clip) + 1e-6:
-                failures.append(
-                    {
-                        "shot_id": shot.get("shot_id"),
-                        "type": "clip_over_cap",
-                        "reason": f"clip {clip.get('clip_id')} 超过模型上限 {max_clip}s",
-                        "reroute_to": "timing",
-                    }
-                )
-    # jobs may be per-clip now
+
+    # Jobs may be generation packages (cover many shot_ids) or per-clip
     job_keys = set()
+    covered_shots = set()
     for j in bible.get("generation_jobs") or []:
-        job_keys.add(j.get("clip_id") or j.get("shot_id"))
+        job_keys.add(j.get("clip_id") or j.get("package_id") or j.get("shot_id"))
+        for sid in j.get("shot_ids") or []:
+            covered_shots.add(sid)
+        if j.get("shot_id"):
+            covered_shots.add(j.get("shot_id"))
+        for beat in j.get("beats") or []:
+            if beat.get("shot_id"):
+                covered_shots.add(beat.get("shot_id"))
     for shot in shots:
-        clips = shot.get("generation_clips") or [{"clip_id": shot.get("shot_id")}]
+        sid = shot.get("shot_id")
+        if sid in covered_shots:
+            continue
+        clips = shot.get("generation_clips") or [{"clip_id": sid}]
+        ok = False
         for clip in clips:
-            cid = clip.get("clip_id") if isinstance(clip, dict) else shot.get("shot_id")
-            if cid not in job_keys and shot.get("shot_id") not in job_keys:
-                failures.append(
-                    {
-                        "shot_id": shot.get("shot_id"),
-                        "type": "missing_generation_job",
-                        "reason": f"缺少生成任务 clip={cid}",
-                        "reroute_to": "generator",
-                    }
-                )
+            cid = clip.get("clip_id") if isinstance(clip, dict) else sid
+            if cid in job_keys or sid in job_keys:
+                ok = True
                 break
-    score = max(0.0, 1.0 - 0.08 * len(failures))
+        if not ok:
+            failures.append(
+                {
+                    "shot_id": sid,
+                    "type": "missing_generation_job",
+                    "reason": f"镜头 {sid} 未包含在任何生成段/提示词 job 中",
+                    "reroute_to": "generator",
+                }
+            )
+
+    # schema requires type/reason/reroute_to; errors fail pass, warns do not
+    clean: list[dict[str, Any]] = []
+    errors: list[dict[str, Any]] = []
+    for f in failures:
+        item = {
+            "type": str(f.get("type") or "check_failed"),
+            "reason": str(f.get("reason") or f.get("message") or "质检失败"),
+            "reroute_to": str(f.get("reroute_to") or "generator"),
+        }
+        if f.get("shot_id"):
+            item["shot_id"] = f["shot_id"]
+        clean.append(item)
+        if f.get("severity") != "warn":
+            errors.append(item)
+    score = max(0.0, 1.0 - 0.12 * len(errors))
+    reroute = errors[0]["reroute_to"] if errors else None
     return {
         "review": {
-            "pass": len(failures) == 0,
+            "pass": len(errors) == 0,
             "score": round(score, 2),
-            "summary": "结构完整" if not failures else f"发现 {len(failures)} 个问题",
-            "failures": failures,
+            "summary": (
+                "结构与对白覆盖通过"
+                if not errors
+                else f"发现 {len(errors)} 个问题（含对白覆盖）"
+            ),
+            "failures": clean,
+            "reroute_to": reroute,
         }
     }
 

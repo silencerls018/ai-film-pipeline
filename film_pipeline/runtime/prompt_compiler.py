@@ -7,6 +7,7 @@ This is deterministic assembly (template + fields), not free-form invention.
 
 from __future__ import annotations
 
+import re
 from typing import Any
 
 
@@ -55,6 +56,13 @@ def _film_look(bible: dict[str, Any]) -> dict[str, Any]:
 
 
 def compile_visual_prompt(bible: dict[str, Any], shot: dict[str, Any], style_pack: dict[str, Any] | None = None) -> str:
+    from film_pipeline.runtime.shot_locale import (
+        ensure_shot_english_slots,
+        resolve_dramatic_beat_en,
+        resolve_subject_en,
+    )
+
+    ensure_shot_english_slots(shot)
     cam = shot.get("camera") or {}
     look = shot.get("look") or {}
     film = _film_look(bible)
@@ -65,8 +73,8 @@ def compile_visual_prompt(bible: dict[str, Any], shot: dict[str, Any], style_pac
     parts: list[str] = [
         "Cinematic still frame from a narrative short film.",
         f"Shot size: {shot.get('shot_size') or cam.get('shot_size') or 'MS'}.",
-        f"Subject: {shot.get('subject') or 'scene'}.",
-        f"Dramatic beat: {shot.get('dramatic_beat') or 'n/a'}.",
+        f"Subject: {resolve_subject_en(shot)}.",
+        f"Dramatic beat: {resolve_dramatic_beat_en(shot)}.",
     ]
 
     emo = shot.get("emotion") or {}
@@ -252,16 +260,21 @@ def compile_master_prompt(
 
 def compile_zh_summary(shot: dict[str, Any], clip: dict[str, Any] | None = None) -> str:
     """Human-readable Chinese director summary (not for all model backends)."""
+    from film_pipeline.runtime.shot_locale import (
+        resolve_dramatic_beat_zh,
+        resolve_subject_zh,
+    )
+
     cam = shot.get("camera") or {}
     look = shot.get("look") or {}
     mov = cam.get("movement") or {}
     base = (
-        f"【{shot.get('shot_id')}】{shot.get('dramatic_beat', '')}；"
+        f"【{shot.get('shot_id')}】{resolve_dramatic_beat_zh(shot)}；"
         f"景别{shot.get('shot_size')}；"
         f"{cam.get('lens_mm', '?')}mm；角度{cam.get('angle', '?')}；"
         f"运镜{mov.get('type', '固定')}（{mov.get('motivation', '')}）；"
         f"影调{look.get('tone', '?')}/{look.get('contrast', '?')}；"
-        f"主体：{shot.get('subject', '')}；"
+        f"主体：{resolve_subject_zh(shot)}；"
         f"需要时长{shot.get('duration_sec', '?')}s"
     )
     if clip:
@@ -276,97 +289,15 @@ def compile_zh_summary(shot: dict[str, Any], clip: dict[str, Any] | None = None)
 
 def compile_generation_jobs(bible: dict[str, Any], style_pack: dict[str, Any] | None = None) -> list[dict[str, Any]]:
     """
-    One API job per generation clip (not merely per shot).
-    Each job includes TWO final prompt versions:
-      - actor_free_prompt: emotion tags only (actor improvises)
-      - director_guided_prompt: performance + shot + move + light unified
+    Back-compat entry: run the dedicated Prompt Writer Agent and return jobs.
+
+    Prefer: film_pipeline.runtime.prompt_writer_agent.run_prompt_writer_agent
     """
-    from film_pipeline.runtime.performance import (
-        compile_actor_free_prompt,
-        compile_director_guided_prompt,
-        enrich_shots_with_performance,
-    )
+    from film_pipeline.runtime.prompt_writer_agent import run_prompt_writer_agent
 
-    # Ensure performance packages exist even if director stage was skipped
-    if any(not s.get("performance") for s in bible.get("shots") or []):
-        enrich_shots_with_performance(bible)
-
-    jobs: list[dict[str, Any]] = []
-    max_clip = (bible.get("timing_plan") or {}).get("max_clip_sec")
-    for shot in bible.get("shots") or []:
-        clips = shot.get("generation_clips") or [
-            {
-                "clip_id": f"{shot.get('shot_id')}_c01",
-                "index": 1,
-                "duration_sec": shot.get("duration_sec") or 3.5,
-                "timeline_start_sec": 0.0,
-                "timeline_end_sec": shot.get("duration_sec") or 3.5,
-                "stitch": "single",
-                "role": "full_shot",
-            }
-        ]
-        visual = compile_visual_prompt(bible, shot, style_pack)
-        negative = compile_negative_prompt(bible, shot)
-        for clip in clips:
-            dur = float(clip.get("duration_sec") or shot.get("duration_sec") or 3.5)
-            if max_clip is not None:
-                dur = min(dur, float(max_clip))
-            motion = compile_motion_prompt(shot, clip=clip)
-            master = compile_master_prompt(bible, shot, style_pack, clip=clip)
-            from film_pipeline.runtime.performance import (
-                compile_actor_free_prompt_en,
-                compile_actor_free_prompt_zh,
-                compile_director_guided_prompt_en,
-                compile_director_guided_prompt_zh,
-            )
-
-            # 主：全英文（生成用）  辅：全中文（阅读对照）
-            actor_free_en = compile_actor_free_prompt_en(shot, clip=clip)
-            director_guided_en = compile_director_guided_prompt_en(
-                bible, shot, style_pack=style_pack, clip=clip
-            )
-            actor_free_zh = compile_actor_free_prompt_zh(shot, clip=clip)
-            director_guided_zh = compile_director_guided_prompt_zh(
-                bible, shot, style_pack=style_pack, clip=clip
-            )
-            jobs.append(
-                {
-                    "shot_id": shot.get("shot_id"),
-                    "clip_id": clip.get("clip_id"),
-                    "scene_id": shot.get("scene_id"),
-                    "visual_prompt": visual,
-                    "motion_prompt": motion,
-                    "master_prompt": master,
-                    # 主产品：英文（复制去视频模型）
-                    "actor_free_prompt": actor_free_en,
-                    "director_guided_prompt": director_guided_en,
-                    "actor_free_prompt_en": actor_free_en,
-                    "director_guided_prompt_en": director_guided_en,
-                    # 辅助：中文对照（帮你看懂内容）
-                    "actor_free_prompt_zh": actor_free_zh,
-                    "director_guided_prompt_zh": director_guided_zh,
-                    "negative_prompt": negative,
-                    "zh_director_summary": compile_zh_summary(shot, clip),
-                    "duration_sec": dur,
-                    "timeline_start_sec": clip.get("timeline_start_sec"),
-                    "timeline_end_sec": clip.get("timeline_end_sec"),
-                    "stitch": clip.get("stitch"),
-                    "extend_from_clip": clip.get("extend_from_clip"),
-                    "sources": {
-                        "dramatic_beat": shot.get("dramatic_beat"),
-                        "shot_size": shot.get("shot_size"),
-                        "emotion": shot.get("emotion"),
-                        "performance": shot.get("performance"),
-                        "camera": shot.get("camera"),
-                        "look": shot.get("look"),
-                        "linked_dialogue": shot.get("linked_dialogue"),
-                        "timing": shot.get("timing"),
-                        "clip": clip,
-                    },
-                    "downgrades": [],
-                }
-            )
-    return jobs
+    # style_pack arg kept for API compatibility; agent loads style from bible meta
+    _ = style_pack
+    return run_prompt_writer_agent(bible).get("generation_jobs") or []
 
 
 def export_prompts_markdown(bible: dict[str, Any]) -> str:
@@ -392,45 +323,58 @@ def export_prompts_markdown(bible: dict[str, Any]) -> str:
     lines += [
         "## 提示词说明",
         "",
-        "- **主语言：英文**（`actor_free_prompt` / `director_guided_prompt`）→ 复制去视频模型",
-        "- **辅助：中文对照**（`*_zh`）→ 只帮你看懂内容，不是主生成稿",
-        "- ① 演员自由发挥版：只给情绪词  ② 导演指导版：表演+景别+运镜+灯光",
+        "- **中文 / 英文均为成品**：都可直接复制投喂视频模型",
+        "- ① 演员自由发挥版  ② 导演指导版（更具体）",
+        "- 四段结构已自动换行，无需横向拖动阅读",
+        "- 终稿由 **Prompt Writer** 根据 FilmBible 合同撰写",
         "",
     ]
 
+    from film_pipeline.runtime.prompt_writer import format_prompt_for_delivery
+
     for job in bible.get("generation_jobs") or compile_generation_jobs(bible):
         title = job.get("clip_id") or job.get("shot_id")
+        free_en = format_prompt_for_delivery(
+            job.get("actor_free_prompt") or job.get("actor_free_prompt_en") or ""
+        )
+        free_zh = format_prompt_for_delivery(job.get("actor_free_prompt_zh") or "")
+        guided_en = format_prompt_for_delivery(
+            job.get("director_guided_prompt")
+            or job.get("director_guided_prompt_en")
+            or ""
+        )
+        guided_zh = format_prompt_for_delivery(
+            job.get("director_guided_prompt_zh") or ""
+        )
         lines += [
             f"## {title}",
             "",
-            f"**镜头摘要（中文）:** {job.get('zh_director_summary', '')}",
+            f"**镜头摘要:** {job.get('zh_director_summary', '')}",
             "",
             f"- 时长: `{job.get('duration_sec')}s` · 拼接: `{job.get('stitch')}`",
             "",
-            "### ① 演员自由发挥版 — 英文主稿（生成用）",
-            "```",
-            job.get("actor_free_prompt") or job.get("actor_free_prompt_en") or "",
-            "```",
-            "",
-            "#### 中文对照（辅助理解，不优先投喂）",
-            "```",
-            job.get("actor_free_prompt_zh") or "",
+            "### ① 演员自由发挥 · 英文（可直接投喂）",
+            "```text",
+            free_en.rstrip(),
             "```",
             "",
-            "### ② 导演指导版 — 英文主稿（生成用）",
-            "```",
-            job.get("director_guided_prompt")
-            or job.get("director_guided_prompt_en")
-            or "",
+            "### ① 演员自由发挥 · 中文（可直接投喂）",
+            "```text",
+            free_zh.rstrip(),
             "```",
             "",
-            "#### 中文对照（辅助理解，不优先投喂）",
+            "### ② 导演指导 · 英文（可直接投喂）",
+            "```text",
+            guided_en.rstrip(),
             "```",
-            job.get("director_guided_prompt_zh") or "",
+            "",
+            "### ② 导演指导 · 中文（可直接投喂）",
+            "```text",
+            guided_zh.rstrip(),
             "```",
             "",
             "### 技术层 visual / motion / negative",
-            "```",
+            "```text",
             "visual: " + (job.get("visual_prompt") or "")[:400],
             "",
             "motion: " + (job.get("motion_prompt") or ""),
@@ -439,4 +383,241 @@ def export_prompts_markdown(bible: dict[str, Any]) -> str:
             "```",
             "",
         ]
+
+    # ── 全片时长统计（交付末尾）──
+    plan = bible.get("timing_plan") or {}
+    meta = bible.get("meta") or {}
+    jobs_list = bible.get("generation_jobs") or []
+    film_total = plan.get("film_total_sec") or meta.get("film_total_sec")
+    if film_total is None:
+        film_total = round(
+            sum(float(s.get("duration_sec") or 0) for s in (bible.get("shots") or [])),
+            2,
+        )
+    gen_total = plan.get("generation_total_sec")
+    if gen_total is None:
+        gen_total = round(sum(float(j.get("duration_sec") or 0) for j in jobs_list), 2)
+    max_clip = plan.get("max_clip_sec") or meta.get("max_clip_sec") or 30
+    pkg_n = plan.get("generation_package_count") or len(
+        bible.get("generation_packages") or jobs_list
+    )
+    film_min = round(float(film_total) / 60.0, 2)
+    lines += [
+        "---",
+        "",
+        "## 电影最终时长统计",
+        "",
+        f"- **电影最终时长**：`{film_total}` 秒（约 `{film_min}` 分钟）← 戏剧分镜合计",
+        f"- **成片预估（按生成段拼接）**：`{gen_total}` 秒（约 `{round(float(gen_total)/60, 2)}` 分钟）",
+        f"- **模型单段上限**：`{max_clip}` 秒（用户选 15 或 30；**不是**整片上限）",
+        f"- **生成段数**：`{pkg_n}` 段（每段 ≤ 上限；段内用 0–2秒 / 3–12秒… 时间轴，模型自行切镜更流畅）",
+        f"- **生成请求总时长**：`{gen_total}` 秒",
+        "",
+        "> **规则**：15/30 = 单次生成天花板。段内把分镜写成时间轴即可，模型自己切镜更顺；"
+        "只有累计时长已经「到底」塞不进上限时，才开下一段生成。",
+        "",
+    ]
     return "\n".join(lines)
+
+
+def export_asset_board_markdown(bible: dict[str, Any]) -> str:
+    """Human-readable asset board (characters / props / sets sheet prompts)."""
+    ab = bible.get("asset_bible") or {}
+    lines = [
+        f"# Asset Board — {(bible.get('meta') or {}).get('title', '')}",
+        "",
+        "三视图/设定提示词（可随时换 image_refs，不影响主链镜头合同）",
+        "",
+    ]
+    for section, key in [
+        ("Characters", "characters"),
+        ("Props", "props"),
+        ("Sets", "sets"),
+    ]:
+        items = ab.get(key) or []
+        if not items:
+            continue
+        lines.append(f"## {section}")
+        lines.append("")
+        for it in items:
+            lines.append(f"### {it.get('asset_id')} — {it.get('name', '')}")
+            lines.append(f"- type: {it.get('type')}")
+            lines.append(f"- anchors: {it.get('consistency_anchors')}")
+            if it.get("image_size_hint"):
+                lines.append(f"- size hint: {it.get('image_size_hint')}")
+            lines.append("")
+            if it.get("sheet_prompt_zh_summary"):
+                lines.append("**中文说明（辅助）**")
+                lines.append("")
+                lines.append(it.get("sheet_prompt_zh_summary") or "")
+                lines.append("")
+            lines.append("**sheet_prompt（英文主稿 · 生图用）**")
+            lines.append("```")
+            lines.append(it.get("sheet_prompt") or "")
+            lines.append("```")
+            lines.append("")
+            refs = it.get("image_refs") or []
+            lines.append(f"- image_refs: {refs if refs else '（空，可稍后替换）'}")
+            lines.append("")
+    return "\n".join(lines)
+
+
+def _safe_asset_filename(asset_id: str, name: str) -> str:
+    raw = f"{asset_id}_{name}".strip("_") or "asset"
+    return re.sub(r'[<>:"/\\|?*\s]+', "_", raw)[:80]
+
+
+def export_assets_into_dir(bible: dict[str, Any], root: Any) -> Any:
+    """
+    Write asset delivery under outputs/<project>/assets/ :
+      assets/asset_board.md
+      assets/characters/<id>_sheet.en.txt
+      assets/props/...
+      assets/sets/...
+      assets/asset_bible.json
+    """
+    from pathlib import Path
+
+    root = Path(root)
+    ab = bible.get("asset_bible")
+    if not ab:
+        return root
+
+    assets_dir = root / "assets"
+    assets_dir.mkdir(parents=True, exist_ok=True)
+    (assets_dir / "asset_board.md").write_text(
+        export_asset_board_markdown(bible), encoding="utf-8"
+    )
+    (assets_dir / "asset_bible.json").write_text(
+        __import__("json").dumps(ab, ensure_ascii=False, indent=2),
+        encoding="utf-8",
+    )
+
+    for kind, folder in (
+        ("characters", "characters"),
+        ("props", "props"),
+        ("sets", "sets"),
+    ):
+        items = ab.get(kind) or []
+        if not items:
+            continue
+        sub = assets_dir / folder
+        sub.mkdir(parents=True, exist_ok=True)
+        for it in items:
+            safe = _safe_asset_filename(
+                str(it.get("asset_id") or "asset"),
+                str(it.get("name") or ""),
+            )
+            sheet = (it.get("sheet_prompt") or "").strip()
+            zh = (it.get("sheet_prompt_zh_summary") or "").strip()
+            (sub / f"{safe}_sheet.en.txt").write_text(sheet, encoding="utf-8")
+            if zh:
+                (sub / f"{safe}_sheet.zh.txt").write_text(zh, encoding="utf-8")
+    return assets_dir
+
+
+def export_final_prompts_package(bible: dict[str, Any], dest: Any = None) -> Any:
+    """
+    Write delivery package into a folder named after the project.
+
+    Layout:
+      outputs/<project_id>/
+        prompt_board.md          # shot prompts board
+        clips/                   # per-clip video prompts
+        assets/                  # ALWAYS when asset_bible present
+          asset_board.md
+          asset_bible.json
+          characters|props|sets/*_sheet.en.txt
+        README.txt
+    """
+    from pathlib import Path
+
+    from film_pipeline.paths import ensure_final_prompts_dir, sanitize_project_id
+
+    meta = bible.get("meta") or {}
+    project_id = sanitize_project_id(
+        str(meta.get("project_id") or meta.get("title") or "untitled")
+    )
+    root = Path(dest) if dest is not None else ensure_final_prompts_dir(project_id)
+    root.mkdir(parents=True, exist_ok=True)
+
+    jobs = list(bible.get("generation_jobs") or [])
+    if not jobs:
+        try:
+            jobs = compile_generation_jobs(bible) if bible.get("shots") else []
+        except Exception:
+            jobs = []
+
+    if jobs:
+        clips_dir = root / "clips"
+        clips_dir.mkdir(parents=True, exist_ok=True)
+        board = export_prompts_markdown(bible)
+        (root / "prompt_board.md").write_text(board, encoding="utf-8")
+        for job in jobs:
+            cid = str(job.get("clip_id") or job.get("shot_id") or "clip")
+            safe = re.sub(r'[<>:"/\\|?*]', "_", cid)
+            from film_pipeline.runtime.prompt_writer import format_prompt_for_delivery
+
+            free_en = format_prompt_for_delivery(
+                job.get("actor_free_prompt") or job.get("actor_free_prompt_en") or ""
+            )
+            guided_en = format_prompt_for_delivery(
+                job.get("director_guided_prompt")
+                or job.get("director_guided_prompt_en")
+                or ""
+            )
+            free_zh = format_prompt_for_delivery(job.get("actor_free_prompt_zh") or "")
+            guided_zh = format_prompt_for_delivery(
+                job.get("director_guided_prompt_zh") or ""
+            )
+            # UTF-8 text with real newlines (auto wrap) — open in any editor, no horizontal drag
+            (clips_dir / f"{safe}_actor_free.en.txt").write_text(free_en, encoding="utf-8")
+            (clips_dir / f"{safe}_director_guided.en.txt").write_text(
+                guided_en, encoding="utf-8"
+            )
+            (clips_dir / f"{safe}_actor_free.zh.txt").write_text(free_zh, encoding="utf-8")
+            (clips_dir / f"{safe}_director_guided.zh.txt").write_text(
+                guided_zh, encoding="utf-8"
+            )
+
+    # Assets always land in the same project delivery folder when present
+    has_assets = bool(bible.get("asset_bible"))
+    if has_assets:
+        export_assets_into_dir(bible, root)
+
+    readme_lines = [
+        f"项目：{project_id}",
+        f"标题：{meta.get('title') or project_id}",
+        "",
+        "本文件夹 = 项目交付目录（文件夹名 = 项目名）",
+        "",
+    ]
+    if jobs:
+        readme_lines += [
+            "prompt_board.md     — 镜头最终提示词板（中英均可投喂）",
+            "clips/              — 每镜 clip 可复制 txt（已自动换行）",
+            "  *_director_guided.en.txt  — 英文导演版（可直接投喂）",
+            "  *_director_guided.zh.txt  — 中文导演版（可直接投喂）",
+            "  *_actor_free.en.txt       — 英文自由发挥版",
+            "  *_actor_free.zh.txt       — 中文自由发挥版",
+            "",
+            "每段 clip/package 为 ≤15/30s 的生成请求；段内时间轴分镜，模型自行切镜。",
+            "全片时长统计见 prompt_board.md 文末。",
+            "",
+        ]
+    if has_assets:
+        readme_lines += [
+            "assets/             — 资产设定提示词（必进交付）",
+            "  asset_board.md    — 人读总板",
+            "  asset_bible.json  — 完整 JSON",
+            "  characters/       — 人物三视图 sheet（英文主稿）",
+            "  props/            — 道具设定",
+            "  sets/             — 场景设定",
+            "",
+        ]
+    readme_lines += [
+        "内部状态仍在 film_pipeline/bible/projects/<项目名>/",
+        "",
+    ]
+    (root / "README.txt").write_text("\n".join(readme_lines), encoding="utf-8")
+    return root

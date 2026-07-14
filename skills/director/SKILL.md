@@ -21,7 +21,9 @@
 - 知识库：`ai/director/*`，`ai/shared/emotion_keys.json`
 
 ## 输出（只写）
-- `shots[]`：shot_id, scene_id, dramatic_beat, emotion.primary, shot_size, subject, edit_intent, linked_dialogue, camera_draft(optional)
+- `shots[]`：shot_id, scene_id, dramatic_beat, **dramatic_beat_en**, emotion.primary, shot_size, subject, **subject_en**, edit_intent, linked_dialogue, camera_draft(optional)
+- `dramatic_beat` / `subject`：给人读（可中文）
+- **`dramatic_beat_en` / `subject_en`：生成用英文终稿必填**（compiler 只拼英文字段，禁止只写中文 beat 塞进英文主稿）
 
 ## 工作步骤
 1. 按场读情绪弧与对白节拍
@@ -54,7 +56,8 @@ emotion.primary
 - `knowledge/human/03_director.md`
 
 ## 质检清单
-- [ ] 每镜有 dramatic_beat + emotion.primary（规范键）
+- [ ] 每镜有 dramatic_beat + dramatic_beat_en + emotion.primary（规范键）
+- [ ] 每镜有 subject + subject_en
 - [ ] 景别序列有叙事逻辑
 - [ ] 反应镜与信息镜平衡
 - [ ] 情绪与景别/运镜倾向不互相打架

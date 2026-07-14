@@ -49,6 +49,8 @@ STAGE_CONTRACTS: dict[str, dict[str, Any]] = {
     },
     "generator": {
         "track": "main",
+        # Dispatch name remains generator; agent role is prompt_writer
+        "agent": "prompt_writer",
         "reads": [
             "production_brief",
             "meta",
@@ -61,7 +63,7 @@ STAGE_CONTRACTS: dict[str, dict[str, Any]] = {
             "asset_bible",
         ],
         "writes": ["generation_jobs"],
-        "forbidden": ["dialogue", "story", "shots.camera"],
+        "forbidden": ["dialogue", "story", "shots.camera", "look_bible"],
     },
     "critic": {
         "track": "main",
@@ -162,10 +164,12 @@ def make_ticket(
 def describe_org_chart() -> str:
     return """
 调度总指挥 Orchestrator（代码）
-  ├─ 主链 main: dramaturg → dialogue → director → look → cinematography → timing → generator → critic
+  ├─ 主链 main: dramaturg → dialogue → director → look → cinematography → timing
+  │              → generator(=Prompt Writer 提示词写手智能体) → critic
   └─ 资产旁路 assets: asset（可并行、可晚做、可换图，不堵主链）
 
 创作意图 Producer / 用户 → ProductionBrief（15|30、风格、是否资产轨）
 专家 Agent → 只接 TaskTicket，只写合同字段
-终点 → 最终提示词（generation_jobs / prompt_board），不调用视频 API
+提示词写手 → 只根据 FilmBible 写 generation_jobs（中英双成品均可投喂）
+终点 → outputs/<项目>/ 最终提示词 + 电影最终时长统计，不调用视频 API
 """.strip()

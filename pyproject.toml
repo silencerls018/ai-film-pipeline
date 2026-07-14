@@ -4,13 +4,13 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "ai-film-pipeline"
-version = "0.1.0"
-description = "Multi-agent pipeline: script → dialogue → shots → look → cinematography → generation"
+version = "0.2.0"
+description = "Industrial multi-agent film crew: script → FilmBible → feedable ZH/EN video prompts (no video API)"
 readme = "README.md"
 requires-python = ">=3.10"
 license = { text = "MIT" }
 authors = [{ name = "AI Film Pipeline Contributors" }]
-keywords = ["ai", "film", "multi-agent", "cinematography", "screenplay"]
+keywords = ["ai", "film", "multi-agent", "cinematography", "screenplay", "prompt", "storyboard"]
 dependencies = [
   "pydantic>=2.6",
   "pyyaml>=6.0",

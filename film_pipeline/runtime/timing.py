@@ -415,6 +415,16 @@ def apply_timing_plan(
         )
 
     total_film = round(sum(scene_totals.values()), 2)
+
+    # Pack consecutive shots into generation packages ≤ max_clip.
+    # Model can cut internally within a package — smoother than 1-shot-1-job.
+    # Only open a new package when adding the next shot would exceed max_clip,
+    # or a single shot itself already needs multiple generation_clips.
+    packages = pack_shots_into_generation_packages(
+        bible.get("shots") or [], max_clip_sec=max_clip
+    )
+    gen_total = round(sum(float(p.get("duration_sec") or 0) for p in packages), 2)
+
     bible["timing_plan"] = {
         "model_profile": profile_id,
         "max_clip_sec": max_clip,
@@ -423,18 +433,161 @@ def apply_timing_plan(
         "scene_totals_sec": scene_totals,
         "film_total_sec": total_film,
         "film_total_min": round(total_film / 60.0, 2),
+        "generation_package_count": len(packages),
+        "generation_total_sec": gen_total,
         "shots": shot_rows,
         "warnings": warnings,
         "rules": {
             "dialogue_and_move": "并行取 max(台词时长, 运镜最小时长) + 头尾留白",
-            "scene_vs_clip": "场次可很长；每个 generation clip ≤ max_clip_sec",
-            "split": "单镜超时 → generation_clips[] 顺序生成再拼接",
+            "model_internal_cut": (
+                f"单段生成上限 {int(max_clip)}s；段内用时间轴分镜，模型自行切镜更流畅"
+            ),
+            "split": "仅当累计时长将超过上限、或单镜本身超过上限时，才开下一段生成",
         },
     }
+    bible["generation_packages"] = packages
     meta = bible.setdefault("meta", {})
     meta["model_profile"] = profile_id
     meta["max_clip_sec"] = int(max_clip)
+    meta["film_total_sec"] = total_film
+    meta["generation_package_count"] = len(packages)
     return bible
+
+
+def pack_shots_into_generation_packages(
+    shots: list[dict[str, Any]],
+    max_clip_sec: float,
+) -> list[dict[str, Any]]:
+    """
+    Greedy pack shots into packages of duration ≤ max_clip_sec.
+
+    Within a package, beats get relative timeline (0–2s, 2–7s, …).
+    A single shot longer than max_clip uses its generation_clips as separate packages.
+    """
+    packages: list[dict[str, Any]] = []
+    cur_shots: list[dict[str, Any]] = []
+    cur_dur = 0.0
+    pkg_i = 0
+
+    def _flush() -> None:
+        nonlocal cur_shots, cur_dur, pkg_i
+        if not cur_shots:
+            return
+        pkg_i += 1
+        packages.append(_build_package(pkg_i, cur_shots, max_clip_sec))
+        cur_shots = []
+        cur_dur = 0.0
+
+    for shot in shots:
+        needed = float(shot.get("duration_sec") or 3.5)
+        clips = shot.get("generation_clips") or []
+        # Single shot exceeds cap → each generation_clip is its own package
+        if needed > max_clip_sec + 1e-6 and len(clips) > 1:
+            _flush()
+            for c in clips:
+                pkg_i += 1
+                packages.append(
+                    _build_package(
+                        pkg_i,
+                        [shot],
+                        max_clip_sec,
+                        clip_override=c,
+                    )
+                )
+            continue
+
+        dur = min(needed, max_clip_sec)
+        if cur_shots and cur_dur + dur > max_clip_sec + 1e-6:
+            _flush()
+        cur_shots.append(shot)
+        cur_dur += dur
+
+    _flush()
+    return packages
+
+
+def _build_package(
+    index: int,
+    shots: list[dict[str, Any]],
+    max_clip_sec: float,
+    clip_override: dict[str, Any] | None = None,
+) -> dict[str, Any]:
+    beats: list[dict[str, Any]] = []
+    t = 0.0
+    if clip_override is not None and len(shots) == 1:
+        shot = shots[0]
+        d = float(clip_override.get("duration_sec") or max_clip_sec)
+        d = min(d, max_clip_sec)
+        beats.append(
+            {
+                "shot_id": shot.get("shot_id"),
+                "scene_id": shot.get("scene_id"),
+                "t_start": 0.0,
+                "t_end": round(d, 2),
+                "duration_sec": round(d, 2),
+                "dramatic_beat": shot.get("dramatic_beat"),
+                "dramatic_beat_en": shot.get("dramatic_beat_en"),
+                "subject": shot.get("subject"),
+                "subject_en": shot.get("subject_en"),
+                "shot_size": shot.get("shot_size"),
+                "emotion": shot.get("emotion"),
+                "linked_dialogue": shot.get("linked_dialogue") or [],
+                "camera": shot.get("camera"),
+                "look": shot.get("look"),
+                "performance": shot.get("performance"),
+                "clip_id": clip_override.get("clip_id"),
+                "stitch": clip_override.get("stitch"),
+            }
+        )
+        total = round(d, 2)
+    else:
+        for shot in shots:
+            d = min(float(shot.get("duration_sec") or 3.5), max_clip_sec)
+            # if remaining would overflow, shrink last (should not happen if packer correct)
+            beats.append(
+                {
+                    "shot_id": shot.get("shot_id"),
+                    "scene_id": shot.get("scene_id"),
+                    "t_start": round(t, 2),
+                    "t_end": round(t + d, 2),
+                    "duration_sec": round(d, 2),
+                    "dramatic_beat": shot.get("dramatic_beat"),
+                    "dramatic_beat_en": shot.get("dramatic_beat_en"),
+                    "subject": shot.get("subject"),
+                    "subject_en": shot.get("subject_en"),
+                    "shot_size": shot.get("shot_size"),
+                    "emotion": shot.get("emotion"),
+                    "linked_dialogue": shot.get("linked_dialogue") or [],
+                    "camera": shot.get("camera"),
+                    "look": shot.get("look"),
+                    "performance": shot.get("performance"),
+                }
+            )
+            t += d
+        total = round(t, 2)
+        if total > max_clip_sec:
+            # scale down beats proportionally to fit model cap
+            scale = max_clip_sec / total
+            t2 = 0.0
+            for b in beats:
+                nd = round(float(b["duration_sec"]) * scale, 2)
+                b["t_start"] = round(t2, 2)
+                b["t_end"] = round(t2 + nd, 2)
+                b["duration_sec"] = nd
+                t2 += nd
+            total = round(t2, 2)
+
+    shot_ids = [str(b.get("shot_id")) for b in beats]
+    return {
+        "package_id": f"G{index:02d}",
+        "index": index,
+        "duration_sec": total,
+        "max_clip_sec": max_clip_sec,
+        "shot_ids": shot_ids,
+        "beats": beats,
+        "internal_cut": True,
+        "note": "段内时间轴分镜；模型在上限内自行切镜",
+    }
 
 
 def format_timing_report(bible: dict[str, Any]) -> str:
@@ -446,6 +599,9 @@ def format_timing_report(bible: dict[str, Any]) -> str:
         f"- Max clip: **{plan.get('max_clip_sec')}s**",
         f"- Preferred clip: {plan.get('preferred_clip_sec')}s",
         f"- Film total: **{plan.get('film_total_sec')}s** ({plan.get('film_total_min')} min)",
+        f"- Generation packages: **{plan.get('generation_package_count')}** "
+        f"(total gen **{plan.get('generation_total_sec')}s**)",
+        f"- Rule: pack shots into ≤max packages; **internal timeline cuts** preferred",
         "",
         "## Scene totals",
     ]

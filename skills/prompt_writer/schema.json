@@ -1,10 +1,9 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "title": "GeneratorOutput",
-  "description": "Dispatch stage name is generator; agent is prompt_writer. See skills/prompt_writer/schema.json",
+  "title": "PromptWriterOutput",
   "type": "object",
   "required": ["generation_jobs"],
-  "additionalProperties": true,
+  "additionalProperties": false,
   "properties": {
     "agent": { "type": "string" },
     "generation_jobs": {
@@ -12,20 +11,24 @@
       "minItems": 1,
       "items": {
         "type": "object",
-        "required": ["shot_id", "actor_free_prompt", "director_guided_prompt"],
+        "required": [
+          "shot_id",
+          "actor_free_prompt",
+          "director_guided_prompt"
+        ],
         "properties": {
           "shot_id": { "type": "string" },
           "clip_id": { "type": "string" },
           "scene_id": { "type": "string" },
-          "visual_prompt": { "type": "string" },
-          "motion_prompt": { "type": "string" },
-          "master_prompt": { "type": "string" },
           "actor_free_prompt": { "type": "string" },
           "director_guided_prompt": { "type": "string" },
           "actor_free_prompt_zh": { "type": "string" },
           "director_guided_prompt_zh": { "type": "string" },
           "actor_free_prompt_en": { "type": "string" },
           "director_guided_prompt_en": { "type": "string" },
+          "visual_prompt": { "type": "string" },
+          "motion_prompt": { "type": "string" },
+          "master_prompt": { "type": "string" },
           "negative_prompt": { "type": "string" },
           "zh_director_summary": { "type": "string" },
           "duration_sec": { "type": "number" },

@@ -224,6 +224,17 @@ def main(argv: list[str] | None = None) -> int:
         default=None,
         help="--dialogue 对白精修 / --no-dialogue 跳过精修保留原台词",
     )
+    run_p.add_argument(
+        "--scheme",
+        choices=["A", "B"],
+        default="A",
+        help="A=单智能体全包（默认） B=多智能体分工（须外部一岗一会话；CLI 仍串行但会写入 meta.scheme）",
+    )
+    run_p.add_argument(
+        "--skip-knowledge-update",
+        action="store_true",
+        help="跳过「每日首次开工」知识库网络更新",
+    )
 
     step_p = sub.add_parser("step", help="Orchestrator 精确派一岗")
     step_p.add_argument("--project", required=True)
@@ -254,6 +265,16 @@ def main(argv: list[str] | None = None) -> int:
 
     list_p = sub.add_parser("stages", help="主链与资产岗列表")
 
+    ku_p = sub.add_parser(
+        "knowledge-update",
+        help="总指挥：从网络更新各岗知识库（日更；默认同日只成功一次）",
+    )
+    ku_p.add_argument(
+        "--force",
+        action="store_true",
+        help="强制重跑（忽略「今日已更新」；给 23:00 定时任务用）",
+    )
+
     args = parser.parse_args(argv)
     orch = Orchestrator(log=lambda m: console.print(f"[dim]{m}[/dim]"))
 
@@ -272,12 +293,46 @@ def main(argv: list[str] | None = None) -> int:
         )
         return 0
 
+    if args.command == "knowledge-update":
+        report = orch.maybe_upgrade_team_knowledge(force=bool(args.force))
+        if report.get("skipped"):
+            console.print(f"[yellow]已跳过[/yellow] reason={report.get('reason')}")
+        else:
+            console.print(
+                f"[green]知识库日更完成[/green] total_ok={report.get('total_ok')} "
+                f"date={report.get('local_date')}"
+            )
+        return 0
+
     if args.command == "run":
         script_path = Path(args.script)
         if not script_path.exists():
             console.print(f"[red]Script not found:[/red] {script_path}")
             return 1
         script = script_path.read_text(encoding="utf-8")
+
+        # ── 运行模式条幅（交付=提示词，模式必须诚实）──
+        import os
+
+        from film_pipeline.runtime.llm import LLMClient
+
+        _llm = LLMClient()
+        dry = bool(_llm.dry_run or not _llm.api_key)
+        mode = "dry-run（离线 stub）" if dry else "live（在线 LLM）"
+        scheme = getattr(args, "scheme", "A") or "A"
+        console.print(
+            Panel.fit(
+                f"[bold]运行模式[/bold] {mode}\n"
+                f"[bold]方案[/bold] {scheme} "
+                f"({'单智能体全包' if scheme == 'A' else '多智能体分工·CLI 串行调度'})\n"
+                f"[bold]终点[/bold] 最终提示词 → outputs/<项目名>/\n"
+                f"[dim]dry-run 时岗位走规则 stub，不是真创作；"
+                f"live 失败默认不静默降级（FILM_PIPELINE_STUB_FALLBACK=1 可开）[/dim]",
+                title="Orchestrator",
+            )
+        )
+        if getattr(args, "skip_knowledge_update", False):
+            os.environ["FILM_PIPELINE_SKIP_KNOWLEDGE_UPDATE"] = "1"
 
         fully_flagged = (
             args.max_clip is not None
@@ -334,7 +389,24 @@ def main(argv: list[str] | None = None) -> int:
             f"max_clip={brief.max_clip_sec}s"
         )
         bible = orch.run_production(brief, script, until=args.until)
+        # Honest product metadata on delivery
+        bible.setdefault("meta", {})
+        bible["meta"]["scheme"] = getattr(args, "scheme", "A") or "A"
+        bible["meta"]["run_mode"] = "dry-run" if dry else "live"
+        if dry:
+            bible["meta"]["used_stub"] = True
+        if bible.get("generation_jobs") or bible.get("asset_bible"):
+            orch.save(bible)
         console.print(f"[green]Saved[/green] {orch.project_path(brief.project_id)}")
+        out_dir = bible.get("meta", {}).get("final_prompts_dir") or str(
+            orch.final_prompts_path(brief.project_id)
+        )
+        if bible.get("generation_jobs"):
+            console.print(f"[bold green]完成 · 最终提示词[/bold green] {out_dir}")
+            if bible.get("meta", {}).get("used_stub"):
+                console.print(
+                    "[yellow]注意：本趟使用了 stub/离线规则，提示词仅作骨架，非真 LLM 剧组创作[/yellow]"
+                )
         _print_summary(bible)
         return 0
 
@@ -440,6 +512,7 @@ def main(argv: list[str] | None = None) -> int:
             return 1
         from film_pipeline.runtime.prompt_compiler import (
             compile_generation_jobs,
+            export_final_prompts_package,
             export_prompts_markdown,
         )
 
@@ -458,18 +531,22 @@ def main(argv: list[str] | None = None) -> int:
             tmp["generation_jobs"] = jobs
             Path(args.out).write_text(export_prompts_markdown(tmp), encoding="utf-8")
             console.print(f"[green]Wrote[/green] {args.out}")
+        else:
+            # Always refresh dedicated project-named folder
+            out_dir = export_final_prompts_package(bible)
+            console.print(f"[bold green]最终提示词文件夹[/bold green] {out_dir}")
         for job in jobs:
             title = job.get("clip_id") or job.get("shot_id")
             console.rule(str(title))
             console.print(job.get("zh_director_summary") or "")
             console.print(f"[dim]时长={job.get('duration_sec')}s[/dim]")
-            console.print("\n[bold]① 演员自由发挥 · 英文主稿[/bold]\n")
+            console.print("\n[bold]① 演员自由发挥 · 英文（可投喂）[/bold]\n")
             console.print(job.get("actor_free_prompt") or "")
-            console.print("\n[dim]中文对照：[/dim]")
+            console.print("\n[bold]① 演员自由发挥 · 中文（可投喂）[/bold]\n")
             console.print(job.get("actor_free_prompt_zh") or "")
-            console.print("\n[bold]② 导演指导 · 英文主稿[/bold]\n")
+            console.print("\n[bold]② 导演指导 · 英文（可投喂）[/bold]\n")
             console.print(job.get("director_guided_prompt") or "")
-            console.print("\n[dim]中文对照：[/dim]")
+            console.print("\n[bold]② 导演指导 · 中文（可投喂）[/bold]\n")
             console.print(job.get("director_guided_prompt_zh") or "")
             console.print()
         return 0

@@ -39,9 +39,22 @@ def test_full_pipeline_dry_run(monkeypatch):
     assert "跳过对白" not in job0["director_guided_prompt"]
     assert "禁止比喻修辞" not in (job0.get("director_guided_prompt_zh") or "")
     assert "shot bias" not in job0["director_guided_prompt"].lower()
-    # Chinese is auxiliary reading aid
+    # Chinese is reading aid; English is main product
     assert job0.get("actor_free_prompt_zh")
     assert job0.get("director_guided_prompt_zh")
+    assert "看懂" in (job0["actor_free_prompt_zh"] or "") or len(
+        job0["actor_free_prompt_zh"] or ""
+    ) > 10
+    # English main draft must not start with Chinese dramatic beats
+    import re
+
+    assert not re.search(r"[\u4e00-\u9fff]", job0["actor_free_prompt"] or ""), job0[
+        "actor_free_prompt"
+    ]
+    assert not (job0["actor_free_prompt"] or "").startswith("雨夜")
+    # natural writer still covers sample story content
+    blob = (job0["actor_free_prompt"] + " " + job0["director_guided_prompt"]).lower()
+    assert "envelope" in blob or "rain" in blob or "living" in blob or "shot" in blob
     assert any(s.get("performance") for s in bible["shots"])
     assert bible["asset_bible"]
     assert bible["asset_bible"]["characters"]
@@ -53,7 +66,11 @@ def test_full_pipeline_dry_run(monkeypatch):
     assert bible["last_review"]["pass"] is True
     assert (PROJECTS_DIR / "test_demo" / "prompt_board.md").exists()
     board = (PROJECTS_DIR / "test_demo" / "prompt_board.md").read_text(encoding="utf-8")
-    assert "英文主稿" in board and "中文对照" in board
+    # Dual product: both ZH/EN are feedable finished prompts
+    assert "可直接投喂" in board
+    assert "中文" in board and "英文" in board
+    # Film final duration footer (15/30 = per-generation cap, not film length)
+    assert "电影最终时长" in board or "Film total" in board
     assert (PROJECTS_DIR / "test_demo" / "production_brief.json").exists()
     assert (PROJECTS_DIR / "test_demo" / "asset_board.md").exists()
 

@@ -28,6 +28,16 @@ film_pipeline/bible/examples/*.generated.json
 outputs/
 *.log
 
+# Auto knowledge digests / local scheduler state (not product source)
+knowledge/.daily_update_state.json
+knowledge/ai/_web_updates/
+knowledge/ai/**/web_digest/
+
+# Local debug scratch (underscore-prefixed)
+scripts/_dbg_*.py
+scripts/_check_*.py
+scripts/_eval_*.py
+
 # Tests / coverage
 .pytest_cache/
 .coverage

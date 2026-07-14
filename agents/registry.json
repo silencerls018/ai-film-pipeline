@@ -1,0 +1,218 @@
+{
+  "version": "1.0",
+  "title": "AI Film Pipeline — independent agent packages",
+  "protocol": "AGENTS.md",
+  "notes": [
+    "Each package is fully independent: only its skill + knowledge_paths.",
+    "Agents must not load other packages' skills or knowledge.",
+    "Handoff only via FilmBible fields (reads/writes).",
+    "This repo does not manage video-model APIs or host LLM API keys for multi-agent runs."
+  ],
+  "user_must_choose": {
+    "question": "运行本项目请选择方案",
+    "options": [
+      {
+        "id": "A_solo",
+        "label": "单智能体全包",
+        "description": "一个执行者按顺序完成全部岗位；每岗仍只写自己的字段"
+      },
+      {
+        "id": "B_multi",
+        "label": "多智能体分工",
+        "description": "每岗一个独立智能体，只安装自己的 skill 与知识库"
+      }
+    ]
+  },
+  "dispatch_order": {
+    "main": [
+      "dramaturg",
+      "dialogue",
+      "director",
+      "look",
+      "cinematography",
+      "timing",
+      "prompt_writer",
+      "critic"
+    ],
+    "assets_optional_after": "dramaturg",
+    "assets": ["asset"]
+  },
+  "cli_stage_alias": {
+    "prompt_writer": "generator",
+    "generator": "prompt_writer"
+  },
+  "packages": [
+    {
+      "id": "dramaturg",
+      "display_name": "剧作",
+      "one_job": "从剧本拆 story / characters / scenes",
+      "skill": "skills/dramaturg/SKILL.md",
+      "schema": "skills/dramaturg/schema.json",
+      "knowledge_paths": [
+        "knowledge/ai/dramaturg/",
+        "knowledge/ai/shared/emotion_keys.json",
+        "knowledge/ai/shared/handoff_contracts.json",
+        "knowledge/human/01_dramaturg.md",
+        "knowledge/storycraft/"
+      ],
+      "reads": ["production_brief", "meta", "source_script"],
+      "writes": ["story", "characters", "scenes"],
+      "forbidden": ["dialogue", "shots", "look_bible", "generation_jobs", "asset_bible"]
+    },
+    {
+      "id": "dialogue",
+      "display_name": "对白",
+      "one_job": "定稿对白功能/潜台词/delivery；或 passthrough 原词",
+      "skill": "skills/dialogue/SKILL.md",
+      "schema": "skills/dialogue/schema.json",
+      "knowledge_paths": [
+        "knowledge/ai/dialogue/",
+        "knowledge/ai/shared/handoff_contracts.json",
+        "knowledge/human/02_dialogue.md",
+        "knowledge/dialogue/"
+      ],
+      "reads": ["production_brief", "story", "characters", "scenes", "source_script"],
+      "writes": ["dialogue"],
+      "forbidden": ["shots", "look_bible", "generation_jobs", "asset_bible"]
+    },
+    {
+      "id": "director",
+      "display_name": "导演分镜",
+      "one_job": "输出 shots 戏剧层（beat/景别/主体/情绪）；建议双语 beat",
+      "skill": "skills/director/SKILL.md",
+      "schema": "skills/director/schema.json",
+      "knowledge_paths": [
+        "knowledge/ai/director/",
+        "knowledge/ai/shared/emotion_keys.json",
+        "knowledge/ai/shared/handoff_contracts.json",
+        "knowledge/human/03_director.md",
+        "knowledge/directing/",
+        "knowledge/exemplars/"
+      ],
+      "reads": ["production_brief", "story", "characters", "scenes", "dialogue"],
+      "writes": ["shots"],
+      "forbidden": ["dialogue", "look_bible", "generation_jobs", "shots.camera"]
+    },
+    {
+      "id": "look",
+      "display_name": "影调",
+      "one_job": "全片/分场 look_bible 与 look_intent",
+      "skill": "skills/look/SKILL.md",
+      "schema": "skills/look/schema.json",
+      "knowledge_paths": [
+        "knowledge/ai/look/",
+        "knowledge/look/",
+        "knowledge/style_packs/",
+        "knowledge/human/04_look.md",
+        "knowledge/ai/shared/handoff_contracts.json"
+      ],
+      "reads": ["production_brief", "meta", "story", "scenes", "shots"],
+      "writes": ["look_bible", "shots.look_intent"],
+      "forbidden": ["dialogue", "shots.camera", "generation_jobs"]
+    },
+    {
+      "id": "cinematography",
+      "display_name": "摄影",
+      "one_job": "为每镜写 camera + look 执行层",
+      "skill": "skills/cinematography/SKILL.md",
+      "schema": "skills/cinematography/schema.json",
+      "knowledge_paths": [
+        "knowledge/ai/camera/",
+        "knowledge/camera/",
+        "knowledge/ai/look/",
+        "knowledge/style_packs/",
+        "knowledge/continuity/",
+        "knowledge/human/05_cinematography.md",
+        "knowledge/ai/shared/handoff_contracts.json"
+      ],
+      "reads": ["production_brief", "shots", "look_bible", "scenes", "dialogue"],
+      "writes": ["shots.camera", "shots.look", "shots.duration_sec"],
+      "forbidden": ["dialogue", "story", "generation_jobs"]
+    },
+    {
+      "id": "timing",
+      "display_name": "时长",
+      "one_job": "时长预算与 generation_clips 拆段（可代码可智能体）",
+      "skill": "skills/timing/SKILL.md",
+      "schema": "skills/timing/schema.json",
+      "knowledge_paths": [
+        "knowledge/ai/timing/",
+        "knowledge/timing/",
+        "knowledge/human/06_timing.md",
+        "knowledge/ai/shared/handoff_contracts.json"
+      ],
+      "reads": ["production_brief", "meta", "shots", "dialogue"],
+      "writes": ["shots.duration_sec", "shots.timing", "shots.generation_clips", "timing_plan"],
+      "forbidden": ["dialogue", "story", "look_bible", "generation_jobs"]
+    },
+    {
+      "id": "prompt_writer",
+      "display_name": "提示词写手",
+      "one_job": "只根据合同写最终提示词 generation_jobs（中英双成品均可投喂）",
+      "cli_stage": "generator",
+      "skill": "skills/prompt_writer/SKILL.md",
+      "schema": "skills/prompt_writer/schema.json",
+      "knowledge_paths": [
+        "knowledge/ai/generator/",
+        "knowledge/prompting/",
+        "knowledge/style_packs/",
+        "knowledge/human/08_generator.md",
+        "knowledge/ai/shared/handoff_contracts.json"
+      ],
+      "reads": [
+        "production_brief",
+        "meta",
+        "story",
+        "shots",
+        "look_bible",
+        "dialogue",
+        "characters",
+        "timing_plan",
+        "asset_bible"
+      ],
+      "writes": ["generation_jobs"],
+      "forbidden": ["dialogue", "story", "shots", "look_bible", "asset_bible"]
+    },
+    {
+      "id": "critic",
+      "display_name": "审片",
+      "one_job": "质检与 reroute_to，不直接改艺术字段",
+      "skill": "skills/critic/SKILL.md",
+      "schema": "skills/critic/schema.json",
+      "knowledge_paths": [
+        "knowledge/ai/critic/",
+        "knowledge/ai/orchestrator/",
+        "knowledge/human/09_critic.md",
+        "knowledge/ai/shared/handoff_contracts.json"
+      ],
+      "reads": ["*"],
+      "writes": ["reviews", "last_review"],
+      "forbidden": ["dialogue", "shots", "story", "generation_jobs"]
+    },
+    {
+      "id": "asset",
+      "display_name": "资产/三视图",
+      "one_job": "人物道具场景设定提示词 asset_bible",
+      "skill": "skills/asset/SKILL.md",
+      "schema": "skills/asset/schema.json",
+      "knowledge_paths": [
+        "knowledge/ai/asset/",
+        "knowledge/human/07_asset.md",
+        "knowledge/style_packs/",
+        "knowledge/ai/shared/handoff_contracts.json"
+      ],
+      "reads": [
+        "production_brief",
+        "meta",
+        "story",
+        "characters",
+        "scenes",
+        "look_bible",
+        "source_script"
+      ],
+      "writes": ["asset_bible", "assets"],
+      "forbidden": ["dialogue", "shots", "generation_jobs", "timing_plan"],
+      "parallel": true
+    }
+  ]
+}

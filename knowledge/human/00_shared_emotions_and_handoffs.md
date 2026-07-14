@@ -43,7 +43,7 @@
 | 导演 → 影调/摄影 | shot 列表、景别、beat、emotion | 改台词 |
 | 影调 → 摄影 | film_look、scene_look、forbidden | 改分镜结构 |
 | 摄影 → 时长 | camera.movement、镜头意图 | 改剧情 |
-| 时长 → 编译 | duration、clips≤15/30 | 改运镜艺术决策 |
+| 时长 → 写手 | duration、packages≤15/30、film_total | 改运镜艺术决策 |
 | 资产 ↔ 全员 | asset_id（可晚到） | 锁死某张图路径为唯一真相 |
 | 编译 → 质检 | generation_jobs 提示词 | 质检不直接改艺术字段 |
 
